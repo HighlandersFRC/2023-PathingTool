@@ -6,7 +6,7 @@ class PathApp(App):
     def build(self):
         Clock.schedule_interval(self.execute, 1.0  / 60.0)
         self.path_tool = PathTool()
-        return self.path_tool.layout
+        return self.path_tool
 
     #called at 60 Hz by Clock
     def execute(self, dt):
