@@ -4,6 +4,7 @@ from custom_widgets.path import Path
 from custom_widgets.points_menu import PointsMenu
 from custom_widgets.editor import Editor
 from data_assets.point import Point
+from tools import convert
 
 class PathTool(BoxLayout):
     def __init__(self, **kwargs):
@@ -29,7 +30,8 @@ class PathTool(BoxLayout):
         if self.path.collide_point(touch.x, touch.y):
             self.selected_point = self.path.get_selected_point(touch.x, touch.y)
             if self.selected_point == None:
-                self.selected_point = Point(len(self.points), touch.x, touch.y)
+                pos = convert.pixel_to_meters((touch.x, touch.y))
+                self.selected_point = Point(len(self.points), pos[0], pos[1], touch.x, touch.y)
                 self.points.append(self.selected_point)
                 self.path.update_points(self.points)
                 self.points_menu.update_points_list(self.points)

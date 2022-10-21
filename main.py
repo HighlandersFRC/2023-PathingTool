@@ -10,7 +10,7 @@ class PathApp(App):
 
     #called at 60 Hz by Clock
     def execute(self, dt):
-        pass
+        self.path_tool.path.draw_path()
 
 if __name__ == "__main__":
     PathApp().run()
