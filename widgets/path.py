@@ -22,8 +22,10 @@ class Path(Image):
         self.canvas.remove(self.instruction_group_b)
         self.instruction_group_b = InstructionGroup()
 
-        if len(self.points) > 2:
-            self.canvas.remove(self.path_line)
+        if len(self.points) > 1:
+            try:
+                self.canvas.remove(self.path_line)
+            except: pass
             interp_points = generateSplines.generateSplineCurves([[p.index, p.x, p.y, 0] for p in self.points])
             pixel_list = [None] * (2 * len(interp_points[1]))
             pixel_list[::2] = [convert.meters_to_pixels_x(n, self.size) for n in interp_points[1]]
@@ -31,7 +33,6 @@ class Path(Image):
             self.path_line = Line(points = pixel_list, width = 2, cap = "round", joint = "round")
             self.canvas.add(Color(0, 0, 0))
             self.canvas.add(self.path_line)
-
 
         for p in self.points:
             pixel_pos = convert.meters_to_pixels((p.x, p.y), self.size)

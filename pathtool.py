@@ -47,5 +47,20 @@ class PathTool(BoxLayout):
                 self.points[self.selected_point.index] = self.selected_point
 
         #Update main widgets
+        self.update_widgets()
+
+    def update_widgets(self):
         self.path.update_points(self.points)
         self.points_menu.update_points_list(self.points)
+        self.editor.update_selected_point(self.selected_point)
+
+    def delete_point(self, index):
+        self.points.pop(index)
+        if self.selected_point.index == index:
+            self.selected_point = None
+        self.update_widgets()
+
+    def clear_points(self):
+        self.points = []
+        self.selected_point = None
+        self.update_widgets()
