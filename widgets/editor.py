@@ -1,18 +1,23 @@
 from kivy.uix.gridlayout import GridLayout
 
 from widgets.sub_widgets.edit_value import EditValue
+from widgets.sub_widgets.nudge_value import NudgeValue
 from data_assets.point import Point
 
 class Editor(GridLayout):
     def __init__(self, **kwargs):
-        super().__init__(rows = 3, **kwargs)
+        super().__init__(rows = 4, **kwargs)
         self.selected_point = None
 
         self.edit_x = EditValue("X", "x", self.update_selected_point)
         self.edit_y = EditValue("Y", "y", self.update_selected_point)
+        self.nudge_x = NudgeValue("X", "x", self.update_selected_point)
+        self.nudge_y = NudgeValue("Y", "y", self.update_selected_point)
 
         self.add_widget(self.edit_x)
+        self.add_widget(self.nudge_x)
         self.add_widget(self.edit_y)
+        self.add_widget(self.nudge_y)
 
     def get_updated_point(self):
         return self.selected_point
@@ -21,3 +26,5 @@ class Editor(GridLayout):
         self.selected_point = point
         self.edit_x.update(self.selected_point)
         self.edit_y.update(self.selected_point)
+        self.nudge_x.update(self.selected_point)
+        self.nudge_y.update(self.selected_point)
