@@ -11,7 +11,7 @@ class PathTool(BoxLayout):
         super().__init__(orientation = "horizontal", **kwargs)
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
         self.editor = Editor(size_hint = (1, 0.25))
-        self.path = Path(size_hint = (1, 0.75))
+        self.path = Path(size_hint = (1, 0.75), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(size_hint = (0.1, 1))
         self.set_layout()
 
@@ -30,8 +30,8 @@ class PathTool(BoxLayout):
         if self.path.collide_point(touch.x, touch.y):
             self.selected_point = self.path.get_selected_point(touch.x, touch.y)
             if self.selected_point == None:
-                pos = convert.pixel_to_meters((touch.x, touch.y))
-                self.selected_point = Point(len(self.points), pos[0], pos[1], touch.x, touch.y)
+                pos = convert.pixels_to_meters((touch.x, touch.y), self.path.size)
+                self.selected_point = Point(len(self.points), pos[0], pos[1])
                 self.points.append(self.selected_point)
                 self.path.update_points(self.points)
                 self.points_menu.update_points_list(self.points)
