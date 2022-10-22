@@ -11,10 +11,10 @@ class Path(Image):
         self.instruction_group = InstructionGroup()
 
     def draw_path(self):
+        self.canvas.remove(self.instruction_group)
         self.instruction_group = InstructionGroup()
-        self.canvas.remove_group("instruction_group")
         for p in self.points:
-            self.canvas.add(Color(0, 0.5, 0))
+            self.canvas.add(Color(0, 1, 0))
             pixel_pos = convert.meters_to_pixels((p.x, p.y), self.size)
             self.instruction_group.add(Ellipse(pos = (pixel_pos[0] - 5, pixel_pos[1] - 5), size = (10, 10)))
         self.canvas.add(self.instruction_group)
