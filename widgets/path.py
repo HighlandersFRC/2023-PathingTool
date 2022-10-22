@@ -3,6 +3,7 @@ from kivy.graphics import *
 
 from data_assets.point import Point
 from tools import convert
+from SplineGeneration import generateSplines
 
 class Path(Image):
     def __init__(self, **kwargs):
@@ -12,6 +13,7 @@ class Path(Image):
 
         self.instruction_group_a = InstructionGroup()
         self.instruction_group_b = InstructionGroup()
+        self.path_line = Line()
         
 
     def draw_path(self):
@@ -19,7 +21,18 @@ class Path(Image):
         self.instruction_group_a = InstructionGroup()
         self.canvas.remove(self.instruction_group_b)
         self.instruction_group_b = InstructionGroup()
-        
+
+        if len(self.points) > 2:
+            self.canvas.remove(self.path_line)
+            interp_points = generateSplines.generateSplineCurves([[p.index, p.x, p.y, 0] for p in self.points])
+            pixel_list = [None] * (2 * len(interp_points[1]))
+            pixel_list[::2] = [convert.meters_to_pixels_x(n, self.size) for n in interp_points[1]]
+            pixel_list[1::2] = [convert.meters_to_pixels_y(n, self.size) for n in interp_points[2]]
+            self.path_line = Line(points = pixel_list, width = 2, cap = "round", joint = "round")
+            self.canvas.add(Color(0, 0, 0))
+            self.canvas.add(self.path_line)
+
+
         for p in self.points:
             pixel_pos = convert.meters_to_pixels((p.x, p.y), self.size)
             if self.selected_point == None:
