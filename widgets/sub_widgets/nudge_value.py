@@ -15,10 +15,14 @@ class NudgeValue(BoxLayout):
         self.add_widget(self.increment_button)
 
     def increment(self, event):
+        if self.selected_point == None:
+            return
         self.set_value(self.get_value() + 0.025)
         self.update_func(self.selected_point)
 
     def decrement(self, event):
+        if self.selected_point == None:
+            return
         self.set_value(self.get_value() - 0.025)
         self.update_func(self.selected_point)
 
@@ -27,7 +31,7 @@ class NudgeValue(BoxLayout):
 
     def get_value(self):
         if self.selected_point == None:
-            return ""
+            return 0
         if self.field == "x":
             return self.selected_point.x
         if self.field == "y":
