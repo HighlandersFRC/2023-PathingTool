@@ -61,3 +61,6 @@ class Path(Image):
 
     def update_points(self, points: list[Point]):
         self.points = points
+
+    def update_selected_point(self, point):
+        self.selected_point = point

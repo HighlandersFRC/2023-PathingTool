@@ -30,7 +30,7 @@ class EditValue(BoxLayout):
 
     def get_value(self):
         if self.selected_point == None:
-            return ""
+            return 0
         if self.field == "x":
             return self.selected_point.x
         if self.field == "y":

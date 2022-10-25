@@ -10,7 +10,7 @@ class PathTool(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(orientation = "horizontal", **kwargs)
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
-        self.editor = Editor(size_hint = (1, 0.25))
+        self.editor = Editor(self.delete_point, size_hint = (1, 0.25))
         self.path = Path(size_hint = (1, 0.75), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
@@ -53,6 +53,7 @@ class PathTool(BoxLayout):
         self.path.update_points(self.points)
         self.points_menu.update_points_list(self.points)
         self.editor.update_selected_point(self.selected_point)
+        self.path.update_selected_point(self.selected_point)
 
     def delete_point(self, index):
         self.points.pop(index)
