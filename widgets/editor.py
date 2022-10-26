@@ -8,35 +8,44 @@ from data_assets.point import Point
 class Editor(GridLayout):
     def __init__(self, delete_func, clear_func, **kwargs):
         super().__init__(rows = 4, **kwargs)
+        #selected path point
         self.selected_point = None
 
+        #callback functions in pathtool
         self.delete_func = delete_func
         self.clear_func = clear_func
 
+        #editor sub-widgets
         self.edit_x = EditValue("X", "x", self.update_selected_point)
         self.edit_y = EditValue("Y", "y", self.update_selected_point)
         self.nudge_x = NudgeValue("X", "x", self.update_selected_point)
         self.nudge_y = NudgeValue("Y", "y", self.update_selected_point)
         self.save_delete = SaveDelete(self.delete_point, self.clear_points)
 
+        #add sub-widgets
         self.add_widget(self.edit_x)
         self.add_widget(self.nudge_x)
         self.add_widget(self.edit_y)
         self.add_widget(self.nudge_y)
         self.add_widget(self.save_delete)
 
+    #delete selected point if a point is selected
     def delete_point(self):
         if self.selected_point == None:
             return
+        #call callback in pathtool
         self.delete_func(self.selected_point.index)
 
+    #clear points by calling callback in pathtool
     def clear_points(self):
         self.clear_func()
 
+    #return the updated selected point
     def get_updated_point(self):
         return self.selected_point
 
-    def update_selected_point(self, point):
+    #update selected point and update sub-widgets
+    def update_selected_point(self, point: Point):
         self.selected_point = point
         self.edit_x.update(self.selected_point)
         self.edit_y.update(self.selected_point)

@@ -4,6 +4,7 @@ from pathtool import PathTool
 
 class PathApp(App):
     def build(self):
+        #schedule execute callback
         Clock.schedule_interval(self.execute, 1.0  / 60.0)
         self.path_tool = PathTool()
         return self.path_tool

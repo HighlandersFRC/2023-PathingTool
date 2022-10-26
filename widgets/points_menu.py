@@ -6,8 +6,9 @@ from data_assets.point import Point
 class PointsMenu(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(orientation = "vertical", **kwargs)
-        
-    def update_points_list(self, points: list[Point]):
+
+    #update list of buttons  
+    def update_points_list(self, points: list):
         self.clear_widgets()
         for p in points:
             self.add_widget(ToggleButton(text = f"Point {p.index}"))
