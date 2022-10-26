@@ -21,11 +21,12 @@ class Path(Image):
         self.instruction_group_a = InstructionGroup()
         self.canvas.remove(self.instruction_group_b)
         self.instruction_group_b = InstructionGroup()
+        try:
+            if self.canvas.indexof(self.path_line) != -1:
+                self.canvas.remove(self.path_line)
+        except: pass
 
         if len(self.points) > 1:
-            try:
-                self.canvas.remove(self.path_line)
-            except: pass
             interp_points = generateSplines.generateSplineCurves([[p.index, p.x, p.y, 0] for p in self.points])
             pixel_list = [None] * (2 * len(interp_points[1]))
             pixel_list[::2] = [convert.meters_to_pixels_x(n, self.size) for n in interp_points[1]]
