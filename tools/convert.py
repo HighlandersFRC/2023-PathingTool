@@ -24,3 +24,6 @@ def meters_to_pixels_x(x, pixel_size: tuple):
 
 def meters_to_pixels_y(y, pixel_size: tuple):
     return y * (pixel_size[1] / 934.0) * (838.0 / 8.23) + 49.0 * (pixel_size[1] / 934.0)
+
+def get_robot_radius(robot_width: float, robot_height: float):
+    return math.sqrt((robot_width / 2.0) ** 2 + (robot_height / 2.0) ** 2)

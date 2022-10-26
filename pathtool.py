@@ -40,7 +40,7 @@ class PathTool(BoxLayout):
             #if no point is selected add new point
             if self.selected_point == None:
                 pos = convert.pixels_to_meters((touch.x, touch.y), self.path.size)
-                self.selected_point = Point(len(self.points), pos[0], pos[1])
+                self.selected_point = Point(len(self.points), pos[0], pos[1], 0.0)
                 self.points.append(self.selected_point)
             #else update selected point
             else:

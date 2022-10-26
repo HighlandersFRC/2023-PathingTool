@@ -50,6 +50,8 @@ class EditValue(BoxLayout):
             return self.selected_point.x
         if self.field == "y":
             return self.selected_point.y
+        if self.field == "angle":
+            return self.selected_point.get_angle_degrees()
 
     #set vaule of point field
     def set_value(self, value: float):
@@ -59,4 +61,6 @@ class EditValue(BoxLayout):
             self.selected_point.x = value
         if self.field == "y":
             self.selected_point.y = value
+        if self.field == "angle":
+            self.selected_point.set_angle_degrees(value)
            
