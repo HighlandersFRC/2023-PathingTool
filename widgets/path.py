@@ -4,6 +4,7 @@ from kivy.graphics import *
 from data_assets.point import Point
 from tools import convert
 from SplineGeneration import generateSplines
+import math
 
 class Path(Image):
     def __init__(self, **kwargs):
@@ -13,9 +14,9 @@ class Path(Image):
         self.selected_point = None
 
         #robot dimensions
-        self.robot_width = 1
-        self.robot_length = 1
-        self.robot_radius = convert.get_robot_radius(self.robot_)
+        self.robot_width = 0.7366
+        self.robot_length = 0.7366
+        self.robot_radius = convert.get_robot_radius(self.robot_width, self.robot_length)
 
         #main instructions/instruction groups
         self.non_selected_points_group = InstructionGroup()
@@ -30,6 +31,8 @@ class Path(Image):
         self.non_selected_points_group = InstructionGroup()
         self.canvas.remove(self.selected_points_group)
         self.selected_points_group = InstructionGroup()
+        self.canvas.remove(self.angle_indicators_group)
+        self.angle_indicators_group = InstructionGroup()
         #if path_line instruction is present erase it
         if self.canvas.indexof(self.path_line) != -1:
             self.canvas.remove(self.path_line)
@@ -57,8 +60,24 @@ class Path(Image):
                 self.non_selected_points_group.add(Ellipse(pos = (pixel_pos[0] - 5, pixel_pos[1] - 5), size = (10, 10)))
 
             #angle indicators
-            corners = []
+            #angle from 0 to first corner
+            corner_1_theta = math.atan2((self.robot_length) / (self.robot_radius * 2), (self.robot_width) / (self.robot_radius * 2))
+            #corner angles
+            theta_1 = corner_1_theta + p.angle
+            theta_2 = math.pi - corner_1_theta + p.angle
+            theta_3 = math.pi + corner_1_theta + p.angle
+            theta_4 = 2 * math.pi - corner_1_theta + p.angle
+            #corner coordinates in pixels
+            corner_1 = convert.meters_to_pixels((self.robot_radius * math.cos(theta_1) + p.x, self.robot_radius * math.sin(theta_1) + p.y), self.size)
+            corner_2 = convert.meters_to_pixels((self.robot_radius * math.cos(theta_2) + p.x, self.robot_radius * math.sin(theta_2) + p.y), self.size)
+            corner_3 = convert.meters_to_pixels((self.robot_radius * math.cos(theta_3) + p.x, self.robot_radius * math.sin(theta_3) + p.y), self.size)
+            corner_4 = convert.meters_to_pixels((self.robot_radius * math.cos(theta_4) + p.x, self.robot_radius * math.sin(theta_4) + p.y), self.size)
+            self.angle_indicators_group.add(Line(width = 2, cap = "square", joint = "miter", close = True, points = [corner_1[0], corner_1[1], corner_2[0], corner_2[1], corner_3[0], corner_3[1], corner_4[0], corner_4[1]]))
+            #robot direction indicator
+            front = convert.meters_to_pixels(((self.robot_length / 2.0) * math.cos(p.angle) + p.x, (self.robot_length / 2.0) * math.sin(p.angle) + p.y), self.size)
+            self.angle_indicators_group.add(Line(width = 2, cap = "square", joint = "miter", points = [pixel_pos[0], pixel_pos[1], front[0], front[1]]))
         self.canvas.add(self.non_selected_points_group)
+        self.canvas.add(self.angle_indicators_group)
 
         #draw selected point
         if self.selected_point != None:
