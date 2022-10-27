@@ -29,8 +29,8 @@ class PathTool(BoxLayout):
         self.add_widget(self.points_menu)
 
     #called on click events
-    def on_touch_up(self, touch):
-        if super().on_touch_up(touch):
+    def on_touch_down(self, touch):
+        if super().on_touch_down(touch):
             return True
 
         #Click on the field
