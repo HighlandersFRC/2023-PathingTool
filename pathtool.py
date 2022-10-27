@@ -12,7 +12,7 @@ class PathTool(BoxLayout):
         #main widgets
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
         self.editor = Editor(self.delete_point, self.clear_points, size_hint = (1, 0.25))
-        self.path = Path(size_hint = (1, 0.75), allow_stretch = True, keep_ratio = False)
+        self.path = Path(size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
 
