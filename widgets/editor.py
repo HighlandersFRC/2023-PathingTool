@@ -1,9 +1,10 @@
 from kivy.uix.gridlayout import GridLayout
-from widgets.sub_widgets.angle_selector import AngleSelector
 
+from widgets.sub_widgets.angle_selector import AngleSelector
 from widgets.sub_widgets.edit_value import EditValue
 from widgets.sub_widgets.nudge_value import NudgeValue
 from widgets.sub_widgets.save_delete import SaveDelete
+from widgets.sub_widgets.animation_controller import AnimationController
 from data_assets.point import Point
 
 class Editor(GridLayout):
