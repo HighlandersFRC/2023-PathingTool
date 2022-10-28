@@ -11,7 +11,7 @@ class PathTool(BoxLayout):
         super().__init__(orientation = "horizontal", **kwargs)
         #main widgets
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
-        self.editor = Editor(self.delete_point, self.clear_points, size_hint = (1, 0.25))
+        self.editor = Editor(self.delete_point, self.clear_points, self.run_animation, size_hint = (1, 0.25))
         self.path = Path(size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
@@ -100,3 +100,6 @@ class PathTool(BoxLayout):
         for p in self.points:
             time += p.delta_time
             p.time = time
+
+    def run_animation(self, start_time: float):
+        self.path.set_animation(start_time)

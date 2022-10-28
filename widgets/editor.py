@@ -8,7 +8,7 @@ from widgets.sub_widgets.animation_controller import AnimationController
 from data_assets.point import Point
 
 class Editor(GridLayout):
-    def __init__(self, delete_func, clear_func, **kwargs):
+    def __init__(self, delete_func, clear_func, animation_func, **kwargs):
         super().__init__(rows = 4, **kwargs)
         #selected path point
         self.selected_point = None
@@ -16,6 +16,7 @@ class Editor(GridLayout):
         #callback functions in pathtool
         self.delete_func = delete_func
         self.clear_func = clear_func
+        self.animation_func = animation_func
 
         #editor sub-widgets
         self.edit_time = EditValue("Delta Time", "delta_time", self.update_selected_point)
@@ -62,5 +63,6 @@ class Editor(GridLayout):
         self.nudge_x.update(self.selected_point)
         self.nudge_y.update(self.selected_point)
 
+    #call run animation callback
     def run_animation(self, time: float):
-        pass
+        self.animation_func(time)

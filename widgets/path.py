@@ -85,6 +85,9 @@ class Path(Image):
             self.canvas.add(Color(1, 0, 1))
             self.selected_points_group.add(Ellipse(pos = (pixel_pos[0] - 7, pixel_pos[1] - 7), size = (14, 14)))
         self.canvas.add(self.selected_points_group)
+
+    def set_animation(self, time: float):
+        pass
         
     #return point that was clicked on, if any
     def get_selected_point(self, px, py):

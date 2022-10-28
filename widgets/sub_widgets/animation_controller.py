@@ -22,15 +22,17 @@ class AnimationController(BoxLayout):
         self.add_widget(self.run_from_point_button)
 
     #run full animation
-    def run_full(self):
+    def run_full(self, event):
         self.run_func(0.0)
 
     #run animation starting at a time
-    def run_from_time(self):
+    def run_from_time(self, event):
+        if self.time_input.text == "":
+            return
         self.run_func(float(self.time_input.text))
 
     #run animation starting at the selected point
-    def run_from_point(self):
+    def run_from_point(self, event):
         if self.selected_point == None:
             return
         self.run_func(self.selected_point.time)
