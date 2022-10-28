@@ -18,7 +18,7 @@ class EditValue(BoxLayout):
         self.field = field
 
         #create and add sub-widgets
-        self.value_input = TextInput(hint_text = f"{self.name} value", input_filter = "float")
+        self.value_input = TextInput(hint_text = f"{self.name} Value", input_filter = "float")
         self.submit_button = Button(text = f"Set {self.name}", on_press = self.submit)
         self.add_widget(self.value_input)
         self.add_widget(self.submit_button)
@@ -52,8 +52,10 @@ class EditValue(BoxLayout):
             return self.selected_point.y
         if self.field == "angle":
             return self.selected_point.get_angle_degrees()
+        if self.field == "delta_time":
+            return self.selected_point.delta_time
 
-    #set vaule of point field
+    #set value of point field
     def set_value(self, value: float):
         if self.selected_point == None:
             return
@@ -63,4 +65,6 @@ class EditValue(BoxLayout):
             self.selected_point.y = value
         if self.field == "angle":
             self.selected_point.set_angle_degrees(value)
+        if self.field == "delta_time":
+            self.selected_point.delta_time = value
            

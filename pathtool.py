@@ -40,7 +40,7 @@ class PathTool(BoxLayout):
             #if no point is selected add new point
             if self.selected_point == None:
                 pos = convert.pixels_to_meters((touch.x, touch.y), self.path.size)
-                self.selected_point = Point(len(self.points), pos[0], pos[1], 0.0)
+                self.selected_point = Point(len(self.points), 1.0, pos[0], pos[1], 0.0)
                 self.points.append(self.selected_point)
             #else update selected point
             else:
@@ -62,6 +62,9 @@ class PathTool(BoxLayout):
 
     #update main widgets
     def update_widgets(self):
+        #update indexes and times
+        self.index_points()
+        self.time_points()
         #update path points in widgets
         self.path.update_points(self.points)
         self.points_menu.update_points_list(self.points)
@@ -76,8 +79,6 @@ class PathTool(BoxLayout):
         #if removed point is the selected point (which it should be) clear selected point
         if self.selected_point.index == index:
             self.selected_point = None
-        #re-index point list
-        self.index_points()
         #update main widgets
         self.update_widgets()
 
@@ -92,3 +93,10 @@ class PathTool(BoxLayout):
     def index_points(self):
         for i in range(len(self.points)):
             self.points[i].index = i
+
+    #update time values for each point
+    def time_points(self):
+        time = 0.0
+        for p in self.points:
+            time += p.delta_time
+            p.time = time

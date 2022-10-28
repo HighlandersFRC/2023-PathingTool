@@ -18,20 +18,24 @@ class Editor(GridLayout):
         self.clear_func = clear_func
 
         #editor sub-widgets
+        self.edit_time = EditValue("Delta Time", "delta_time", self.update_selected_point)
         self.edit_x = EditValue("X", "x", self.update_selected_point)
         self.edit_y = EditValue("Y", "y", self.update_selected_point)
         self.angle_selector = AngleSelector(self.update_selected_point)
         self.nudge_x = NudgeValue("X", "x", self.update_selected_point)
         self.nudge_y = NudgeValue("Y", "y", self.update_selected_point)
         self.save_delete = SaveDelete(self.delete_point, self.clear_points)
+        self.animation_controller = AnimationController(self.run_animation)
 
         #add sub-widgets
+        self.add_widget(self.edit_time)
         self.add_widget(self.edit_x)
         self.add_widget(self.nudge_x)
         self.add_widget(self.edit_y)
         self.add_widget(self.nudge_y)
         self.add_widget(self.angle_selector)
         self.add_widget(self.save_delete)
+        self.add_widget(self.animation_controller)
 
     #delete selected point if a point is selected
     def delete_point(self):
@@ -51,8 +55,12 @@ class Editor(GridLayout):
     #update selected point and update sub-widgets
     def update_selected_point(self, point: Point):
         self.selected_point = point
+        self.edit_time.update(self.selected_point)
         self.edit_x.update(self.selected_point)
         self.edit_y.update(self.selected_point)
         self.angle_selector.update(self.selected_point)
         self.nudge_x.update(self.selected_point)
         self.nudge_y.update(self.selected_point)
+
+    def run_animation(self, time: float):
+        pass
