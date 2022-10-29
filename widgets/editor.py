@@ -10,7 +10,7 @@ from data_assets.point import Point
 class Editor(GridLayout):
     def __init__(self, delete_func, clear_func, animation_func, **kwargs):
         super().__init__(rows = 4, **kwargs)
-        #selected path point
+        #selected key point
         self.selected_point = None
 
         #callback functions in pathtool
@@ -45,7 +45,7 @@ class Editor(GridLayout):
         #call callback in pathtool
         self.delete_func(self.selected_point.index)
 
-    #clear points by calling callback in pathtool
+    #clear key points by calling callback in pathtool
     def clear_points(self):
         self.clear_func()
 

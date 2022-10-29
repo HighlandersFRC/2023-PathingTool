@@ -5,7 +5,7 @@ from kivy.uix.textinput import TextInput
 class AnimationController(BoxLayout):
     def __init__(self, run_func, **kwargs):
         super().__init__(orientation = "horizontal", **kwargs)
-        #selected path point
+        #selected key point
         self.selected_point = None
 
         #run animation callback

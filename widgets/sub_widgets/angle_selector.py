@@ -48,7 +48,7 @@ class AngleSelector(BoxLayout):
 class AngleDial(Image):
     def __init__(self, update_func, **kwargs):
         super().__init__(source = "images/DialBackground.png", **kwargs)
-        #update angle callback
+        #update key callback
         self.update_func = update_func
         #white line on dial
         self.angle_line = Line()

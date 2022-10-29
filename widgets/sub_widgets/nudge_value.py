@@ -6,7 +6,7 @@ from data_assets.point import Point
 class NudgeValue(BoxLayout):
     def __init__(self, name: str, field: str, update_func, **kwargs):
         super().__init__(orientation = "horizontal", **kwargs)
-        #selected path point
+        #selected key point
         self.selected_point = None
 
         #update callback

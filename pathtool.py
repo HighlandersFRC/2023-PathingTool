@@ -16,7 +16,7 @@ class PathTool(BoxLayout):
         self.points_menu = PointsMenu(size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
 
-        #list of path points
+        #list of key points
         self.points = []
         #currently selected point
         self.selected_point = None
@@ -65,7 +65,7 @@ class PathTool(BoxLayout):
         #update indexes and times
         self.index_points()
         self.time_points()
-        #update path points in widgets
+        #update key points in widgets
         self.path.update_points(self.points)
         self.points_menu.update_points_list(self.points)
         #update selected point in widgets
@@ -82,9 +82,9 @@ class PathTool(BoxLayout):
         #update main widgets
         self.update_widgets()
 
-    #clear path points
+    #clear key points
     def clear_points(self):
-        #clear path points, selected point, and update main widgets
+        #clear key points, selected point, and update main widgets
         self.points = []
         self.selected_point = None
         self.update_widgets()

@@ -1,0 +1,23 @@
+Path JSON Format
+
+"key_points": [
+    {
+        "index": int,
+        "time": float,
+        "delta_time": float,
+        "x": float,
+        "y": float,
+        "angle": float
+    },
+    ...
+],
+"sample_points": [
+    {
+        "time": float,
+        "delta_time": float,
+        "x": float,
+        "y": float,
+        "angle": float
+    },
+    ...
+]

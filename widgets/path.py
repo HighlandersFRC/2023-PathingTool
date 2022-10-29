@@ -9,7 +9,7 @@ import math
 class Path(Image):
     def __init__(self, **kwargs):
         super().__init__(source = "images/RapidReactField.png", **kwargs)
-        #path points and selected point
+        #key points and selected point
         self.points = []
         self.selected_point = None
 
