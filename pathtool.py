@@ -1,10 +1,12 @@
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.modalview import ModalView
 
 from widgets.path import Path
 from widgets.points_menu import PointsMenu
 from widgets.editor import Editor
 from data_assets.point import Point
 from tools import convert
+from popups.save_load import SaveLoad
 
 class PathTool(BoxLayout):
     def __init__(self, **kwargs):
@@ -20,6 +22,10 @@ class PathTool(BoxLayout):
         self.points = []
         #currently selected point
         self.selected_point = None
+
+        #save and load path popup
+        self.save_load_popup = SaveLoad()
+        self.save_load_popup.open()
 
     #add widgets to main layout
     def set_layout(self):
@@ -101,5 +107,6 @@ class PathTool(BoxLayout):
             time += p.delta_time
             p.time = time
 
+    #start path animation from a time
     def run_animation(self, start_time: float):
         self.path.set_animation(start_time)

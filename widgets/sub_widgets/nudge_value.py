@@ -4,7 +4,7 @@ from kivy.uix.button import Button
 from data_assets.point import Point
 
 class NudgeValue(BoxLayout):
-    def __init__(self, name: str, field: str, update_func, **kwargs):
+    def __init__(self, name: str, field: str, pos_color: tuple, neg_color: tuple, update_func, **kwargs):
         super().__init__(orientation = "horizontal", **kwargs)
         #selected key point
         self.selected_point = None
@@ -17,8 +17,8 @@ class NudgeValue(BoxLayout):
         self.field = field
         
         #create and add sub-widgets
-        self.increment_button = Button(text = f"+{self.name}", on_press = self.increment)
-        self.decrement_button = Button(text = f"-{self.name}", on_press = self.decrement)
+        self.increment_button = Button(text = f"+{self.name}", on_press = self.increment, background_color = pos_color)
+        self.decrement_button = Button(text = f"-{self.name}", on_press = self.decrement, background_color = neg_color)
         self.add_widget(self.decrement_button)
         self.add_widget(self.increment_button)
 

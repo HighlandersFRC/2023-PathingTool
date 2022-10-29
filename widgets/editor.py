@@ -23,9 +23,9 @@ class Editor(GridLayout):
         self.edit_x = EditValue("X", "x", self.update_selected_point)
         self.edit_y = EditValue("Y", "y", self.update_selected_point)
         self.angle_selector = AngleSelector(self.update_selected_point)
-        self.nudge_x = NudgeValue("X", "x", self.update_selected_point)
-        self.nudge_y = NudgeValue("Y", "y", self.update_selected_point)
-        self.save_delete = SaveDelete(self.delete_point, self.clear_points)
+        self.nudge_x = NudgeValue("X", "x", (0, 0, 0.75, 1), (0, 0, 0.25, 1), self.update_selected_point)
+        self.nudge_y = NudgeValue("Y", "y", (0.75, 0.75, 0.75, 1), (0.25, 0.25, 0.25, 1), self.update_selected_point)
+        self.save_delete = SaveDelete(self.delete_point, self.clear_points, self.save_path, self.open_path, self.upload_path)
         self.animation_controller = AnimationController(self.run_animation)
 
         #add sub-widgets
@@ -45,9 +45,21 @@ class Editor(GridLayout):
         #call callback in pathtool
         self.delete_func(self.selected_point.index)
 
-    #clear key points by calling callback in pathtool
+    #clear key points
     def clear_points(self):
         self.clear_func()
+
+    #save path to json
+    def save_path(self):
+        pass
+
+    #open path from json
+    def open_path(self):
+        pass
+
+    #upload path to roborio
+    def upload_path(self):
+        pass
 
     #return the updated selected point
     def get_updated_point(self):
