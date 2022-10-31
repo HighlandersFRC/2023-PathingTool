@@ -7,8 +7,10 @@ from widgets.sub_widgets.save_delete import SaveDelete
 from widgets.sub_widgets.animation_controller import AnimationController
 from data_assets.point import Point
 
+from popups.save_load import SaveLoad
+
 class Editor(GridLayout):
-    def __init__(self, delete_func, clear_func, animation_func, **kwargs):
+    def __init__(self, delete_func, clear_func, animation_func, save_func, load_func, **kwargs):
         super().__init__(rows = 4, **kwargs)
         #selected key point
         self.selected_point = None
@@ -38,6 +40,9 @@ class Editor(GridLayout):
         self.add_widget(self.save_delete)
         self.add_widget(self.animation_controller)
 
+        #popups
+        self.save_load = SaveLoad(save_func, load_func)
+
     #delete selected point if a point is selected
     def delete_point(self):
         if self.selected_point == None:
@@ -51,11 +56,11 @@ class Editor(GridLayout):
 
     #save path to json
     def save_path(self):
-        pass
+        self.save_load.open()
 
     #open path from json
     def open_path(self):
-        pass
+        self.save_load.open()
 
     #upload path to roborio
     def upload_path(self):

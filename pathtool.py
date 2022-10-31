@@ -13,7 +13,7 @@ class PathTool(BoxLayout):
         super().__init__(orientation = "horizontal", **kwargs)
         #main widgets
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
-        self.editor = Editor(self.delete_point, self.clear_points, self.run_animation, size_hint = (1, 0.25))
+        self.editor = Editor(self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, size_hint = (1, 0.25))
         self.path = Path(size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
@@ -22,10 +22,6 @@ class PathTool(BoxLayout):
         self.points = []
         #currently selected point
         self.selected_point = None
-
-        #save and load path popup
-        self.save_load_popup = SaveLoad()
-        self.save_load_popup.open()
 
     #add widgets to main layout
     def set_layout(self):
@@ -110,3 +106,11 @@ class PathTool(BoxLayout):
     #start path animation from a time
     def run_animation(self, start_time: float):
         self.path.set_animation(start_time)
+
+    #save path as json file
+    def save_path(self, path: list):
+        print(f"save {path}")
+
+    #open json save file
+    def load_path(self, path: list):
+        print(f"load {path}")
