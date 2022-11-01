@@ -1,5 +1,7 @@
 Path JSON Format
-
+"meta_data":{
+    "sampling_rate": float
+},
 "key_points": [
     {
         "index": int,
@@ -11,10 +13,9 @@ Path JSON Format
     },
     ...
 ],
-"sample_points": [
+"sampled_points": [
     {
         "time": float,
-        "delta_time": float,
         "x": float,
         "y": float,
         "angle": float

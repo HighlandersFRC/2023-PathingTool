@@ -27,7 +27,7 @@ class Editor(GridLayout):
         self.angle_selector = AngleSelector(self.update_selected_point)
         self.nudge_x = NudgeValue("X", "x", (0, 0, 0.75, 1), (0, 0, 0.25, 1), self.update_selected_point)
         self.nudge_y = NudgeValue("Y", "y", (0.75, 0.75, 0.75, 1), (0.25, 0.25, 0.25, 1), self.update_selected_point)
-        self.save_delete = SaveDelete(self.delete_point, self.clear_points, self.save_path, self.open_path, self.upload_path)
+        self.save_delete = SaveDelete(self.delete_point, self.clear_points, self.save_path, self.load_path, self.upload_path)
         self.animation_controller = AnimationController(self.run_animation)
 
         #add sub-widgets
@@ -58,8 +58,8 @@ class Editor(GridLayout):
     def save_path(self):
         self.save_load.open()
 
-    #open path from json
-    def open_path(self):
+    #load path from json
+    def load_path(self):
         self.save_load.open()
 
     #upload path to roborio

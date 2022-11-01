@@ -37,14 +37,14 @@ class SaveLoad(Popup):
     def save(self, event):
         if not "saves" in self.file_chooser.path or self.file_chooser.selection == []:
             return
-        self.save_func(self.file_chooser.selection)
+        self.save_func(self.file_chooser.selection[0])
         self.dismiss()
 
     #load path
     def load(self, event):
         if not "saves" in self.file_chooser.path or self.file_chooser.selection == []:
             return
-        self.load_func(self.file_chooser.selection)
+        self.load_func(self.file_chooser.selection[0])
         self.dismiss()
 
     #update callback

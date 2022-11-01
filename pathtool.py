@@ -6,6 +6,7 @@ from widgets.points_menu import PointsMenu
 from widgets.editor import Editor
 from data_assets.point import Point
 from tools import convert
+from tools import file_manager
 from popups.save_load import SaveLoad
 
 class PathTool(BoxLayout):
@@ -108,9 +109,9 @@ class PathTool(BoxLayout):
         self.path.set_animation(start_time)
 
     #save path as json file
-    def save_path(self, path: list):
+    def save_path(self, path: str):
         print(f"save {path}")
 
     #open json save file
-    def load_path(self, path: list):
+    def load_path(self, path: str):
         print(f"load {path}")
