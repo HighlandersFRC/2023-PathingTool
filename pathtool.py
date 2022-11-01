@@ -20,9 +20,11 @@ class PathTool(BoxLayout):
         self.set_layout()
 
         #list of key points
-        self.points = []
+        self.key_points = []
         #currently selected point
         self.selected_point = None
+        #how often path is sample in seconds
+        self.sample_rate = 0.01
 
     #add widgets to main layout
     def set_layout(self):
@@ -43,8 +45,8 @@ class PathTool(BoxLayout):
             #if no point is selected add new point
             if self.selected_point == None:
                 pos = convert.pixels_to_meters((touch.x, touch.y), self.path.size)
-                self.selected_point = Point(len(self.points), 1.0, pos[0], pos[1], 0.0)
-                self.points.append(self.selected_point)
+                self.selected_point = Point(len(self.key_points), 1.0, pos[0], pos[1], 0.0)
+                self.key_points.append(self.selected_point)
             #else update selected point
             else:
                 self.editor.update_selected_point(self.selected_point)
@@ -58,7 +60,7 @@ class PathTool(BoxLayout):
                 return True
             #else update selected point
             else:
-                self.points[self.selected_point.index] = self.selected_point
+                self.key_points[self.selected_point.index] = self.selected_point
 
         #update main widgets
         self.update_widgets()
@@ -69,8 +71,8 @@ class PathTool(BoxLayout):
         self.index_points()
         self.time_points()
         #update key points in widgets
-        self.path.update_points(self.points)
-        self.points_menu.update_points_list(self.points)
+        self.path.update(self.key_points, self.sample_rate)
+        self.points_menu.update_points_list(self.key_points)
         #update selected point in widgets
         self.editor.update_selected_point(self.selected_point)
         self.path.update_selected_point(self.selected_point)
@@ -78,7 +80,7 @@ class PathTool(BoxLayout):
     #delete selected point
     def delete_point(self, index):
         #remove point
-        self.points.pop(index)
+        self.key_points.pop(index)
         #if removed point is the selected point (which it should be) clear selected point
         if self.selected_point.index == index:
             self.selected_point = None
@@ -88,19 +90,19 @@ class PathTool(BoxLayout):
     #clear key points
     def clear_points(self):
         #clear key points, selected point, and update main widgets
-        self.points = []
+        self.key_points = []
         self.selected_point = None
         self.update_widgets()
 
     #re-index points
     def index_points(self):
-        for i in range(len(self.points)):
-            self.points[i].index = i
+        for i in range(len(self.key_points)):
+            self.key_points[i].index = i
 
     #update time values for each point
     def time_points(self):
         time = 0.0
-        for p in self.points:
+        for p in self.key_points:
             time += p.delta_time
             p.time = time
 
@@ -109,9 +111,15 @@ class PathTool(BoxLayout):
         self.path.set_animation(start_time)
 
     #save path as json file
-    def save_path(self, path: str):
-        print(f"save {path}")
+    def save_path(self, folder_path: str, file_name: str):
+        print(f"saving {folder_path}\\{file_name}.json")
+        file_manager.save_path(self.key_points, self.sample_rate, folder_path, file_name)
 
     #open json save file
-    def load_path(self, path: str):
-        print(f"load {path}")
+    def load_path(self, file_path: str):
+        print(f"loading {file_path}")
+        path_data = file_manager.load_path(file_path)
+        self.key_points = path_data[0]
+        self.sample_rate = path_data[1]
+        self.update_widgets()
+        

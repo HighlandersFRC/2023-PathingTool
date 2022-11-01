@@ -14,6 +14,8 @@ class Editor(GridLayout):
         super().__init__(rows = 4, **kwargs)
         #selected key point
         self.selected_point = None
+        #sampling rate
+        self.sample_rate = 0.01
 
         #callback functions in pathtool
         self.delete_func = delete_func
@@ -56,10 +58,12 @@ class Editor(GridLayout):
 
     #save path to json
     def save_path(self):
+        self.save_load.path = "./saves"
         self.save_load.open()
 
     #load path from json
     def load_path(self):
+        self.save_load.path = "./saves"
         self.save_load.open()
 
     #upload path to roborio

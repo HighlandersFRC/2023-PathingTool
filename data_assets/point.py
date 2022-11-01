@@ -19,3 +19,6 @@ class Point:
 
     def get_angle_degrees(self):
         return self.angle * (180.0 / math.pi)
+
+    def to_json(self):
+        return self.__dict__

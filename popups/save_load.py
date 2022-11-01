@@ -35,9 +35,9 @@ class SaveLoad(Popup):
 
     #save path
     def save(self, event):
-        if not "saves" in self.file_chooser.path or self.file_chooser.selection == []:
+        if not "saves" in self.file_chooser.path or self.text_box.text == "":
             return
-        self.save_func(self.file_chooser.selection[0])
+        self.save_func(self.file_chooser.path, self.text_box.text)
         self.dismiss()
 
     #load path

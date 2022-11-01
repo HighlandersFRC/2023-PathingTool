@@ -9,9 +9,10 @@ import math
 class Path(Image):
     def __init__(self, **kwargs):
         super().__init__(source = "images/RapidReactField.png", **kwargs)
-        #key points and selected point
+        #key points, selected point, and sampling rate
         self.points = []
         self.selected_point = None
+        self.sample_rate = 0.01
 
         #robot dimensions
         self.robot_width = 0.7366
@@ -99,8 +100,9 @@ class Path(Image):
         return None
 
     #update points list
-    def update_points(self, points: list):
+    def update(self, points: list, sample_rate: float):
         self.points = points
+        self.sample_rate = sample_rate
 
     #update selected point
     def update_selected_point(self, point: Point):
