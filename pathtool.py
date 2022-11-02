@@ -25,6 +25,8 @@ class PathTool(BoxLayout):
         self.selected_point = None
         #how often path is sample in seconds
         self.sample_rate = 0.01
+        #name of current path
+        self.path_name = ""
 
     #add widgets to main layout
     def set_layout(self):
@@ -75,6 +77,7 @@ class PathTool(BoxLayout):
         self.points_menu.update_points_list(self.key_points)
         #update selected point in widgets
         self.editor.update_selected_point(self.selected_point)
+        self.editor.update_path_name(self.path_name)
         self.path.update_selected_point(self.selected_point)
 
     #delete selected point
@@ -121,5 +124,7 @@ class PathTool(BoxLayout):
         path_data = file_manager.load_path(file_path)
         self.key_points = path_data[0]
         self.sample_rate = path_data[1]
+        self.path_name = path_data[2]
+        self.selected_point = None
         self.update_widgets()
         

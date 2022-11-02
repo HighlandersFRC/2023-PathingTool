@@ -16,6 +16,8 @@ class Editor(GridLayout):
         self.selected_point = None
         #sampling rate
         self.sample_rate = 0.01
+        #name of current path
+        self.path_name = ""
 
         #callback functions in pathtool
         self.delete_func = delete_func
@@ -58,13 +60,16 @@ class Editor(GridLayout):
 
     #save path to json
     def save_path(self):
+        self.save_load.mode = "save"
         self.save_load.file_chooser.path = "./saves"
         self.save_load.file_chooser.selection = []
+        self.save_load.text_box.text = self.path_name
         self.save_load.open()
 
     #load path from json
     def load_path(self):
-        self.save_load.path = "./saves"
+        self.save_load.mode = "load"
+        self.save_load.file_chooser.path = "./saves"
         self.save_load.open()
 
     #upload path to roborio
@@ -84,6 +89,9 @@ class Editor(GridLayout):
         self.angle_selector.update(self.selected_point)
         self.nudge_x.update(self.selected_point)
         self.nudge_y.update(self.selected_point)
+
+    def update_path_name(self, name: str):
+        self.path_name = name
 
     #call run animation callback
     def run_animation(self, time: float):

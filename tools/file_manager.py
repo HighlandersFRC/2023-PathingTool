@@ -32,7 +32,7 @@ def load_path(file_path: str):
             for p in data["key_points"]:
                 key_points.append(Point(p["index"], p["delta_time"], p["x"], p["y"], p["angle"]))
             print("Path loaded successfully")
-            return key_points, data["meta_data"]["sample_rate"]
+            return key_points, data["meta_data"]["sample_rate"], data["meta_data"]["path_name"]
     except:
         print("Path was unable to be loaded")
         return [], 0.01
