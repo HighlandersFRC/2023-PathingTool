@@ -58,7 +58,8 @@ class Editor(GridLayout):
 
     #save path to json
     def save_path(self):
-        self.save_load.path = "./saves"
+        self.save_load.file_chooser.path = "./saves"
+        self.save_load.file_chooser.selection = []
         self.save_load.open()
 
     #load path from json

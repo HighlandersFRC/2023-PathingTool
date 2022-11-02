@@ -40,7 +40,8 @@ class Path(Image):
 
         #if more that 1 point in path generate spline line and add it
         if len(self.points) > 1:
-            interp_points = generateSplines.generateSplineCurves([[p.index, p.x, p.y, 0] for p in self.points])
+            # TODO - code breaks when times are floats
+            interp_points = generateSplines.generateSplineCurves([[p.index, p.x, p.y, p.angle] for p in self.points])
             pixel_list = [None] * (2 * len(interp_points[1]))
             pixel_list[::2] = [convert.meters_to_pixels_x(n, self.size) for n in interp_points[1]]
             pixel_list[1::2] = [convert.meters_to_pixels_y(n, self.size) for n in interp_points[2]]
