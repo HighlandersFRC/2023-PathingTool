@@ -114,8 +114,9 @@ class PathTool(BoxLayout):
         self.path.set_animation(start_time)
 
     #save path as json file
-    def save_path(self, folder_path: str, file_name: str):
+    def save_path(self, folder_path: str, file_name: str, sample_rate: float):
         print(f"saving {folder_path}\\{file_name}.json")
+        self.sample_rate = sample_rate
         file_manager.save_path(self.key_points, self.sample_rate, folder_path, file_name)
 
     #open json save file

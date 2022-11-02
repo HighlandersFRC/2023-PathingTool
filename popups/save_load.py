@@ -26,6 +26,7 @@ class SaveLoad(Popup):
         #Create and add widgets
         self.file_chooser = FileChooserListView(path = "./saves")
         self.text_box = TextInput(hint_text = "File name")
+        self.sample_rate_input = TextInput(hint_text = "Sample rate (sec)", text = "0.01", input_filter = "float", size_hint = (0.2, 1))
         self.load_button = Button(text = "Load", on_press = self.load, size_hint = (0.2, 1))
         self.save_button = Button(text = "Save", on_press = self.save, size_hint = (0.2, 1))
         self.cancel_button = Button(text = "Cancel", on_press = self.cancel, size_hint = (0.2, 1))
@@ -34,15 +35,16 @@ class SaveLoad(Popup):
         self.layout.add_widget(self.file_chooser)
         self.layout.add_widget(self.controls_layout)
         self.controls_layout.add_widget(self.text_box)
+        self.controls_layout.add_widget(self.sample_rate_input)
         self.controls_layout.add_widget(self.load_button)
         self.controls_layout.add_widget(self.save_button)
         self.controls_layout.add_widget(self.cancel_button)
 
     #save path
     def save(self, event):
-        if not "saves" in self.file_chooser.path or self.text_box.text == "":
+        if not "saves" in self.file_chooser.path or self.text_box.text == "" or self.sample_rate_input.text == "":
             return
-        self.save_func(self.file_chooser.path, self.text_box.text)
+        self.save_func(self.file_chooser.path, self.text_box.text, float(self.sample_rate_input.text))
         self.dismiss()
 
     #load path
