@@ -16,7 +16,7 @@ class PathTool(BoxLayout):
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
         self.editor = Editor(self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, size_hint = (1, 0.25))
         self.path = Path(size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
-        self.points_menu = PointsMenu(size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
+        self.points_menu = PointsMenu(self.set_selected_point, size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
 
         #list of key points
@@ -74,11 +74,15 @@ class PathTool(BoxLayout):
         self.time_points()
         #update key points in widgets
         self.path.update(self.key_points, self.sample_rate)
-        self.points_menu.update_points_list(self.key_points)
+        self.points_menu.update(self.key_points, self.selected_point)
         #update selected point in widgets
         self.editor.update_selected_point(self.selected_point)
         self.editor.update_path_name(self.path_name)
         self.path.update_selected_point(self.selected_point)
+
+    def set_selected_point(self, selected_point: Point):
+        self.selected_point = selected_point
+        self.update_widgets()
 
     #delete selected point
     def delete_point(self, index):
