@@ -16,6 +16,8 @@ class PointsMenu(BoxLayout):
 
         #list of buttons
         self.buttons = []
+        #button selected in list
+        self.selected_button = None
 
     #update list of buttons  
     def update(self, key_points: list, selected_point: Point):
@@ -34,6 +36,7 @@ class PointsMenu(BoxLayout):
     def select(self, index: int, event):
         self.selected_point = self.key_points[index]
         self.update_func(self.selected_point)
+        return index
 
     #when mouse starts to drag button
     def on_touch_move(self, touch):
