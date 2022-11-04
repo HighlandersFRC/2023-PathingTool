@@ -80,6 +80,7 @@ class PathTool(BoxLayout):
         self.editor.update_path_name(self.path_name)
         self.path.update_selected_point(self.selected_point)
 
+    #set the selected point
     def set_selected_point(self, selected_point: Point):
         self.selected_point = selected_point
         self.update_widgets()

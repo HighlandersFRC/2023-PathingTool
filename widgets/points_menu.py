@@ -33,6 +33,7 @@ class PointsMenu(BoxLayout):
         for b in self.buttons:
             self.add_widget(b)
 
+    #button callback
     def select(self, index: int, event):
         self.selected_point = self.key_points[index]
         self.update_func(self.selected_point)
