@@ -24,5 +24,14 @@ class Point:
     def get_angle_degrees(self):
         return self.angle * (180.0 / math.pi)
 
+    def set_vel_theta_degrees(self, degrees: float):
+        self.velocity_theta = degrees * (math.pi / 180.0)
+
+    def get_vel_theta_degrees(self):
+        return self.velocity_theta * (180.0 / math.pi)
+
+    def get_vel_marker_pos(self):
+        return self.x + self.velocity_magnitude * math.cos(self.velocity_theta), self.y + self.velocity_magnitude * math.sin(self.velocity_theta)
+
     def to_json(self):
         return self.__dict__

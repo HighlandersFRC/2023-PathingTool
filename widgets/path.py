@@ -95,13 +95,16 @@ class Path(Image):
     def get_selected_point(self, px, py):
         for p in self.points:
             pixel_pos = convert.meters_to_pixels((p.x, p.y), self.size)
+            # vel_marker_pos = convert.meters_to_pixels(p.get_vel_marker_pos(), self.size)
+            # if convert.get_dist(px, py, vel_marker_pos[0], vel_marker_pos[1]) <= 5:
+            #     return None
             if convert.get_dist(px, py, pixel_pos[0], pixel_pos[1]) <= 5:
                 self.selected_point = p
                 return p
         return None
 
     #update points list
-    def update(self, points: list, sample_rate: float):
+    def update(self, points: list[Point], sample_rate: float):
         self.points = points
         self.sample_rate = sample_rate
 
