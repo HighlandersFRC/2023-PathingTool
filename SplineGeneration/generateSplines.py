@@ -9,10 +9,12 @@ def samplePoints(equations, pointList, sampleRate):
 
     pointTimeList = []
 
+    #print(pointList)
+
     for i in range(0, len(pointList)):
         pointTimeList.append(pointList[i][0])
 
-    print("TIMES: ", pointTimeList)
+    #print("TIMES: ", pointTimeList)
 
     xEquations = equations[0]
     yEquations = equations[1]
@@ -42,12 +44,15 @@ def samplePoints(equations, pointList, sampleRate):
 
         sampledTimes.append(time)
 
-    print("TIMES: ", sampledTimes)
-    print("X: ", sampledXPoints)
-    print("Y: ", sampledYPoints)
-    print("Theta: ", sampledThetaPoints)
+    # print("TIMES: ", sampledTimes)
+    # print("X: ", sampledXPoints)
+    # print("Y: ", sampledYPoints)
+    # print("Theta: ", sampledThetaPoints)
+
+    return sampledTimes, sampledXPoints, sampledYPoints, sampledThetaPoints
 
 def generateSplineCurves(points):
+    #print("RECEIVED POINTS: ", points)
     # overallSysEqArray = np.zeros(((len(points) - 1) * 4, (len(points) - 1) * 4))
     overallSysEqArray = []
     xArray = []
@@ -122,8 +127,14 @@ def generateSplineCurves(points):
     yCoefficients = np.matmul(M, yMatrix)
     thetaCoefficients = np.matmul(M, thetaMatrix)
 
-    samplePoints([xCoefficients, yCoefficients, thetaCoefficients], pointList, 10)
+    #print("X: ", xCoefficients, " Y: ", yCoefficients, " THETA: ", thetaCoefficients)
 
-pointList = [[0, 1, 2, 0], [1, 3, 1, math.pi/4], [2, 5, 4, math.pi/2], [3, 8, 0, (3/4) * math.pi]]
+    sampledPoints = samplePoints([xCoefficients, yCoefficients, thetaCoefficients], points, 10)
 
-generateSplineCurves(pointList)
+    #print(sampledPoints)
+
+    return sampledPoints
+
+#pointList = [[0, 1, 2, 0], [1, 3, 1, math.pi/4], [2, 5, 4, math.pi/2], [3, 8, 0, (3/4) * math.pi]]
+
+#generateSplineCurves(pointList)
