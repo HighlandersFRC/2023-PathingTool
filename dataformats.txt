@@ -1,0 +1,29 @@
+Path JSON Format
+{
+    "meta_data":{
+        "path_name": str,
+        "sample_rate": float
+    },
+    "key_points": [
+        {
+            "index": int,
+            "time": float,
+            "delta_time": float,
+            "x": float,
+            "y": float,
+            "angle": float
+            "velocity_magnitude": float,
+            "velocity_theta": float
+        },
+        ...
+    ],
+    "sampled_points": [
+        {
+            "time": float,
+            "x": float,
+            "y": float,
+            "angle": float
+        },
+        ...
+    ]
+}
