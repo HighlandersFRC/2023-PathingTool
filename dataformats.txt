@@ -12,6 +12,8 @@ Path JSON Format
             "x": float,
             "y": float,
             "angle": float
+            "velocity_magnitude": float,
+            "velocity_theta": float
         },
         ...
     ],

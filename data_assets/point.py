@@ -1,7 +1,7 @@
 import math
 
 class Point:
-    def __init__(self, index: int, delta_time: float, x: float, y: float, angle: float):
+    def __init__(self, index: int, delta_time: float, x: float, y: float, angle: float, v_mag: float, v_theta: float):
         #index in point list
         self.index = index
         #time from previous point
@@ -13,7 +13,11 @@ class Point:
         self.y = y
         #angle in radians
         self.angle = angle
-    
+        #velocity magnitude component
+        self.velocity_magnitude = v_mag
+        #velocity theta component
+        self.velocity_theta = v_theta
+        
     def set_angle_degrees(self, degrees: float):
         self.angle = degrees * (math.pi / 180.0)
 
