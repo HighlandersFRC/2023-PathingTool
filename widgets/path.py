@@ -41,7 +41,7 @@ class Path(Image):
         #if more that 1 point in path generate spline line and add it
         if len(self.points) > 1:
             # TODO - code breaks when times are floats
-            interp_points = generateSplines.generateSplineCurves([[p.index, p.x, p.y, p.angle] for p in self.points])
+            interp_points = generateSplines.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), 0.0, 0.0, 0.0, 0.0] for p in self.points])
             pixel_list = [None] * (2 * len(interp_points[1]))
             pixel_list[::2] = [convert.meters_to_pixels_x(n, self.size) for n in interp_points[1]]
             pixel_list[1::2] = [convert.meters_to_pixels_y(n, self.size) for n in interp_points[2]]
@@ -95,13 +95,16 @@ class Path(Image):
     def get_selected_point(self, px, py):
         for p in self.points:
             pixel_pos = convert.meters_to_pixels((p.x, p.y), self.size)
+            # vel_marker_pos = convert.meters_to_pixels(p.get_vel_marker_pos(), self.size)
+            # if convert.get_dist(px, py, vel_marker_pos[0], vel_marker_pos[1]) <= 5:
+            #     return None
             if convert.get_dist(px, py, pixel_pos[0], pixel_pos[1]) <= 5:
                 self.selected_point = p
                 return p
         return None
 
     #update points list
-    def update(self, points: list, sample_rate: float):
+    def update(self, points: list[Point], sample_rate: float):
         self.points = points
         self.sample_rate = sample_rate
 

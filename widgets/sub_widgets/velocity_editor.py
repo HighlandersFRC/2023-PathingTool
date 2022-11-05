@@ -4,6 +4,8 @@ from kivy.uix.button import Button
 
 from data_assets.point import Point
 
+from .angle_selector import AngleDial
+
 class VelocityEditor(BoxLayout):
     def __init__(self, update_func, **kwargs):
         super().__init__(**kwargs)
@@ -14,24 +16,32 @@ class VelocityEditor(BoxLayout):
         self.update_func = update_func
 
         #create and add widgets
+        self.theta_dial = AngleDial(self.set_v_theta)
         self.v_theta_input = TextInput(hint_text = "VTheta (degr)", input_filter = "float")
-        self.v_theta_button = Button(text = "Set VTheta", on_press = self.set_v_theta)
+        self.v_theta_button = Button(text = "Set VTheta", on_press = self.update_v_theta)
         self.v_mag_input = TextInput(hint_text = "VMagnitude (m)", input_filter = "float")
-        self.v_mag_button = Button(text = "Set VMagnitude", on_press = self.set_v_mag)
+        self.v_mag_button = Button(text = "Set VMagnitude", on_press = self.update_v_mag)
+        self.add_widget(self.theta_dial)
         self.add_widget(self.v_theta_input)
         self.add_widget(self.v_theta_button)
         self.add_widget(self.v_mag_input)
         self.add_widget(self.v_mag_button)
 
-    #set theta component
-    def set_v_theta(self, event):
+    def set_v_theta(self, theta: float):
+        if self.selected_point == None:
+            return
+        self.selected_point.velocity_theta = theta
+        self.v_theta_input.text = str(round(self.selected_point.get_vel_theta_degrees(), 2))  
+
+    #update theta component
+    def update_v_theta(self, event):
         if self.selected_point == None or self.v_theta_input.text == "":
             return
-        self.selected_point.velocity_theta = float(self.v_theta_input.text)
+        self.selected_point.update_vel_theta_degrees(float(self.v_theta_input.text))
         self.update_func(self.selected_point)
 
-    #set magnitude component
-    def set_v_mag(self, event):
+    #update magnitude component
+    def update_v_mag(self, event):
         if self.selected_point == None or self.v_mag_input.text == "":
             return
         self.selected_point.velocity_magnitude = float(self.v_mag_input.text)
@@ -44,5 +54,5 @@ class VelocityEditor(BoxLayout):
             self.v_theta_input.text = ""
             self.v_mag_input.text = ""
             return
-        self.v_theta_input.text = str(round(self.selected_point.velocity_theta, 2))
+        self.v_theta_input.text = str(round(self.selected_point.get_vel_theta_degrees(), 2))
         self.v_mag_input.text = str(round(self.selected_point.velocity_magnitude, 2))
