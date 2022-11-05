@@ -74,7 +74,8 @@ def samplePoints(equations, pointList, sampleRate):
 
     print("XVEL: ", sampledXVelocities)
 
-    quiver(sampledXArray, sampledYArray, sampledXVelocities, sampledYVelocities)
+    plot(sampledXArray, sampledYArray)
+    # quiver(sampledXArray, sampledYArray, sampledXVelocities, sampledYVelocities)
     plt.xlim([-20, 20])
     plt.ylim([-20, 20])
     show()
@@ -92,85 +93,60 @@ def generateSplineCurves(points):
     for i in range(len(points) - 1):
         currentPoint = points[i]
         nextPoint = points[i+1]
-        if(i == 0):
-            xArray.append(0)
-            yArray.append(0)
-            thetaArray.append(0)
-            startPad = [0 for j in range(0, i * 6)]
-            # eq = startPad + [0, 1, 2 * currentPoint[0], 3 * (currentPoint[0] ** 2)]
-            eq = startPad + [0, 1, 2 * currentPoint[0], 3 * (currentPoint[0] ** 2), 4 * (currentPoint[0] ** 3), 5 * (currentPoint[0] ** 4)]
-            # eq = startPad + [0, 1, 0, 0]
-            firstEndPad = [0 for j in range(0, (size - len(eq)))]
-            overallSysEqArray.append(eq + firstEndPad)
-            print("ORIGINAL SLOPE: ", eq + firstEndPad)
-            # overallSysEqArray[((i) * 4)][(i) * 4:((i) * 4)+4] = eq
         
         startPad = [0 for j in range(0, i * 6)]
 
-        if(i == len(points) - 2):
-            firstEq = startPad + [1, currentPoint[0], currentPoint[0] ** 2, currentPoint[0] ** 3, currentPoint[0] ** 4, currentPoint[0] ** 5]
-            secondEq = startPad + [1, nextPoint[0], nextPoint[0] ** 2, nextPoint[0] ** 3, nextPoint[0] ** 4, nextPoint[0] ** 5]
-            velocityEq = startPad + [0, 1,  2 * nextPoint[0], 3 * (nextPoint[0] ** 2), 4 * (nextPoint[0] ** 3), 5 * (nextPoint[0] ** 4)]
-            accelerationEq = startPad + [0, 0,  2, 6 * (nextPoint[0]), 12 * (nextPoint[0] ** 2), 20 * (nextPoint[0] ** 3)]
-            jerkEq = startPad + [0, 0, 0, 6, 24 * nextPoint[0], 60 * (nextPoint[0] ** 2)]
-        else:
-            firstEq = startPad + [1, currentPoint[0], currentPoint[0] ** 2, currentPoint[0] ** 3, currentPoint[0] ** 4, currentPoint[0] ** 5]
-            secondEq = startPad + [1, nextPoint[0], nextPoint[0] ** 2, nextPoint[0] ** 3, nextPoint[0] ** 4, nextPoint[0] ** 5]
-            velocityEq = startPad + [0, 1,  2 * nextPoint[0], 3 * (nextPoint[0] ** 2), 4 * (nextPoint[0] ** 3), 5 * (nextPoint[0] ** 4), 0, -1,  -2 * nextPoint[0], -3 * (nextPoint[0] ** 2), -4 * (nextPoint[0] ** 3), -5 * (nextPoint[0] ** 4)]
-            accelerationEq = startPad + [0, 0,  2, 6 * (nextPoint[0]), 12 * (nextPoint[0] ** 2), 20 * (nextPoint[0] ** 3), 0, 0,  -2, -6 * (nextPoint[0]), -12 * (nextPoint[0] ** 2), -20 * (nextPoint[0] ** 3)]
-            jerkEq = startPad + [0, 0, 0, 6, 24 * nextPoint[0], 60 * (nextPoint[0] ** 2), 0, 0, 0, -6, -24 * nextPoint[0], -60 * (nextPoint[0] ** 2)]
-        snapEq = startPad + [0, 0, 0, 0, 24, 120 * nextPoint[0], 0, 0, 0, 0, -24, -120 * nextPoint[0]]
+        # if(i == len(points) - 2):
+        firstPointEq = startPad + [1, currentPoint[0], currentPoint[0] ** 2, currentPoint[0] ** 3, currentPoint[0] ** 4, currentPoint[0] ** 5]
+        secondPointEq = startPad + [1, nextPoint[0], nextPoint[0] ** 2, nextPoint[0] ** 3, nextPoint[0] ** 4, nextPoint[0] ** 5]
+        firstVelEq = startPad + [0, 1,  2 * currentPoint[0], 3 * (currentPoint[0] ** 2), 4 * (currentPoint[0] ** 3), 5 * (currentPoint[0] ** 4)]
+        secondVelEq = startPad + [0, 1,  2 * nextPoint[0], 3 * (nextPoint[0] ** 2), 4 * (nextPoint[0] ** 3), 5 * (nextPoint[0] ** 4)]
+        firstAccelEq = startPad + [0, 0, 0, 6, 24 * currentPoint[0], 60 * (currentPoint[0] ** 2)]
+        secondAccelEq = startPad + [0, 0, 0, 6, 24 * nextPoint[0], 60 * (nextPoint[0] ** 2)]
 
-        firstEndPad = [0 for j in range(0, size - len(firstEq))]
-        secondEndPad = [0 for j in range(0, size - len(secondEq))]
-        velEndPad = [0 for j in range(0, size - len(velocityEq))]
-        accEndPad = [0 for j in range(0, size - len(accelerationEq))]
-        jerkEndPad = [0 for j in range(0, size - len(jerkEq))]
+        firstEndPad = [0 for j in range(0, size - len(firstPointEq))]
+        secondEndPad = [0 for j in range(0, size - len(secondPointEq))]
+        firstVelEndPad = [0 for j in range(0, size - len(firstVelEq))]
+        secondVelEndPad = [0 for j in range(0, size - len(secondVelEq))]
+        firstAcelEndPad = [0 for j in range(0, size - len(firstAccelEq))]
+        secondAcelEndPad = [0 for j in range(0, size - len(secondAccelEq))]
 
-        overallSysEqArray.append(firstEq + firstEndPad)
-        overallSysEqArray.append(secondEq + secondEndPad)
-        overallSysEqArray.append(velocityEq + velEndPad)
-        overallSysEqArray.append(accelerationEq + accEndPad)
-        overallSysEqArray.append(jerkEq + jerkEndPad)
-        
-        # print("FIRST: ", len(firstEq + firstEndPad))
-        # print("SECOND: ", len(secondEq + secondEndPad))
-        # print("VEL: ", len(velocityEq + velEndPad))
-        # print("ACC: ", len(accelerationEq + accEndPad))
-        # print("JERK: ", len(jerkEq + jerkEndPad))
-        
-        print("FIRST: ", (firstEq + firstEndPad))
-        print("SECOND: ", (secondEq + secondEndPad))
-        print("VEL EQ: ", velocityEq + velEndPad)
-        print("ACC EQ: ", accelerationEq + accEndPad)
-        print("JERK EQ: ", jerkEq + jerkEndPad)
+        overallSysEqArray.append(firstPointEq + firstEndPad)
+        overallSysEqArray.append(secondPointEq + secondEndPad)
+        overallSysEqArray.append(firstVelEq + firstVelEndPad)
+        overallSysEqArray.append(secondVelEq + secondVelEndPad)
+        overallSysEqArray.append(firstAccelEq + firstAcelEndPad)
+        overallSysEqArray.append(secondAccelEq + secondAcelEndPad)
         
         xArray.append(currentPoint[1])
         xArray.append(nextPoint[1])
-        xArray.append(0)
-        xArray.append(0)
-        xArray.append(0)
+        xArray.append(currentPoint[4])
+        xArray.append(nextPoint[4])
+        xArray.append(currentPoint[7])
+        xArray.append(nextPoint[7])
 
         yArray.append(currentPoint[2])
         yArray.append(nextPoint[2])
-        yArray.append(0)
-        yArray.append(0)
-        yArray.append(0)
+        yArray.append(currentPoint[5])
+        yArray.append(nextPoint[5])
+        yArray.append(currentPoint[8])
+        yArray.append(nextPoint[8])
 
         thetaArray.append(currentPoint[3])
         thetaArray.append(nextPoint[3])
-        thetaArray.append(0)
-        thetaArray.append(0)
-        thetaArray.append(0)
+        thetaArray.append(currentPoint[6])
+        thetaArray.append(nextPoint[6])
+        thetaArray.append(currentPoint[9])
+        thetaArray.append(nextPoint[9])
 
-        if(i <= len(points) - 3):
-            snapEndPad = [0 for j in range(0, size - len(snapEq))]
-            overallSysEqArray.append(snapEq + snapEndPad)
-            # print("SNAP: ", len(snapEq + snapEndPad))
-            print("SNAP: ", snapEq + snapEndPad)
-            xArray.append(0)
-            yArray.append(0)
-            thetaArray.append(0)
+        # if(i <= len(points) - 3):
+        #     snapEndPad = [0 for j in range(0, size - len(secondAccelEq))]
+        #     overallSysEqArray.append(secondAccelEq + snapEndPad)
+        #     # print("SNAP: ", len(secondAccelEq + snapEndPad))
+        #     print("SNAP: ", secondAccelEq + snapEndPad)
+        #     xArray.append(0)
+        #     yArray.append(0)
+        #     thetaArray.append(0)
 
     # print(len(overallSysEqArray))
     print(overallSysEqArray)
@@ -191,9 +167,8 @@ def generateSplineCurves(points):
 
     print("X COEF:", xCoefficients)
 
-    samplePoints([xCoefficients, yCoefficients, thetaCoefficients], pointList, 10)
+    samplePoints([xCoefficients, yCoefficients, thetaCoefficients], pointList, 50)
 
-# pointList = [[1, 1, 2, 0], [1.5, 3, 1, math.pi/4], [2, 5, 4, math.pi/2], [3, 8, 0, (3/4) * math.pi]]
-
-pointList = [[0, 0, 0, 0], [1, 1, 1, math.pi/4], [2, 4, 4, math.pi/2]]#, [3, 8, 0, (3/4) * math.pi], [4, 10, 12, (3/4) * math.pi], [5, 10, 10, (3/4) * math.pi], [6, 9, 15, (3/4) * math.pi]]
+# list is as follows [time, x, y, theta, xVel, yVel, thetaVel, xAccel, yAccel, thetaAccel]
+pointList = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, math.pi/4, 3, 1.5, math.pi/4, 0, 0, 0], [2, 6, 3, math.pi/2, 3.5, -0.75, 0, 0, 0, 0], [3, 8, 0, (3/4) * math.pi, 2, 4.5, 0, 0, 0, 0], [4, 10, 12, (3/4) * math.pi, 2, 5, 0, 0, 0, 0], [5, 10, 10, (3/4) * math.pi, 0, 0, 0, 0, 0, 0]]
 generateSplineCurves(pointList)
