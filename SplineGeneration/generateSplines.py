@@ -1,5 +1,7 @@
 import numpy as np
 import math
+from matplotlib.pyplot import plot, show, quiver
+import matplotlib.pyplot as plt
 
 def samplePoints(equations, pointList, sampleRate):
     sampledTimes = []
@@ -42,10 +44,40 @@ def samplePoints(equations, pointList, sampleRate):
 
         sampledTimes.append(time)
 
+    sampledXVelocities = [0]
+    sampledYVelocities = [0]
+
+    for i in range(1, len(sampledXPoints)):
+        sampledXVelocities.append((sampledXPoints[i] - sampledXPoints[i - 1])/(1/sampleRate))
+        sampledYVelocities.append((sampledYPoints[i] - sampledYPoints[i - 1])/(1/sampleRate))
+
     print("TIMES: ", sampledTimes)
     print("X: ", sampledXPoints)
     print("Y: ", sampledYPoints)
     print("Theta: ", sampledThetaPoints)
+
+    # plot(sampledXPoints, sampledYPoints)
+    print(len(sampledXPoints))
+    print(len(sampledYPoints))
+    print(len(sampledXVelocities))
+    print(len(sampledYVelocities))
+
+    sampledXArray = np.array(sampledXPoints)
+    sampledYArray = np.array(sampledYPoints)
+
+    # totalPoints = []
+
+    # for x, y in zip(sampledXPoints, sampledYPoints):
+    #     totalPoints.append([x, y])
+
+    # print("TOTAL POINTS: ", totalPoints)
+
+    print("XVEL: ", sampledXVelocities)
+
+    quiver(sampledXArray, sampledYArray, sampledXVelocities, sampledYVelocities)
+    plt.xlim([-20, 20])
+    plt.ylim([-20, 20])
+    show()
 
 def generateSplineCurves(points):
     overallSysEqArray = []
@@ -140,7 +172,7 @@ def generateSplineCurves(points):
             yArray.append(0)
             thetaArray.append(0)
 
-    print(len(overallSysEqArray))
+    # print(len(overallSysEqArray))
     print(overallSysEqArray)
     print("XMATRIX: ", xArray)
     # print("Y LENGTH: ", len(yArray))
@@ -157,9 +189,11 @@ def generateSplineCurves(points):
     yCoefficients = np.matmul(M, yMatrix)
     thetaCoefficients = np.matmul(M, thetaMatrix)
 
+    print("X COEF:", xCoefficients)
+
     samplePoints([xCoefficients, yCoefficients, thetaCoefficients], pointList, 10)
 
 # pointList = [[1, 1, 2, 0], [1.5, 3, 1, math.pi/4], [2, 5, 4, math.pi/2], [3, 8, 0, (3/4) * math.pi]]
 
-pointList = [[0, 0, 0, 0], [1, 1, 1, math.pi/4], [2, 32, 32, math.pi/2]]#, [3, 8, 0, (3/4) * math.pi]]
+pointList = [[0, 0, 0, 0], [1, 1, 1, math.pi/4], [2, 4, 4, math.pi/2]]#, [3, 8, 0, (3/4) * math.pi], [4, 10, 12, (3/4) * math.pi], [5, 10, 10, (3/4) * math.pi], [6, 9, 15, (3/4) * math.pi]]
 generateSplineCurves(pointList)
