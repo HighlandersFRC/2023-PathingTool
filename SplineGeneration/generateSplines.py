@@ -22,17 +22,20 @@ def samplePoints(equations, pointList, sampleRate):
 
     currentEquationIndex = 0
 
-    for i in range(sampleRate * pointList[-1][0]):
+    i = 0
+
+    # for i in range(sampleRate * pointList[-1][0]):
+    while (i < sampleRate * pointList[-1][0]):
         time = (i)/(sampleRate)
 
-        for i in range(0, len(pointTimeList) - 1):
-            if(time >= pointTimeList[i] and time <= pointTimeList[i+1]):
-                currentEquationIndex = i
+        for j in range(0, len(pointTimeList) - 1):
+            if(time >= pointTimeList[j] and time <= pointTimeList[j+1]):
+                currentEquationIndex = j
                 break
 
-        currentXEquation = xEquations[i * 6: (i * 6) + 6]
-        currentYEquation = yEquations[i * 6: (i * 6) + 6]
-        currentThetaEquation = thetaEquations[i * 6: (i * 6) + 6]
+        currentXEquation = xEquations[j * 6: (j * 6) + 6]
+        currentYEquation = yEquations[j * 6: (j * 6) + 6]
+        currentThetaEquation = thetaEquations[j * 6: (j * 6) + 6]
 
         sampledX = currentXEquation[0] + (currentXEquation[1] * time) + (currentXEquation[2] * (time ** 2)) + (currentXEquation[3] * (time ** 3)) + (currentXEquation[4] * (time ** 4)) + (currentXEquation[5] * (time ** 5))
         sampledY = currentYEquation[0] + (currentYEquation[1] * time) + (currentYEquation[2] * (time ** 2)) + (currentYEquation[3] * (time ** 3)) + (currentYEquation[4] * (time ** 4)) + (currentYEquation[5] * (time ** 5))
@@ -43,6 +46,8 @@ def samplePoints(equations, pointList, sampleRate):
         sampledThetaPoints.append(sampledTheta)
 
         sampledTimes.append(time)
+        # print(i)
+        i += 1
 
     sampledXVelocities = [0]
     sampledYVelocities = [0]
@@ -51,16 +56,16 @@ def samplePoints(equations, pointList, sampleRate):
         sampledXVelocities.append((sampledXPoints[i] - sampledXPoints[i - 1])/(1/sampleRate))
         sampledYVelocities.append((sampledYPoints[i] - sampledYPoints[i - 1])/(1/sampleRate))
 
-    print("TIMES: ", sampledTimes)
-    print("X: ", sampledXPoints)
-    print("Y: ", sampledYPoints)
-    print("Theta: ", sampledThetaPoints)
+    # print("TIMES: ", sampledTimes)
+    # print("X: ", sampledXPoints)
+    # print("Y: ", sampledYPoints)
+    # print("Theta: ", sampledThetaPoints)
 
-    # plot(sampledXPoints, sampledYPoints)
-    print(len(sampledXPoints))
-    print(len(sampledYPoints))
-    print(len(sampledXVelocities))
-    print(len(sampledYVelocities))
+    # # plot(sampledXPoints, sampledYPoints)
+    # print(len(sampledXPoints))
+    # print(len(sampledYPoints))
+    # print(len(sampledXVelocities))
+    # print(len(sampledYVelocities))
 
     sampledXArray = np.array(sampledXPoints)
     sampledYArray = np.array(sampledYPoints)
@@ -72,13 +77,15 @@ def samplePoints(equations, pointList, sampleRate):
 
     # print("TOTAL POINTS: ", totalPoints)
 
-    print("XVEL: ", sampledXVelocities)
+    # print("XVEL: ", sampledXVelocities)
 
     plot(sampledXArray, sampledYArray)
     # quiver(sampledXArray, sampledYArray, sampledXVelocities, sampledYVelocities)
     plt.xlim([-20, 20])
     plt.ylim([-20, 20])
-    show()
+    # show()
+
+    return sampledTimes, sampledXArray, sampledYArray, sampledThetaPoints
 
 def generateSplineCurves(points):
     overallSysEqArray = []
@@ -167,8 +174,10 @@ def generateSplineCurves(points):
 
     print("X COEF:", xCoefficients)
 
-    samplePoints([xCoefficients, yCoefficients, thetaCoefficients], pointList, 50)
+    sampledPoints = samplePoints([xCoefficients, yCoefficients, thetaCoefficients], points, 50)
 
-# list is as follows [time, x, y, theta, xVel, yVel, thetaVel, xAccel, yAccel, thetaAccel]
-pointList = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, math.pi/4, 3, 1.5, math.pi/4, 0, 0, 0], [2, 6, 3, math.pi/2, 3.5, -0.75, 0, 0, 0, 0], [3, 8, 0, (3/4) * math.pi, 2, 4.5, 0, 0, 0, 0], [4, 10, 12, (3/4) * math.pi, 2, 5, 0, 0, 0, 0], [5, 10, 10, (3/4) * math.pi, 0, 0, 0, 0, 0, 0]]
-generateSplineCurves(pointList)
+    return sampledPoints
+
+# # list is as follows [time, x, y, theta, xVel, yVel, thetaVel, xAccel, yAccel, thetaAccel]
+# pointList = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, math.pi/4, 3, 1.5, math.pi/4, 0, 0, 0], [2, 6, 3, math.pi/2, 3.5, -0.75, 0, 0, 0, 0], [3, 8, 0, (3/4) * math.pi, 2, 4.5, 0, 0, 0, 0], [4, 10, 12, (3/4) * math.pi, 2, 5, 0, 0, 0, 0], [5, 10, 10, (3/4) * math.pi, 0, 0, 0, 0, 0, 0]]
+# generateSplineCurves(pointList)
