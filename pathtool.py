@@ -123,8 +123,14 @@ class PathTool(BoxLayout):
     def save_path(self, folder_path: str, file_name: str, sample_rate: float):
         print(f"saving {folder_path}\\{file_name}.json")
         self.sample_rate = sample_rate
-        file_manager.save_path(self.key_points, self.sample_rate, folder_path, file_name)
+        self.path_name = file_name
+        result = file_manager.save_path(self.key_points, self.sample_rate, folder_path, file_name)
         self.update_widgets()
+        #update status
+        if result:
+            self.editor.update_status("[b]Path Saved[/b]", (0.25, 1, 0.25, 1))
+        else:
+            self.editor.update_status("[b]Save Failed[/b]", (1, 0.25, 0.25, 1))
 
     #open json save file
     def load_path(self, file_path: str):
@@ -135,17 +141,37 @@ class PathTool(BoxLayout):
         self.path_name = path_data[2]
         self.selected_point = None
         self.update_widgets()
+        #update status
+        if self.path_name == "":
+            self.editor.update_status("[b]Load Failed[/b]", (1, 0.25, 0.25, 1))
+        else:
+            self.editor.update_status("[b]Path Loaded[/b]", (0.25, 1, 0.25, 1))
 
     #upload the current path
     def upload_path(self, file_path: str, folder_path: str, file_name: str, sample_rate: float):
         self.save_path(folder_path, file_name, sample_rate)
-        file_manager.upload("10.44.99.2", file_path)
+        result = file_manager.upload("10.44.99.2", file_path)
+        #update status
+        if result:
+            self.editor.update_status("[b]Path Uploaded[/b]", (0.25, 1, 0.25, 1))
+        else:
+            self.editor.update_status("[b]Upload Failed[/b]", (1, 0.25, 0.25, 1))
 
     #upload all paths
     def upload_all_paths(self, folder_path: str, file_name: str, sample_rate: float):
         self.save_path(folder_path, file_name, sample_rate)
-        file_manager.upload_all("10.44.99.2")
+        result = file_manager.upload_all("10.44.99.2")
+        #update status
+        if result:
+            self.editor.update_status("[b]Uploaded All Paths[/b]", (0.25, 1, 0.25, 1))
+        else:
+            self.editor.update_status("[b]Upload All Failed[/b]", (1, 0.25, 0.25, 1))
 
     #download all paths
     def download_all_paths(self):
-        file_manager.download_all("10.44.99.2")
+        result = file_manager.download_all("10.44.99.2")
+        #update status
+        if result:
+            self.editor.update_status("[b]All Paths Downloaded[/b]", (0.25, 1, 0.25, 1))
+        else:
+            self.editor.update_status("[b]Download All Failed[/b]", (1, 0.25, 0.25, 1))

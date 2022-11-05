@@ -29,26 +29,28 @@ def upload_all(addr: str):
     saves = glob.glob("saves/*.json*")
     conns = get_connection(addr)
     if conns == None:
-        return
+        return False
     scp_cli = conns[0]
     for save in saves:
         scp_cli.put(save, remote_path = "/home/lvuser/deploy")
     print("Uploaded all save files")
+    return True
 
 def upload(addr: str, file_path: str):
     print("Uploading all...")
     conns = get_connection(addr)
     if conns == None:
-        return
+        return False
     scp_cli = conns[0]
     scp_cli.put(file_path, remote_path = "/home/lvuser/deploy")
     print("Uploaded save successfully")
+    return True
 
 def download_all(addr: str):
     print("downloading all...")
     conns = get_connection(addr)
     if conns == None:
-        return
+        return False
     scp_cli = conns[0]
     ssh_cli = conns[1]
     sftp = ssh_cli.open_sftp()
@@ -57,6 +59,7 @@ def download_all(addr: str):
         if rs.endswith(".json"):
             scp_cli.get(remote_path = f"/home/lvuser/deploy/{rs}", local_path = "saves/")
     print("Downloaded all saves successfully")
+    return True
 
 
 def save_path(key_points: list[Point], sample_rate: float, folder_path: str, file_name: str):
@@ -73,8 +76,10 @@ def save_path(key_points: list[Point], sample_rate: float, folder_path: str, fil
         json.dump(data, out_file, indent = 2)
         out_file.close()
         print("Path saved successfully")
+        return True
     except:
        print("Path was unable to be saved")
+       return False
 
 def load_path(file_path: str):
     try:
@@ -87,4 +92,4 @@ def load_path(file_path: str):
             return key_points, data["meta_data"]["sample_rate"], data["meta_data"]["path_name"]
     except:
         print("Path was unable to be loaded")
-        return [], 0.01
+        return [], 0.01, ""

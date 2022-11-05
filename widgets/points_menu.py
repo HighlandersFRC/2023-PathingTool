@@ -66,8 +66,8 @@ class MenuButton(BoxLayout):
         #layout for index adjusting buttons
         self.arrow_layout = BoxLayout(orientation = "vertical", size_hint = (0.4, 1))
         #index adjusting buttons
-        self.up_button = Button(text = "+", on_press = partial(move_func, 1))
-        self.down_arrow = Button(text = "-", on_press = partial(move_func, -1))
+        self.up_button = Button(text = "[b]+[/b]", on_press = partial(move_func, 1), markup = True)
+        self.down_arrow = Button(text = "[b]-[/b]", on_press = partial(move_func, -1), markup = True)
         #add index button
         self.arrow_layout.add_widget(self.down_arrow)
         self.arrow_layout.add_widget(self.up_button)

@@ -16,12 +16,12 @@ class SaveDelete(BoxLayout):
         self.delete_button = Button(text = "DELETE", background_color = (1, 0, 0, 1), on_press = self.delete)
         self.save_button = Button(text = "SAVE", background_color = (0, 0.5, 0, 1), on_press = self.save)
         self.load_button = Button(text = "LOAD", background_color = (0, 1, 0, 1), on_press = self.load)
-        self.upload_button = Button(text = "UPLOAD", background_color = (0, 0.5, 0, 1), on_press = self.upload)
+        self.upload_download_button = Button(text = "UP/DOWNLOAD", background_color = (0, 0.5, 0, 1), on_press = self.upload, size_hint = (1.5, 1))
         self.add_widget(self.clear_button)
         self.add_widget(self.delete_button)
         self.add_widget(self.save_button)
         self.add_widget(self.load_button)
-        self.add_widget(self.upload_button)
+        self.add_widget(self.upload_download_button)
 
     #updload button callback
     def upload(self, event):

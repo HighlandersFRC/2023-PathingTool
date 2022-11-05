@@ -92,6 +92,7 @@ class SaveLoad(Popup):
     #download all paths
     def download_all(self, event):
         self.download_all_func()
+        self.dismiss()
 
     #update callback
     def update(self):
