@@ -10,7 +10,7 @@ from data_assets.point import Point
 from popups.save_load import SaveLoad
 
 class Editor(GridLayout):
-    def __init__(self, delete_func, clear_func, animation_func, save_func, load_func, **kwargs):
+    def __init__(self, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, **kwargs):
         super().__init__(rows = 4, **kwargs)
         #selected key point
         self.selected_point = None
@@ -45,7 +45,7 @@ class Editor(GridLayout):
         self.add_widget(self.animation_controller)
 
         #popups
-        self.save_load = SaveLoad(save_func, load_func)
+        self.save_load = SaveLoad(save_func, load_func, upload_func, upload_all_func, download_func)
 
     #delete selected point if a point is selected
     def delete_point(self):
@@ -74,7 +74,12 @@ class Editor(GridLayout):
 
     #upload path to roborio
     def upload_path(self):
-        pass
+        print(self.path_name)
+        self.save_load.mode = "save"
+        self.save_load.file_chooser.path = "./saves"
+        self.save_load.file_chooser.selection = []
+        self.save_load.text_box.text = self.path_name
+        self.save_load.open()
 
     #return the updated selected point
     def get_updated_point(self):

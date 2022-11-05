@@ -14,7 +14,7 @@ class PathTool(BoxLayout):
         super().__init__(orientation = "horizontal", **kwargs)
         #main widgets
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
-        self.editor = Editor(self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, size_hint = (1, 0.25))
+        self.editor = Editor(self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, size_hint = (1, 0.25))
         self.path = Path(size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(self.update_path, size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
@@ -124,6 +124,7 @@ class PathTool(BoxLayout):
         print(f"saving {folder_path}\\{file_name}.json")
         self.sample_rate = sample_rate
         file_manager.save_path(self.key_points, self.sample_rate, folder_path, file_name)
+        self.update_widgets()
 
     #open json save file
     def load_path(self, file_path: str):
@@ -134,4 +135,17 @@ class PathTool(BoxLayout):
         self.path_name = path_data[2]
         self.selected_point = None
         self.update_widgets()
-        
+
+    #upload the current path
+    def upload_path(self, file_path: str, folder_path: str, file_name: str, sample_rate: float):
+        self.save_path(folder_path, file_name, sample_rate)
+        file_manager.upload("10.44.99.2", file_path)
+
+    #upload all paths
+    def upload_all_paths(self, folder_path: str, file_name: str, sample_rate: float):
+        self.save_path(folder_path, file_name, sample_rate)
+        file_manager.upload_all("10.44.99.2")
+
+    #download all paths
+    def download_all_paths(self):
+        file_manager.download_all("10.44.99.2")
