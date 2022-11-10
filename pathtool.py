@@ -50,7 +50,7 @@ class PathTool(BoxLayout):
                 if len(self.key_points) > 0:
                     self.selected_point = Point(len(self.key_points), 1.0, pos[0], pos[1], 0.0, 1.0, 0.0)
                 else:
-                    self.selected_point = Point(len(self.key_points), 1.0, pos[0], pos[1], 0.0, 0.0, 0.0)
+                    self.selected_point = Point(len(self.key_points), 0.0, pos[0], pos[1], 0.0, 0.0, 0.0)
                 self.key_points.append(self.selected_point)
             #else update selected point
             else:

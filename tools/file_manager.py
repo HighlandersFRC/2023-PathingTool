@@ -3,6 +3,7 @@ import glob
 from . import convert
 import paramiko
 import scp
+import math
 
 from data_assets.point import Point
 from SplineGeneration import generateSplines
@@ -69,7 +70,7 @@ def save_path(key_points: list[Point], sample_rate: float, folder_path: str, fil
         "sample_rate": sample_rate
     }
     data["key_points"] = [p.to_json() for p in key_points]
-    interp_points = generateSplines.generateSplineCurves([[p.index, p.x, p.y, p.angle] for p in key_points])
+    interp_points = generateSplines.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), 0.0, 0.0, 0.0, 0.0] for p in key_points])
     data["sampled_points"] = [[interp_points[0][i], interp_points[1][i], interp_points[2][i], interp_points[3][i]] for i in range(len(interp_points[0]))]
     try:
         out_file = open(f"{folder_path}\\{file_name}.json", "w")
