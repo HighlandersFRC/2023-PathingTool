@@ -88,7 +88,7 @@ def samplePoints(equations, pointList, sampleRate):
     return sampledTimes, sampledXArray, sampledYArray, sampledThetaPoints
 
 def generateSplineCurves(points):
-    print(points)
+    # print(points)
     overallSysEqArray = []
     xArray = []
     yArray = []
