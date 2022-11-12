@@ -23,6 +23,7 @@ class Path(Image):
         self.non_selected_points_group = InstructionGroup()
         self.selected_points_group = InstructionGroup()
         self.angle_indicators_group = InstructionGroup()
+        self.velocity_indicators_group = InstructionGroup()
         self.path_line = Line()
         
     #draw points and path line
@@ -34,6 +35,8 @@ class Path(Image):
         self.selected_points_group = InstructionGroup()
         self.canvas.remove(self.angle_indicators_group)
         self.angle_indicators_group = InstructionGroup()
+        self.canvas.remove(self.velocity_indicators_group)
+        self.velocity_indicators_group = InstructionGroup()
         #if path_line instruction is present erase it
         if self.canvas.indexof(self.path_line) != -1:
             self.canvas.remove(self.path_line)
@@ -53,12 +56,11 @@ class Path(Image):
         for p in self.points:
             pixel_pos = convert.meters_to_pixels((p.x, p.y), self.size)
 
+            self.non_selected_points_group.add(Color(0.6, 0, 0.6))
             #non-selected points
             if self.selected_point == None:
-                self.canvas.add(Color(0.6, 0, 0.6))
                 self.non_selected_points_group.add(Ellipse(pos = (pixel_pos[0] - 5, pixel_pos[1] - 5), size = (10, 10)))
             elif self.selected_point.index != p.index:
-                self.canvas.add(Color(0.6, 0, 0.6))
                 self.non_selected_points_group.add(Ellipse(pos = (pixel_pos[0] - 5, pixel_pos[1] - 5), size = (10, 10)))
 
             #angle indicators
@@ -78,6 +80,12 @@ class Path(Image):
             #robot direction indicator
             front = convert.meters_to_pixels(((self.robot_length / 2.0) * math.cos(p.angle) + p.x, (self.robot_length / 2.0) * math.sin(p.angle) + p.y), self.size)
             self.angle_indicators_group.add(Line(width = 2, cap = "square", joint = "miter", points = [pixel_pos[0], pixel_pos[1], front[0], front[1]]))
+
+            #velocity indicators
+            self.velocity_indicators_group.add(Color(0, 0.75, 0))
+            linear_pos = convert.meters_to_pixels(p.get_vel_marker_pos(), self.size)
+            self.velocity_indicators_group.add(Line(width = 2, cap = "square", points = [pixel_pos[0], pixel_pos[1], linear_pos[0], linear_pos[1]]))
+        self.canvas.add(self.velocity_indicators_group)
         self.canvas.add(self.non_selected_points_group)
         self.canvas.add(self.angle_indicators_group)
 

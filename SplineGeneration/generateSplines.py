@@ -175,7 +175,7 @@ def generateSplineCurves(points):
 
     # print("X COEF:", xCoefficients)
 
-    sampledPoints = samplePoints([xCoefficients, yCoefficients, thetaCoefficients], points, 100)
+    sampledPoints = samplePoints([xCoefficients, yCoefficients, thetaCoefficients], points, 50)
 
     return sampledPoints
 

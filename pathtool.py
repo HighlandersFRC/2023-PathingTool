@@ -8,13 +8,14 @@ from data_assets.point import Point
 from tools import convert
 from tools import file_manager
 from popups.save_load import SaveLoad
+import math
 
 class PathTool(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(orientation = "horizontal", **kwargs)
         #main widgets
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
-        self.editor = Editor(self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, size_hint = (1, 0.25))
+        self.editor = Editor(self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_point_velocities, size_hint = (1, 0.25))
         self.path = Path(size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(self.update_path, size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
@@ -91,6 +92,10 @@ class PathTool(BoxLayout):
 
     #delete selected point
     def delete_point(self, index):
+        #if removed point is the first point set new first point velocity to zero
+        if index == 0 and len(self.key_points) > 1:
+            self.key_points[1].velocity_magnitude = 0
+            self.key_points[1].delta_time = 0
         #remove point
         self.key_points.pop(index)
         #if removed point is the selected point (which it should be) clear selected point
@@ -117,6 +122,23 @@ class PathTool(BoxLayout):
         for p in self.key_points:
             time += p.delta_time
             p.time = time
+
+    #set average velocities for sandwiched points and zero velocities for edge points
+    def average_point_velocities(self):
+        for p in self.key_points:
+            if p.index != 0 and p.index != len(self.key_points) - 1:
+                p0 = self.key_points[p.index - 1]
+                p2 = self.key_points[p.index + 1]
+                dt = p2.time - p0.time
+                v_theta = math.atan2(p2.y - p0.y, p2.x - p0.x)
+                dist = convert.get_dist(p0.x, p0.y, p2.x, p2.y)
+                v_mag = dist / dt
+                p.velocity_magnitude = v_mag
+                p.velocity_theta = v_theta
+            else:
+                p.velocity_magnitude = 0
+                p.velocity_theta = 0
+        self.update_widgets()
 
     #start path animation from a time
     def run_animation(self, start_time: float):

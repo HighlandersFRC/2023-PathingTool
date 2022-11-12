@@ -12,7 +12,7 @@ from data_assets.point import Point
 from popups.save_load import SaveLoad
 
 class Editor(GridLayout):
-    def __init__(self, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, **kwargs):
+    def __init__(self, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, average_func, **kwargs):
         super().__init__(cols = 3, **kwargs)
         #selected key point
         self.selected_point = None
@@ -35,7 +35,7 @@ class Editor(GridLayout):
         self.nudge_y = NudgeValue("Y", "y", (0.75, 0.75, 0.75, 1), (0.75, 0.75, 0.75, 1), self.update_selected_point)
         self.save_delete = SaveDelete(self.delete_point, self.clear_points, self.save_path, self.load_path, self.upload_path)
         self.animation_controller = AnimationController(self.run_animation)
-        self.velocity_editor = VelocityEditor(self.update_selected_point)
+        self.velocity_editor = VelocityEditor(self.update_selected_point, average_func)
         self.status_display = Label(text = "", markup = True, font_size = 24)
 
 
