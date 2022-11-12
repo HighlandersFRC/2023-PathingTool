@@ -141,7 +141,20 @@ class PathTool(BoxLayout):
         self.update_widgets()
 
     def average_angular_velocities(self):
-        pass
+        for p in self.key_points:
+            if p.index != 0 and p.index != len(self.key_points) - 1:
+                p0 = self.key_points[p.index - 1]
+                p2 = self.key_points[p.index + 1]
+                dt = p2.time - p0.time
+                da = p2.angle - p0.angle
+                if p2.angle - p0.angle > 180:
+                    da = math.pi - da
+                elif p2.angle - p0.angle < -180:
+                    da = math.pi + da
+                p.angular_velocity = da / dt
+            else:
+                p.angular_velocity = 0
+        self.update_widgets()
 
     #start path animation from a time
     def run_animation(self, start_time: float):
