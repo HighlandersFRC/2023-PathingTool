@@ -95,7 +95,7 @@ def generateSplineCurves(points):
     overallOutputArray = []
 
     size = (len(points) - 1) * 6
-    print(size)
+    #print(size)
     # print(overallSysEqArray)
     for i in range(len(points) - 1):
         currentPoint = points[i]
@@ -156,8 +156,8 @@ def generateSplineCurves(points):
         #     thetaArray.append(0)
 
     # print(len(overallSysEqArray))
-    print(overallSysEqArray)
-    print("XMATRIX: ", xArray)
+    # print(overallSysEqArray)
+    # print("XMATRIX: ", xArray)
     # print("Y LENGTH: ", len(yArray))
 
     overallSysEqArray = np.array(overallSysEqArray)
@@ -172,7 +172,7 @@ def generateSplineCurves(points):
     yCoefficients = np.matmul(M, yMatrix)
     thetaCoefficients = np.matmul(M, thetaMatrix)
 
-    print("X COEF:", xCoefficients)
+    # print("X COEF:", xCoefficients)
 
     sampledPoints = samplePoints([xCoefficients, yCoefficients, thetaCoefficients], points, 50)
 
