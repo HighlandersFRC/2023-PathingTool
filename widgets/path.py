@@ -43,7 +43,6 @@ class Path(Image):
 
         #if more that 1 point in path generate spline line and add it
         if len(self.points) > 1:
-            # TODO - code breaks when times are floats
             interp_points = generateSplines.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), 0.0, 0.0, 0.0, 0.0] for p in self.points])
             pixel_list = [None] * (2 * len(interp_points[1]))
             pixel_list[::2] = [convert.meters_to_pixels_x(n, self.size) for n in interp_points[1]]
@@ -84,7 +83,11 @@ class Path(Image):
             #velocity indicators
             self.velocity_indicators_group.add(Color(0, 0.75, 0))
             linear_pos = convert.meters_to_pixels(p.get_vel_marker_pos(), self.size)
+            # linear_dist = convert.get_dist(pixel_pos[0], pixel_pos[1], linear_pos[0], linear_pos[1])
+            linear_dist = math.sqrt((pixel_pos[0] - linear_pos[0]) ** 2 + (pixel_pos[1] - linear_pos[1]) ** 2)
             self.velocity_indicators_group.add(Line(width = 2, cap = "square", points = [pixel_pos[0], pixel_pos[1], linear_pos[0], linear_pos[1]]))
+            self.velocity_indicators_group.add(Line(width = 2, circle = (pixel_pos[0] - 5, pixel_pos[1] - 5, linear_dist, p.get_angle_degrees(), p.get_angle_degrees() + p.get_angular_velocity_degrees())))
+            # self.velocity_indicators_group.add(Line(circle = (pixel_pos[0] - 5, pixel_pos[1] - 5, 100, 90, 180)))
         self.canvas.add(self.velocity_indicators_group)
         self.canvas.add(self.non_selected_points_group)
         self.canvas.add(self.angle_indicators_group)

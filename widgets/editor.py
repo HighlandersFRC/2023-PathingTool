@@ -7,12 +7,13 @@ from widgets.sub_widgets.nudge_value import NudgeValue
 from widgets.sub_widgets.save_delete import SaveDelete
 from widgets.sub_widgets.animation_controller import AnimationController
 from widgets.sub_widgets.velocity_editor import VelocityEditor
+from widgets.sub_widgets.angular_velocity_editor import AngularVelocityEditor
 from data_assets.point import Point
 
 from popups.save_load import SaveLoad
 
 class Editor(GridLayout):
-    def __init__(self, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, average_func, **kwargs):
+    def __init__(self, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, linear_average_func, angular_average_func, **kwargs):
         super().__init__(cols = 3, **kwargs)
         #selected key point
         self.selected_point = None
@@ -34,10 +35,10 @@ class Editor(GridLayout):
         self.nudge_x = NudgeValue("X", "x", (0, 0, 0.75, 1), (0, 0, 0.75, 1), self.update_selected_point)
         self.nudge_y = NudgeValue("Y", "y", (0.75, 0.75, 0.75, 1), (0.75, 0.75, 0.75, 1), self.update_selected_point)
         self.save_delete = SaveDelete(self.delete_point, self.clear_points, self.save_path, self.load_path, self.upload_path)
+        self.velocity_editor = VelocityEditor(self.update_selected_point, linear_average_func)
+        self.angular_velocity_editor = AngularVelocityEditor(self.update_selected_point, angular_average_func)
         self.animation_controller = AnimationController(self.run_animation)
-        self.velocity_editor = VelocityEditor(self.update_selected_point, average_func)
         self.status_display = Label(text = "", markup = True, font_size = 24)
-
 
         #add sub-widgets
         self.add_widget(self.edit_time)
@@ -47,8 +48,9 @@ class Editor(GridLayout):
         self.add_widget(self.edit_y)
         self.add_widget(self.nudge_y)
         self.add_widget(self.save_delete)
-        self.add_widget(self.animation_controller)
         self.add_widget(self.velocity_editor)
+        self.add_widget(self.angular_velocity_editor)
+        self.add_widget(self.animation_controller)
         self.add_widget(self.status_display)
 
         #popups
@@ -102,6 +104,7 @@ class Editor(GridLayout):
         self.nudge_x.update(self.selected_point)
         self.nudge_y.update(self.selected_point)
         self.velocity_editor.update(self.selected_point)
+        self.angular_velocity_editor.update(self.selected_point)
 
     #update name of path
     def update_path_name(self, name: str):

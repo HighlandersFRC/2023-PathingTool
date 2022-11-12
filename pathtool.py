@@ -15,7 +15,7 @@ class PathTool(BoxLayout):
         super().__init__(orientation = "horizontal", **kwargs)
         #main widgets
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
-        self.editor = Editor(self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_point_velocities, size_hint = (1, 0.25))
+        self.editor = Editor(self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocities, self.average_angular_velocities, size_hint = (1, 0.25))
         self.path = Path(size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(self.update_path, size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
@@ -49,9 +49,9 @@ class PathTool(BoxLayout):
             if self.selected_point == None:
                 pos = convert.pixels_to_meters((touch.x, touch.y), self.path.size)
                 if len(self.key_points) > 0:
-                    self.selected_point = Point(len(self.key_points), 1.0, pos[0], pos[1], 0.0, 1.0, 0.0)
+                    self.selected_point = Point(len(self.key_points), 1.0, pos[0], pos[1], 0.0, 1.0, 0.0, 0.0)
                 else:
-                    self.selected_point = Point(len(self.key_points), 0.0, pos[0], pos[1], 0.0, 0.0, 0.0)
+                    self.selected_point = Point(len(self.key_points), 0.0, pos[0], pos[1], 0.0, 0.0, 0.0, 0.0)
                 self.key_points.append(self.selected_point)
             #else update selected point
             else:
@@ -124,7 +124,7 @@ class PathTool(BoxLayout):
             p.time = time
 
     #set average velocities for sandwiched points and zero velocities for edge points
-    def average_point_velocities(self):
+    def average_linear_velocities(self):
         for p in self.key_points:
             if p.index != 0 and p.index != len(self.key_points) - 1:
                 p0 = self.key_points[p.index - 1]
@@ -139,6 +139,9 @@ class PathTool(BoxLayout):
                 p.velocity_magnitude = 0
                 p.velocity_theta = 0
         self.update_widgets()
+
+    def average_angular_velocities(self):
+        pass
 
     #start path animation from a time
     def run_animation(self, start_time: float):

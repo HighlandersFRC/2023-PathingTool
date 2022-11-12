@@ -22,7 +22,7 @@ class VelocityEditor(BoxLayout):
         self.v_theta_button = Button(text = "Set VTheta", on_press = self.update_v_theta)
         self.v_mag_input = TextInput(hint_text = "VMagnitude (m)", input_filter = "float")
         self.v_mag_button = Button(text = "Set VMag", on_press = self.update_v_mag)
-        self.average_button = Button(text = "Set Avg.", on_press = self.average, background_color = (0.25, 0, 0, 1))
+        self.average_button = Button(text = "Set Avg.", on_press = self.average, background_color = (0.5, 0, 0, 1))
         self.add_widget(self.theta_dial)
         self.add_widget(self.v_theta_input)
         self.add_widget(self.v_theta_button)
@@ -30,9 +30,11 @@ class VelocityEditor(BoxLayout):
         self.add_widget(self.v_mag_button)
         self.add_widget(self.average_button)
 
+    #average point velocities
     def average(self, event):
         self.average_func()
 
+    #set the velocity theta component
     def set_v_theta(self, theta: float):
         if self.selected_point == None:
             return

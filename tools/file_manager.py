@@ -88,7 +88,7 @@ def load_path(file_path: str):
             data = json.load(json_save)
             key_points = []
             for p in data["key_points"]:
-                key_points.append(Point(p["index"], p["delta_time"], p["x"], p["y"], p["angle"], p["velocity_magnitude"], p["velocity_theta"]))
+                key_points.append(Point(p["index"], p["delta_time"], p["x"], p["y"], p["angle"], p["velocity_magnitude"], p["velocity_theta"], p["angular_velocity"]))
             print("Path loaded successfully")
             return key_points, data["meta_data"]["sample_rate"], data["meta_data"]["path_name"]
     except:
