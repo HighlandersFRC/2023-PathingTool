@@ -88,6 +88,7 @@ def samplePoints(equations, pointList, sampleRate):
     return sampledTimes, sampledXArray, sampledYArray, sampledThetaPoints
 
 def generateSplineCurves(points):
+    # print(points)
     overallSysEqArray = []
     xArray = []
     yArray = []
@@ -95,7 +96,7 @@ def generateSplineCurves(points):
     overallOutputArray = []
 
     size = (len(points) - 1) * 6
-    #print(size)
+    # print(size)
     # print(overallSysEqArray)
     for i in range(len(points) - 1):
         currentPoint = points[i]
@@ -174,10 +175,11 @@ def generateSplineCurves(points):
 
     # print("X COEF:", xCoefficients)
 
-    sampledPoints = samplePoints([xCoefficients, yCoefficients, thetaCoefficients], points, 50)
+    sampledPoints = samplePoints([xCoefficients, yCoefficients, thetaCoefficients], points, 100)
 
     return sampledPoints
 
 # # list is as follows [time, x, y, theta, xVel, yVel, thetaVel, xAccel, yAccel, thetaAccel]
 # pointList = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, math.pi/4, 3, 1.5, math.pi/4, 0, 0, 0], [2, 6, 3, math.pi/2, 3.5, -0.75, 0, 0, 0, 0], [3, 8, 0, (3/4) * math.pi, 2, 4.5, 0, 0, 0, 0], [4, 10, 12, (3/4) * math.pi, 2, 5, 0, 0, 0, 0], [5, 10, 10, (3/4) * math.pi, 0, 0, 0, 0, 0, 0]]
+# pointList = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, -1, 0, 1, 1, 0, 0, 0, 0], [2, 4, 8, 0, 2, 2, 0, 0, 0, 0], [3, 6, 2, 0, 1, 1, 0, 0, 0, 0]]
 # generateSplineCurves(pointList)
