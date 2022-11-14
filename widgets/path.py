@@ -111,7 +111,7 @@ class Path(Image):
             # vel_marker_pos = convert.meters_to_pixels(p.get_vel_marker_pos(), self.size)
             # if convert.get_dist(px, py, vel_marker_pos[0], vel_marker_pos[1]) <= 5:
             #     return None
-            if convert.get_dist(px, py, pixel_pos[0], pixel_pos[1]) <= 5:
+            if convert.get_dist(px, py, pixel_pos[0], pixel_pos[1]) <= 7:
                 self.selected_point = p
                 return p
         return None
