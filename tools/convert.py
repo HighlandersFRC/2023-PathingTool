@@ -1,7 +1,7 @@
 import math
 
 def get_dist(x1, y1, x2, y2):
-    return math.sqrt(((x1 - x2) ** 2) * ((y1 - y2) ** 2))
+    return math.sqrt(((x1 - x2) ** 2) + ((y1 - y2) ** 2))
 
 def pixels_to_meters(pixel_pos: tuple, pixel_size: tuple):
     x = (pixel_pos[0] - 72.0 * (pixel_size[0] / 1812.0)) * (16.46 / 1668.0) * (1812.0 / pixel_size[0])
