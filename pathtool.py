@@ -132,7 +132,6 @@ class PathTool(BoxLayout):
                 dt = p2.time - p0.time
                 v_theta = math.atan2(p2.y - p0.y, p2.x - p0.x)
                 dist = convert.get_dist(p0.x, p0.y, p2.x, p2.y)
-                print(f"Dist: {dist}")
                 v_mag = dist / dt
                 p.velocity_magnitude = v_mag
                 p.velocity_theta = v_theta
@@ -148,14 +147,16 @@ class PathTool(BoxLayout):
                 p2 = self.key_points[p.index + 1]
                 dt = p2.time - p0.time
                 da = p2.angle - p0.angle
-                # if p2.angle - p0.angle > 180:
-                #     da = math.pi - da
-                # elif p2.angle - p0.angle < -180:
-                #     da = math.pi + da
+                if p2.angle - p0.angle > math.pi:
+                    da = math.pi - da
+                elif p2.angle - p0.angle < -math.pi:
+                    da = math.pi + da
                 sine1 = self.get_optimized_rotation_sine(p0.angle, p.angle)
                 sine2 = self.get_optimized_rotation_sine(p.angle, p2.angle)
-                print(f"first: {sine1} second: {sine2}")
-                p.angular_velocity = da / dt
+                if sine1 != sine2:
+                    p.angular_velocity = 0
+                else:
+                    p.angular_velocity = da / dt
             else:
                 p.angular_velocity = 0
         self.update_widgets()
