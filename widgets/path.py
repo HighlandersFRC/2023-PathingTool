@@ -10,7 +10,7 @@ class Path(Image):
     def __init__(self, **kwargs):
         super().__init__(source = "images/RapidReactField.png", **kwargs)
         #key points, selected point, and sampling rate
-        self.points = []
+        self.key_points = []
         self.selected_point = None
         self.sample_rate = 0.01
 
@@ -42,8 +42,8 @@ class Path(Image):
             self.canvas.remove(self.path_line)
 
         #if more that 1 point in path generate spline line and add it
-        if len(self.points) > 1:
-            interp_points = generateSplines.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), 0.0, 0.0, 0.0, 0.0] for p in self.points])
+        if len(self.key_points) > 1:
+            interp_points = generateSplines.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), 0.0, 0.0, 0.0, 0.0] for p in self.key_points])
             pixel_list = [None] * (2 * len(interp_points[1]))
             pixel_list[::2] = [convert.meters_to_pixels_x(n, self.size) for n in interp_points[1]]
             pixel_list[1::2] = [convert.meters_to_pixels_y(n, self.size) for n in interp_points[2]]
@@ -52,7 +52,7 @@ class Path(Image):
             self.canvas.add(self.path_line)
 
         #draw non-selected points and angle indicators
-        for p in self.points:
+        for p in self.key_points:
             pixel_pos = convert.meters_to_pixels((p.x, p.y), self.size)
 
             self.non_selected_points_group.add(Color(0.6, 0, 0.6))
@@ -106,7 +106,7 @@ class Path(Image):
         
     #return point that was clicked on, if any
     def get_selected_point(self, px, py):
-        for p in self.points:
+        for p in self.key_points:
             pixel_pos = convert.meters_to_pixels((p.x, p.y), self.size)
             # vel_marker_pos = convert.meters_to_pixels(p.get_vel_marker_pos(), self.size)
             # if convert.get_dist(px, py, vel_marker_pos[0], vel_marker_pos[1]) <= 5:
@@ -118,7 +118,7 @@ class Path(Image):
 
     #update points list
     def update(self, points: list[Point], sample_rate: float):
-        self.points = points
+        self.key_points = points
         self.sample_rate = sample_rate
 
     #update selected point

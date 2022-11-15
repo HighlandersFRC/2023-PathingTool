@@ -50,10 +50,13 @@ class PointsMenu(BoxLayout):
             return
         elif self.selected_point.index == len(self.key_points) - 1 and direction == 1:
             return
-        #switch points and update indexes
+        #switch points and update indexes and delta times
         self.selected_point.index += direction
         moved_point = self.key_points[self.selected_point.index]
         moved_point.index -= direction
+        selected_point_dt = self.selected_point.delta_time
+        self.selected_point.delta_time = moved_point.delta_time
+        moved_point.delta_time = selected_point_dt
         self.key_points[self.selected_point.index] = self.selected_point
         self.key_points[moved_point.index] = moved_point
         self.update_func(self.key_points, self.selected_point)
