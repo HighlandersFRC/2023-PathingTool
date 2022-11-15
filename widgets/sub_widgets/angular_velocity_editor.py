@@ -29,7 +29,9 @@ class AngularVelocityEditor(BoxLayout):
 
     #average button callback
     def average(self, event):
-        self.average_func()
+        if self.selected_point == None:
+            return
+        self.average_func(self.selected_point.index)
 
     #update selected point
     def update(self, point):

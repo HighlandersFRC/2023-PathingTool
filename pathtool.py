@@ -15,7 +15,7 @@ class PathTool(BoxLayout):
         super().__init__(orientation = "horizontal", **kwargs)
         #main widgets
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
-        self.editor = Editor(self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocities, self.average_angular_velocities, size_hint = (1, 0.25))
+        self.editor = Editor(self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocity, self.average_angular_velocity, size_hint = (1, 0.25))
         self.path = Path(size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(self.update_path, size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
@@ -124,41 +124,39 @@ class PathTool(BoxLayout):
             p.time = time
 
     #set average velocities for sandwiched points and zero velocities for edge points
-    def average_linear_velocities(self):
-        for p in self.key_points:
-            if p.index != 0 and p.index != len(self.key_points) - 1:
-                p0 = self.key_points[p.index - 1]
-                p2 = self.key_points[p.index + 1]
-                dt = p2.time - p0.time
-                v_theta = math.atan2(p2.y - p0.y, p2.x - p0.x)
-                dist = convert.get_dist(p0.x, p0.y, p2.x, p2.y)
-                v_mag = dist / dt
-                p.velocity_magnitude = v_mag
-                p.velocity_theta = v_theta
-            else:
-                p.velocity_magnitude = 0
-                p.velocity_theta = 0
+    def average_linear_velocity(self, index: int):
+        if self.key_points[index].index != 0 and self.key_points[index].index != len(self.key_points) - 1:
+            p0 = self.key_points[self.key_points[index].index - 1]
+            p2 = self.key_points[self.key_points[index].index + 1]
+            dt = p2.time - p0.time
+            v_theta = math.atan2(p2.y - p0.y, p2.x - p0.x)
+            dist = convert.get_dist(p0.x, p0.y, p2.x, p2.y)
+            v_mag = dist / dt
+            self.key_points[index].velocity_magnitude = v_mag
+            self.key_points[index].velocity_theta = v_theta
+        else:
+            self.key_points[index].velocity_magnitude = 0
+            self.key_points[index].velocity_theta = 0
         self.update_widgets()
 
-    def average_angular_velocities(self):
-        for p in self.key_points:
-            if p.index != 0 and p.index != len(self.key_points) - 1:
-                p0 = self.key_points[p.index - 1]
-                p2 = self.key_points[p.index + 1]
-                dt = p2.time - p0.time
-                da = p2.angle - p0.angle
-                if p2.angle - p0.angle > math.pi:
-                    da = math.pi - da
-                elif p2.angle - p0.angle < -math.pi:
-                    da = math.pi + da
-                sine1 = self.get_optimized_rotation_sine(p0.angle, p.angle)
-                sine2 = self.get_optimized_rotation_sine(p.angle, p2.angle)
-                if sine1 != sine2:
-                    p.angular_velocity = 0
-                else:
-                    p.angular_velocity = da / dt
+    def average_angular_velocity(self, index: int):
+        if self.key_points[index].index != 0 and self.key_points[index].index != len(self.key_points) - 1:
+            p0 = self.key_points[self.key_points[index].index - 1]
+            p2 = self.key_points[self.key_points[index].index + 1]
+            dt = p2.time - p0.time
+            da = p2.angle - p0.angle
+            if p2.angle - p0.angle > math.pi:
+                da = math.pi - da
+            elif p2.angle - p0.angle < -math.pi:
+                da = math.pi + da
+            sine1 = self.get_optimized_rotation_sine(p0.angle, self.key_points[index].angle)
+            sine2 = self.get_optimized_rotation_sine(self.key_points[index].angle, p2.angle)
+            if sine1 != sine2:
+                self.key_points[index].angular_velocity = 0
             else:
-                p.angular_velocity = 0
+                self.key_points[index].angular_velocity = da / dt
+        else:
+            self.key_points[index].angular_velocity = 0
         self.update_widgets()
 
     def get_optimized_rotation_sine(self, angle1, angle2):

@@ -32,7 +32,9 @@ class VelocityEditor(BoxLayout):
 
     #average point velocities
     def average(self, event):
-        self.average_func()
+        if self.selected_point == None:
+            return
+        self.average_func(self.selected_point.index)
 
     #set the velocity theta component
     def set_v_theta(self, theta: float):
