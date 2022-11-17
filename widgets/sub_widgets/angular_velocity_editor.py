@@ -15,7 +15,7 @@ class AngularVelocityEditor(BoxLayout):
         #create and add widgets
         self.number_input = TextInput(hint_text = "VAng", input_filter = "float")
         self.set_button = Button(text = "Set VAng", on_press = self.set_anguler_velocity)
-        self.average_button = Button(text = "Average", on_press = self.average, background_color = (0.5, 0, 0, 1))
+        self.average_button = Button(text = "Ang Cat.", on_press = self.average, background_color = (0.5, 0, 0, 1))
         self.add_widget(self.number_input)
         self.add_widget(self.set_button)
         self.add_widget(self.average_button)
