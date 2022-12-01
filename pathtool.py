@@ -17,7 +17,7 @@ class PathTool(BoxLayout):
         #main widgets
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
         self.editor = Editor(self.update_widgets, self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocity, self.average_angular_velocity, size_hint = (1, 0.25))
-        self.path = Path(size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
+        self.path = Path(self.get_sampled_point, size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(self.update_path, size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
 
@@ -79,6 +79,7 @@ class PathTool(BoxLayout):
         #update indexes and times
         self.index_points()
         self.time_points()
+        #if multiple points update equations
         if len(self.key_points) > 1:
             self.spline_generator.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), 0.0, 0.0, 0.0, 0.0] for p in self.key_points])
             self.path.update(self.key_points, self.get_sampled_points(), self.sample_rate)
@@ -130,7 +131,7 @@ class PathTool(BoxLayout):
             time += p.delta_time
             p.time = time
 
-    #set average velocities for sandwiched points and zero velocities for edge points
+    #apply catmull-rom on linear splines
     def average_linear_velocity(self, index: int):
         if self.key_points[index].index != 0 and self.key_points[index].index != len(self.key_points) - 1:
             p0 = self.key_points[self.key_points[index].index - 1]
@@ -146,6 +147,7 @@ class PathTool(BoxLayout):
             self.key_points[index].velocity_theta = 0
         self.update_widgets()
 
+    #apply catmull-rom  on angular spline
     def average_angular_velocity(self, index: int):
         if self.key_points[index].index != 0 and self.key_points[index].index != len(self.key_points) - 1:
             p0 = self.key_points[self.key_points[index].index - 1]
@@ -166,6 +168,7 @@ class PathTool(BoxLayout):
             self.key_points[index].angular_velocity = 0
         self.update_widgets()
 
+    #angular optimizer
     def get_optimized_rotation_sine(self, angle1, angle2):
         if angle1 >= angle2:
             op2 = ((math.pi * 2) - (angle1 - angle2))
@@ -178,6 +181,7 @@ class PathTool(BoxLayout):
         else:
             return 1
 
+    #get list of sampled points
     def get_sampled_points(self, include_times = False):
         sampled_points = []
         t = 0
@@ -191,9 +195,19 @@ class PathTool(BoxLayout):
             t += self.sample_rate
         return sampled_points
 
+    #get single sampled point by time
+    def get_sampled_point(self, time: float, include_time = False):
+        if include_time:
+            point = self.spline_generator.sample(self.key_points, time)
+            point.insert(0, time)
+            return point
+        else:
+            return self.spline_generator.sample(self.key_points, time)
+
     #start path animation from a time
     def run_animation(self, start_time: float):
-        self.path.set_animation(start_time)
+        if len(self.key_points) > 1:
+            self.path.set_animation(start_time)
 
     #save path as json file
     def save_path(self, folder_path: str, file_name: str, sample_rate: float):

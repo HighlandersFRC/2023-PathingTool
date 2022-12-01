@@ -106,6 +106,7 @@ class Editor(GridLayout):
         self.nudge_y.update(self.selected_point)
         self.velocity_editor.update(self.selected_point)
         self.angular_velocity_editor.update(self.selected_point)
+        self.animation_controller.update(self.selected_point)
         self.update_func(update_editor = False)
 
     #update name of path
