@@ -13,7 +13,7 @@ from data_assets.point import Point
 from popups.save_load import SaveLoad
 
 class Editor(GridLayout):
-    def __init__(self, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, linear_average_func, angular_average_func, **kwargs):
+    def __init__(self, update_func, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, linear_average_func, angular_average_func, **kwargs):
         super().__init__(cols = 3, **kwargs)
         #selected key point
         self.selected_point = None
@@ -26,6 +26,7 @@ class Editor(GridLayout):
         self.delete_func = delete_func
         self.clear_func = clear_func
         self.animation_func = animation_func
+        self.update_func = update_func
 
         #editor sub-widgets
         self.edit_time = EditValue("Delta Time", "delta_time", self.update_selected_point)
@@ -105,6 +106,7 @@ class Editor(GridLayout):
         self.nudge_y.update(self.selected_point)
         self.velocity_editor.update(self.selected_point)
         self.angular_velocity_editor.update(self.selected_point)
+        self.update_func(update_editor = False)
 
     #update name of path
     def update_path_name(self, name: str):

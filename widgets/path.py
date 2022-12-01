@@ -11,6 +11,7 @@ class Path(Image):
         super().__init__(source = "images/RapidReactField.png", **kwargs)
         #key points, selected point, and sampling rate
         self.key_points = []
+        self.sampled_points = []
         self.selected_point = None
         self.sample_rate = 0.01
 
@@ -43,10 +44,13 @@ class Path(Image):
 
         #if more that 1 point in path generate spline line and add it
         if len(self.key_points) > 1:
-            interp_points = generateSplines.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), 0.0, 0.0, 0.0, 0.0] for p in self.key_points])
-            pixel_list = [None] * (2 * len(interp_points[1]))
-            pixel_list[::2] = [convert.meters_to_pixels_x(n, self.size) for n in interp_points[1]]
-            pixel_list[1::2] = [convert.meters_to_pixels_y(n, self.size) for n in interp_points[2]]
+            # pixel_list = [None] * (2 * len(interp_points[1]))
+            # pixel_list[::2] = [convert.meters_to_pixels_x(n, self.size) for n in interp_points[1]]
+            # pixel_list[1::2] = [convert.meters_to_pixels_y(n, self.size) for n in interp_points[2]]
+            pixel_list = []
+            for p in self.sampled_points:
+                pixel_list.append(convert.meters_to_pixels_x(p[0], self.size))
+                pixel_list.append(convert.meters_to_pixels_y(p[1], self.size))
             self.path_line = Line(points = pixel_list, width = 2, cap = "round", joint = "round")
             self.canvas.add(Color(0, 0, 0))
             self.canvas.add(self.path_line)
@@ -117,8 +121,9 @@ class Path(Image):
         return None
 
     #update points list
-    def update(self, points: list[Point], sample_rate: float):
+    def update(self, points: list[Point], sampled_points: list, sample_rate: float):
         self.key_points = points
+        self.sampled_points = sampled_points
         self.sample_rate = sample_rate
 
     #update selected point

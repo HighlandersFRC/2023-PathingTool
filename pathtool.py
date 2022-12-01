@@ -8,6 +8,7 @@ from data_assets.point import Point
 from tools import convert
 from tools import file_manager
 from popups.save_load import SaveLoad
+from SplineGeneration.generateSplines import SplineGenerator
 import math
 
 class PathTool(BoxLayout):
@@ -15,10 +16,12 @@ class PathTool(BoxLayout):
         super().__init__(orientation = "horizontal", **kwargs)
         #main widgets
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
-        self.editor = Editor(self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocity, self.average_angular_velocity, size_hint = (1, 0.25))
+        self.editor = Editor(self.update_widgets, self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocity, self.average_angular_velocity, size_hint = (1, 0.25))
         self.path = Path(size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(self.update_path, size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
+
+        self.spline_generator = SplineGenerator()
 
         #list of key points
         self.key_points = []
@@ -72,16 +75,20 @@ class PathTool(BoxLayout):
         self.update_widgets()
 
     #update main widgets
-    def update_widgets(self):
+    def update_widgets(self, update_editor = True):
         #update indexes and times
         self.index_points()
         self.time_points()
-        #update key points in widgets
-        self.path.update(self.key_points, self.sample_rate)
+        if len(self.key_points) > 1:
+            self.spline_generator.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), 0.0, 0.0, 0.0, 0.0] for p in self.key_points])
+            self.path.update(self.key_points, self.get_sampled_points(), self.sample_rate)
+        else:
+            self.path.update(self.key_points, [], self.sample_rate)
         self.points_menu.update(self.key_points, self.selected_point)
         #update selected point in widgets
-        self.editor.update_selected_point(self.selected_point)
-        self.editor.update_path_name(self.path_name)
+        if update_editor:
+            self.editor.update_selected_point(self.selected_point)
+            self.editor.update_path_name(self.path_name)
         self.path.update_selected_point(self.selected_point)
 
     #update key points and selected point
@@ -171,6 +178,19 @@ class PathTool(BoxLayout):
         else:
             return 1
 
+    def get_sampled_points(self, include_times = False):
+        sampled_points = []
+        t = 0
+        while t <= self.key_points[-1].time:
+            if include_times:
+                point = self.spline_generator.sample(self.key_points, t)
+                point.insert(0, t)
+                sampled_points.append(point)
+            else:
+                sampled_points.append(self.spline_generator.sample(self.key_points, t))
+            t += self.sample_rate
+        return sampled_points
+
     #start path animation from a time
     def run_animation(self, start_time: float):
         self.path.set_animation(start_time)
@@ -180,7 +200,8 @@ class PathTool(BoxLayout):
         print(f"saving {folder_path}\\{file_name}.json")
         self.sample_rate = sample_rate
         self.path_name = file_name
-        result = file_manager.save_path(self.key_points, self.sample_rate, folder_path, file_name)
+        sampled_points = self.get_sampled_points(include_times = True)
+        result = file_manager.save_path(self.key_points, sampled_points, self.sample_rate, folder_path, file_name)
         self.update_widgets()
         #update status
         if result:
