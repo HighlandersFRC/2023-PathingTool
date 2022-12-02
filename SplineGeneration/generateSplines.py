@@ -61,7 +61,8 @@ class SplineGenerator:
         return [sampledX, sampledY, sampledTheta]
 
     def generateSplineCurves(self, points):
-        # print(points)
+        for p in points:
+            p[3] = p[3] % (2 * math.pi)
         overallSysEqArray = []
         xArray = []
         yArray = []

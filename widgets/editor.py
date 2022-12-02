@@ -8,12 +8,13 @@ from widgets.sub_widgets.save_delete import SaveDelete
 from widgets.sub_widgets.animation_controller import AnimationController
 from widgets.sub_widgets.velocity_editor import VelocityEditor
 from widgets.sub_widgets.angular_velocity_editor import AngularVelocityEditor
+from widgets.sub_widgets.extra_controls import ExtraControls
 from data_assets.point import Point
 
 from popups.save_load import SaveLoad
 
 class Editor(GridLayout):
-    def __init__(self, update_func, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, linear_average_func, angular_average_func, **kwargs):
+    def __init__(self, update_func, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, linear_average_func, angular_average_func, average_all_func, **kwargs):
         super().__init__(cols = 3, **kwargs)
         #selected key point
         self.selected_point = None
@@ -39,6 +40,7 @@ class Editor(GridLayout):
         self.velocity_editor = VelocityEditor(self.update_selected_point, linear_average_func)
         self.angular_velocity_editor = AngularVelocityEditor(self.update_selected_point, angular_average_func)
         self.animation_controller = AnimationController(self.run_animation)
+        self.extra_controls = ExtraControls(average_all_func)
         self.status_display = Label(text = "", markup = True, font_size = 24)
 
         #add sub-widgets
@@ -52,6 +54,7 @@ class Editor(GridLayout):
         self.add_widget(self.velocity_editor)
         self.add_widget(self.angular_velocity_editor)
         self.add_widget(self.animation_controller)
+        self.add_widget(self.extra_controls)
         self.add_widget(self.status_display)
 
         #popups

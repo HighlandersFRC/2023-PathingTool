@@ -16,7 +16,7 @@ class PathTool(BoxLayout):
         super().__init__(orientation = "horizontal", **kwargs)
         #main widgets
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
-        self.editor = Editor(self.update_widgets, self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocity, self.average_angular_velocity, size_hint = (1, 0.25))
+        self.editor = Editor(self.update_widgets, self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocity, self.average_angular_velocity, self.average_all, size_hint = (1, 0.25))
         self.path = Path(self.get_sampled_point, size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(self.update_path, size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
@@ -81,7 +81,7 @@ class PathTool(BoxLayout):
         self.time_points()
         #if multiple points update equations
         if len(self.key_points) > 1:
-            self.spline_generator.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), 0.0, 0.0, 0.0, 0.0] for p in self.key_points])
+            self.spline_generator.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), p.angular_velocity, 0.0, 0.0, 0.0] for p in self.key_points])
             self.path.update(self.key_points, self.get_sampled_points(), self.sample_rate)
         else:
             self.path.update(self.key_points, [], self.sample_rate)
@@ -167,6 +167,12 @@ class PathTool(BoxLayout):
         else:
             self.key_points[index].angular_velocity = 0
         self.update_widgets()
+
+    #apply linear and angular catmull-rom on all points
+    def average_all(self):
+        for p in self.key_points:
+            self.average_linear_velocity(p.index)
+            self.average_angular_velocity(p.index)
 
     #angular optimizer
     def get_optimized_rotation_sine(self, angle1, angle2):

@@ -137,7 +137,6 @@ class Path(Image):
         self.canvas.add(self.selected_points_group)
 
     def set_animation(self, time: float):
-        print("running")
         self.animation_time = time
         
     #return point that was clicked on, if any
