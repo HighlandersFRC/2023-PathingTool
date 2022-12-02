@@ -132,7 +132,7 @@ class PathTool(BoxLayout):
             p.time = time
 
     #apply catmull-rom on linear splines
-    def average_linear_velocity(self, index: int):
+    def average_linear_velocity(self, index: int, update_widgets = True):
         if self.key_points[index].index != 0 and self.key_points[index].index != len(self.key_points) - 1:
             p0 = self.key_points[self.key_points[index].index - 1]
             p2 = self.key_points[self.key_points[index].index + 1]
@@ -145,10 +145,11 @@ class PathTool(BoxLayout):
         else:
             self.key_points[index].velocity_magnitude = 0
             self.key_points[index].velocity_theta = 0
-        self.update_widgets()
+        if update_widgets:
+            self.update_widgets()
 
     #apply catmull-rom  on angular spline
-    def average_angular_velocity(self, index: int):
+    def average_angular_velocity(self, index: int, update_widgets = True):
         if self.key_points[index].index != 0 and self.key_points[index].index != len(self.key_points) - 1:
             p0 = self.key_points[self.key_points[index].index - 1]
             p2 = self.key_points[self.key_points[index].index + 1]
@@ -166,13 +167,14 @@ class PathTool(BoxLayout):
                 self.key_points[index].angular_velocity = da / dt
         else:
             self.key_points[index].angular_velocity = 0
-        self.update_widgets()
+        if update_widgets:
+            self.update_widgets()
 
     #apply linear and angular catmull-rom on all points
     def average_all(self):
         for p in self.key_points:
-            self.average_linear_velocity(p.index)
-            self.average_angular_velocity(p.index)
+            self.average_linear_velocity(p.index, update_widgets = False)
+            self.average_angular_velocity(p.index, update_widgets = False)
 
     #angular optimizer
     def get_optimized_rotation_sine(self, angle1, angle2):
