@@ -5,6 +5,7 @@ from data_assets.point import Point
 from tools import convert
 from SplineGeneration import generateSplines
 import math
+import time
 
 class Path(Image):
     def __init__(self, sample_func, **kwargs):
@@ -20,6 +21,8 @@ class Path(Image):
         self.robot_length = 0.7366
         self.robot_radius = convert.get_robot_radius(self.robot_width, self.robot_length)
 
+        self.field_image = Rectangle(source = "images/RapidReactField.png", pos = self.pos)
+
         #main instructions/instruction groups
         self.non_selected_points_group = InstructionGroup()
         self.selected_points_group = InstructionGroup()
@@ -34,21 +37,25 @@ class Path(Image):
         
     #draw points and path line
     def draw_path(self):
+        start_time = time.time_ns() / 1000000
         #erase non-selected points, selected point, angle indicators
-        self.canvas.remove(self.non_selected_points_group)
-        self.non_selected_points_group = InstructionGroup()
-        self.canvas.remove(self.selected_points_group)
-        self.selected_points_group = InstructionGroup()
-        self.canvas.remove(self.angle_indicators_group)
-        self.angle_indicators_group = InstructionGroup()
-        self.canvas.remove(self.velocity_indicators_group)
-        self.velocity_indicators_group = InstructionGroup()
-        self.canvas.remove(self.animation_group)
-        self.animation_group = InstructionGroup()
+        # self.canvas.remove(self.non_selected_points_group)
+        self.non_selected_points_group.clear()
+        # self.canvas.remove(self.selected_points_group)
+        self.selected_points_group.clear()
+        # self.canvas.remove(self.angle_indicators_group)
+        self.angle_indicators_group.clear()
+        # self.canvas.remove(self.velocity_indicators_group)
+        self.velocity_indicators_group.clear()
+        # self.canvas.remove(self.animation_group)
+        self.animation_group.clear()
         #if path_line instruction is present erase it
-        if self.canvas.indexof(self.path_line) != -1:
-            self.canvas.remove(self.path_line)
+        # if self.canvas.indexof(self.path_line) != -1:
+        #     self.canvas.remove(self.path_line)
 
+        self.canvas.clear()
+        self.field_image.size = self.size
+        self.canvas.add(self.field_image)
         #if more that 1 point in path generate spline line and add it
         if len(self.key_points) > 1:
             # pixel_list = [None] * (2 * len(interp_points[1]))
@@ -135,6 +142,8 @@ class Path(Image):
             self.canvas.add(Color(1, 0, 1))
             self.selected_points_group.add(Ellipse(pos = (pixel_pos[0] - 7, pixel_pos[1] - 7), size = (14, 14)))
         self.canvas.add(self.selected_points_group)
+
+        print(f"Draw: {time.time_ns() / 1000000 - start_time}")
 
     def set_animation(self, time: float):
         self.animation_time = time

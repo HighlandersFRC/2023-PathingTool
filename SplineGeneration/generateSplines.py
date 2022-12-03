@@ -2,7 +2,7 @@ import numpy as np
 import math
 from matplotlib.pyplot import plot, show, quiver
 import matplotlib.pyplot as plt
-
+import time
 
 class SplineGenerator:
     def __init__(self):
@@ -10,8 +10,8 @@ class SplineGenerator:
         self.yCoefficients = []
         self.thetaCoefficients = []
 
-    def sample(self, pointList, time):
-
+    def sample(self, pointList, sample_time):
+        # start_time = time.time()
         pointTimeList = []
 
         for i in range(0, len(pointList)):
@@ -24,7 +24,7 @@ class SplineGenerator:
         # thetaEquations = equations[2]
         index = 0
         for j in range(0, len(pointTimeList) - 1):
-            if(time >= pointTimeList[j] and time <= pointTimeList[j+1]):
+            if(sample_time >= pointTimeList[j] and sample_time <= pointTimeList[j+1]):
                 index = j
                 break
 
@@ -32,9 +32,9 @@ class SplineGenerator:
         currentYEquation = self.yCoefficients[index * 6: (index * 6) + 6]
         currentThetaEquation = self.thetaCoefficients[index * 6: (index * 6) + 6]
 
-        sampledX = currentXEquation[0] + (currentXEquation[1] * time) + (currentXEquation[2] * (time ** 2)) + (currentXEquation[3] * (time ** 3)) + (currentXEquation[4] * (time ** 4)) + (currentXEquation[5] * (time ** 5))
-        sampledY = currentYEquation[0] + (currentYEquation[1] * time) + (currentYEquation[2] * (time ** 2)) + (currentYEquation[3] * (time ** 3)) + (currentYEquation[4] * (time ** 4)) + (currentYEquation[5] * (time ** 5))
-        sampledTheta = currentThetaEquation[0] + (currentThetaEquation[1] * time) + (currentThetaEquation[2] * (time ** 2)) + (currentThetaEquation[3] * (time ** 3)) + (currentThetaEquation[4] * (time ** 4)) + (currentThetaEquation[5] * (time ** 5))
+        sampledX = currentXEquation[0] + (currentXEquation[1] * sample_time) + (currentXEquation[2] * (sample_time ** 2)) + (currentXEquation[3] * (sample_time ** 3)) + (currentXEquation[4] * (sample_time ** 4)) + (currentXEquation[5] * (sample_time ** 5))
+        sampledY = currentYEquation[0] + (currentYEquation[1] * sample_time) + (currentYEquation[2] * (sample_time ** 2)) + (currentYEquation[3] * (sample_time ** 3)) + (currentYEquation[4] * (sample_time ** 4)) + (currentYEquation[5] * (sample_time ** 5))
+        sampledTheta = currentThetaEquation[0] + (currentThetaEquation[1] * sample_time) + (currentThetaEquation[2] * (sample_time ** 2)) + (currentThetaEquation[3] * (sample_time ** 3)) + (currentThetaEquation[4] * (sample_time ** 4)) + (currentThetaEquation[5] * (sample_time ** 5))
 
         # print("TIMES: ", sampledTimes)
         # print("X: ", sampledXPoints)
@@ -57,7 +57,7 @@ class SplineGenerator:
         # print("XVEL: ", sampledXVelocities)
 
         # show()
-
+        # print(f"Sample: {time.time() - start_time}")
         return [sampledX, sampledY, sampledTheta]
 
     def generateSplineCurves(self, points):
@@ -154,7 +154,7 @@ class SplineGenerator:
         self.yCoefficients = yCoefficients
         self.thetaCoefficients = thetaCoefficients
 
-    # # list is as follows [time, x, y, theta, xVel, yVel, thetaVel, xAccel, yAccel, thetaAccel]
+    # # list is as follows [sample_time, x, y, theta, xVel, yVel, thetaVel, xAccel, yAccel, thetaAccel]
     # pointList = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, math.pi/4, 3, 1.5, math.pi/4, 0, 0, 0], [2, 6, 3, math.pi/2, 3.5, -0.75, 0, 0, 0, 0], [3, 8, 0, (3/4) * math.pi, 2, 4.5, 0, 0, 0, 0], [4, 10, 12, (3/4) * math.pi, 2, 5, 0, 0, 0, 0], [5, 10, 10, (3/4) * math.pi, 0, 0, 0, 0, 0, 0]]
     # pointList = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, -1, 0, 1, 1, 0, 0, 0, 0], [2, 4, 8, 0, 2, 2, 0, 0, 0, 0], [3, 6, 2, 0, 1, 1, 0, 0, 0, 0]]
     # generateSplineCurves(pointList)
