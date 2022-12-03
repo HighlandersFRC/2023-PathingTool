@@ -48,9 +48,10 @@ def upload(addr: str, file_path: str):
     return True
 
 def download_all(addr: str):
-    print("downloading all...")
+    print("Downloading all...")
     conns = get_connection(addr)
     if conns == None:
+        print("Download all failed")
         return False
     scp_cli = conns[0]
     ssh_cli = conns[1]
@@ -59,9 +60,25 @@ def download_all(addr: str):
     for rs in remote_saves:
         if rs.endswith(".json"):
             scp_cli.get(remote_path = f"/home/lvuser/deploy/{rs}", local_path = "saves/")
+            print(f"Downloaded {rs}")
     print("Downloaded all saves successfully")
     return True
 
+def download_recorded_data(addr: str):
+    print("Downloading all recordings...")
+    conns = get_connection(addr)
+    if conns == None:
+        print("Recorded data download failed")
+        return False
+    scp_cli = conns[0]
+    ssh_cli = conns[1]
+    sftp = ssh_cli.open_sftp()
+    remote_recordings = sftp.listdir("/home/lvuser/deploy/recordings")
+    for rr in remote_recordings:
+        if rr.endswith(".csv"):
+            scp_cli.get(remote_path = f"/home/lvuser/deploy/{rr}", local_path = "recorded_data/")
+            print(f"Downloaded {rr}")
+    print("Recorded data downloaded successfully")
 
 def save_path(key_points: list[Point], sampled_points: list, sample_rate: float, folder_path: str, file_name: str):
     data = {}

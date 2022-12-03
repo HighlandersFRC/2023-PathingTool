@@ -1,7 +1,6 @@
 from kivy.app import App
 from kivy.clock import Clock
 from pathtool import PathTool
-from kivy.core.window import Window
 
 class PathApp(App):
     def build(self):
@@ -15,7 +14,6 @@ class PathApp(App):
     def execute(self, dt):
         self.path_tool.path.draw_path()
         self.path_tool.editor.save_load.update()
-        # print(f"Execute: {dt}")
 
 if __name__ == "__main__":
     PathApp().run()

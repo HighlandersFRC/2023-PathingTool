@@ -37,7 +37,7 @@ class Path(Image):
         
     #draw points and path line
     def draw_path(self):
-        start_time = time.time_ns() / 1000000
+        # start_time = time.time_ns() / 1000000
         #erase non-selected points, selected point, angle indicators
         # self.canvas.remove(self.non_selected_points_group)
         self.non_selected_points_group.clear()
@@ -143,7 +143,7 @@ class Path(Image):
             self.selected_points_group.add(Ellipse(pos = (pixel_pos[0] - 7, pixel_pos[1] - 7), size = (14, 14)))
         self.canvas.add(self.selected_points_group)
 
-        print(f"Draw: {time.time_ns() / 1000000 - start_time}")
+        # print(f"Draw: {time.time_ns() / 1000000 - start_time}")
 
     def set_animation(self, time: float):
         self.animation_time = time

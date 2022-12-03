@@ -12,6 +12,7 @@ from widgets.sub_widgets.extra_controls import ExtraControls
 from data_assets.point import Point
 
 from popups.save_load import SaveLoad
+from popups.visualizer_menu import VisualizerMenu
 
 class Editor(GridLayout):
     def __init__(self, update_func, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, linear_average_func, angular_average_func, average_all_func, **kwargs):
@@ -40,7 +41,7 @@ class Editor(GridLayout):
         self.velocity_editor = VelocityEditor(self.update_selected_point, linear_average_func)
         self.angular_velocity_editor = AngularVelocityEditor(self.update_selected_point, angular_average_func)
         self.animation_controller = AnimationController(self.run_animation)
-        self.extra_controls = ExtraControls(average_all_func)
+        self.extra_controls = ExtraControls(average_all_func, self.open_visualizer_menu)
         self.status_display = Label(text = "", markup = True, font_size = 24)
 
         #add sub-widgets
@@ -59,6 +60,7 @@ class Editor(GridLayout):
 
         #popups
         self.save_load = SaveLoad(save_func, load_func, upload_func, upload_all_func, download_func)
+        self.visualizer_menu = VisualizerMenu()
 
     #delete selected point if a point is selected
     def delete_point(self):
@@ -70,6 +72,12 @@ class Editor(GridLayout):
     #clear key points
     def clear_points(self):
         self.clear_func()
+
+    #open the visualizer menu
+    def open_visualizer_menu(self):
+        self.visualizer_menu.data_chooser.path = "./recorded_data"
+        self.visualizer_menu.data_chooser.selection = []
+        self.visualizer_menu.open()
 
     #save path to json
     def save_path(self):
