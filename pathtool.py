@@ -79,6 +79,7 @@ class PathTool(BoxLayout):
         #update indexes and times
         self.index_points()
         self.time_points()
+        self.optimize_points()
         #if multiple points update equations
         if len(self.key_points) > 1:
             self.spline_generator.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), p.angular_velocity, 0.0, 0.0, 0.0] for p in self.key_points])
@@ -130,6 +131,15 @@ class PathTool(BoxLayout):
         for p in self.key_points:
             time += p.delta_time
             p.time = time
+
+    #optize the angles of the key points
+    def optimize_points(self):
+        for i in range(1, len(self.key_points)):
+            p1 = self.key_points[i - 1]
+            p2 = self.key_points[i]
+            p2.angle %= 2 * math.pi
+            if abs(p2.angle - p1.angle) > math.pi:
+                p2.angle = math.pi - p2.angle
 
     #apply catmull-rom on linear splines
     def average_linear_velocity(self, index: int, update_widgets = True):
@@ -214,6 +224,7 @@ class PathTool(BoxLayout):
 
     #start path animation from a time
     def run_animation(self, start_time: float):
+        self.update_widgets()
         if len(self.key_points) > 1:
             self.path.set_animation(start_time)
 

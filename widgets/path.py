@@ -96,11 +96,11 @@ class Path(Image):
             linear_pos = convert.meters_to_pixels(p.get_vel_marker_pos(), self.size)
             linear_dist = convert.get_dist(pixel_pos[0], pixel_pos[1], linear_pos[0], linear_pos[1])
             self.velocity_indicators_group.add(Line(width = 2, cap = "square", points = [pixel_pos[0], pixel_pos[1], linear_pos[0], linear_pos[1]]))
-            if p.get_angular_velocity_degrees() != 0:
-                if linear_dist > 20:
-                    self.velocity_indicators_group.add(Line(width = 2, circle = (pixel_pos[0], pixel_pos[1], linear_dist, -p.get_vel_theta_degrees() - p.get_angular_velocity_degrees() + 90, -p.get_vel_theta_degrees() + 90)))
-                else:
-                    self.velocity_indicators_group.add(Line(width = 2, circle = (pixel_pos[0], pixel_pos[1], 20, -p.get_vel_theta_degrees() - p.get_angular_velocity_degrees() + 90, -p.get_vel_theta_degrees() + 90)))
+            # if p.get_angular_velocity_degrees() != 0:
+            #     if linear_dist > 20:
+            #         self.velocity_indicators_group.add(Line(width = 2, circle = (pixel_pos[0], pixel_pos[1], linear_dist, -p.get_vel_theta_degrees() - p.get_angular_velocity_degrees() + 90, -p.get_vel_theta_degrees() + 90)))
+            #     else:
+            #         self.velocity_indicators_group.add(Line(width = 2, circle = (pixel_pos[0], pixel_pos[1], 20, -p.get_vel_theta_degrees() - p.get_angular_velocity_degrees() + 90, -p.get_vel_theta_degrees() + 90)))
             
         #animation
         if len(self.key_points) > 1:
