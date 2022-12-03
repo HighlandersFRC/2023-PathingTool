@@ -23,12 +23,14 @@ class VisualizerMenu(Popup):
 
         self.graph_button = Button(text = "Graph", on_press = self.graph)
         self.display_on_field_button = Button(text = "Disp. on Field", on_press = self.display_on_field)
+        self.update_button = Button(text = "Update", on_press = self.update)
         self.cancel_button = Button(text = "Back", on_press = self.cancel)
         self.controls_layout.add_widget(self.graph_button)
         self.controls_layout.add_widget(self.display_on_field_button)
+        self.controls_layout.add_widget(self.update_button)
         self.controls_layout.add_widget(self.cancel_button)
 
-    def on_open(self):
+    def update(self, event):
         file_manager.download_recorded_data("10.44.99.2")
         self.data_chooser._update_files()
 
