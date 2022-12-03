@@ -76,7 +76,7 @@ def download_recorded_data(addr: str):
     remote_recordings = sftp.listdir("/home/lvuser/deploy/recordings")
     for rr in remote_recordings:
         if rr.endswith(".csv"):
-            scp_cli.get(remote_path = f"/home/lvuser/deploy/{rr}", local_path = "recorded_data/")
+            scp_cli.get(remote_path = f"/home/lvuser/deploy/recordings/{rr}", local_path = "recorded_data/")
             print(f"Downloaded {rr}")
     print("Recorded data downloaded successfully")
 
