@@ -33,7 +33,6 @@ class AnimationController(BoxLayout):
 
     #run animation starting at the selected point
     def run_from_point(self, event):
-        print(self.selected_point)
         if self.selected_point == None:
             return
         self.run_func(self.selected_point.time)
