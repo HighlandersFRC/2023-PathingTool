@@ -63,15 +63,14 @@ def download_all(addr: str):
     return True
 
 
-def save_path(key_points: list[Point], sample_rate: float, folder_path: str, file_name: str):
+def save_path(key_points: list[Point], sampled_points: list, sample_rate: float, folder_path: str, file_name: str):
     data = {}
     data["meta_data"] = {
         "path_name": file_name,
         "sample_rate": sample_rate
     }
     data["key_points"] = [p.to_json() for p in key_points]
-    interp_points = generateSplines.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), 0.0, 0.0, 0.0, 0.0] for p in key_points])
-    data["sampled_points"] = [[interp_points[0][i], interp_points[1][i], interp_points[2][i], interp_points[3][i]] for i in range(len(interp_points[0]))]
+    data["sampled_points"] = [[sampled_points[i][0], sampled_points[i][1], sampled_points[i][2], sampled_points[i][3]] for i in range(len(sampled_points))]
     try:
         out_file = open(f"{folder_path}\\{file_name}.json", "w")
         json.dump(data, out_file, indent = 2)

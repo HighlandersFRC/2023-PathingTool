@@ -7,10 +7,11 @@ from SplineGeneration import generateSplines
 import math
 
 class Path(Image):
-    def __init__(self, **kwargs):
+    def __init__(self, sample_func, **kwargs):
         super().__init__(source = "images/RapidReactField.png", **kwargs)
         #key points, selected point, and sampling rate
         self.key_points = []
+        self.sampled_points = []
         self.selected_point = None
         self.sample_rate = 0.01
 
@@ -24,7 +25,12 @@ class Path(Image):
         self.selected_points_group = InstructionGroup()
         self.angle_indicators_group = InstructionGroup()
         self.velocity_indicators_group = InstructionGroup()
+        self.animation_group = InstructionGroup()
         self.path_line = Line()
+
+        #animation time
+        self.animation_time = -1
+        self.sample_func = sample_func
         
     #draw points and path line
     def draw_path(self):
@@ -37,16 +43,21 @@ class Path(Image):
         self.angle_indicators_group = InstructionGroup()
         self.canvas.remove(self.velocity_indicators_group)
         self.velocity_indicators_group = InstructionGroup()
+        self.canvas.remove(self.animation_group)
+        self.animation_group = InstructionGroup()
         #if path_line instruction is present erase it
         if self.canvas.indexof(self.path_line) != -1:
             self.canvas.remove(self.path_line)
 
         #if more that 1 point in path generate spline line and add it
         if len(self.key_points) > 1:
-            interp_points = generateSplines.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), 0.0, 0.0, 0.0, 0.0] for p in self.key_points])
-            pixel_list = [None] * (2 * len(interp_points[1]))
-            pixel_list[::2] = [convert.meters_to_pixels_x(n, self.size) for n in interp_points[1]]
-            pixel_list[1::2] = [convert.meters_to_pixels_y(n, self.size) for n in interp_points[2]]
+            # pixel_list = [None] * (2 * len(interp_points[1]))
+            # pixel_list[::2] = [convert.meters_to_pixels_x(n, self.size) for n in interp_points[1]]
+            # pixel_list[1::2] = [convert.meters_to_pixels_y(n, self.size) for n in interp_points[2]]
+            pixel_list = []
+            for p in self.sampled_points:
+                pixel_list.append(convert.meters_to_pixels_x(p[0], self.size))
+                pixel_list.append(convert.meters_to_pixels_y(p[1], self.size))
             self.path_line = Line(points = pixel_list, width = 2, cap = "round", joint = "round")
             self.canvas.add(Color(0, 0, 0))
             self.canvas.add(self.path_line)
@@ -90,9 +101,33 @@ class Path(Image):
                     self.velocity_indicators_group.add(Line(width = 2, circle = (pixel_pos[0], pixel_pos[1], linear_dist, -p.get_vel_theta_degrees() - p.get_angular_velocity_degrees() + 90, -p.get_vel_theta_degrees() + 90)))
                 else:
                     self.velocity_indicators_group.add(Line(width = 2, circle = (pixel_pos[0], pixel_pos[1], 20, -p.get_vel_theta_degrees() - p.get_angular_velocity_degrees() + 90, -p.get_vel_theta_degrees() + 90)))
+            
+        #animation
+        if len(self.key_points) > 1:
+            if self.animation_time <= self.key_points[-1].time and self.animation_time >= 0:
+                anim_point = self.sample_func(self.animation_time)
+                anim_angle = anim_point[2]
+                anim_pixel_point = convert.meters_to_pixels((anim_point[0], anim_point[1]), self.size)
+                anim_front = convert.meters_to_pixels(((self.robot_length / 2.0) * math.cos(anim_angle) + anim_point[0], (self.robot_length / 2.0) * math.sin(anim_angle) + anim_point[1]), self.size)
+                self.animation_group.add(Color(0, 0.4, 0.8))
+                self.animation_group.add(Line(width = 2, cap = "square", joint = "miter", points = [anim_pixel_point[0], anim_pixel_point[1], anim_front[0], anim_front[1]]))
+                corner_1_theta = math.atan2((self.robot_length) / (self.robot_radius * 2), (self.robot_width) / (self.robot_radius * 2))
+                anim_theta_1 = corner_1_theta + anim_angle
+                anim_theta_2 = math.pi - corner_1_theta + anim_angle
+                anim_theta_3 = math.pi + corner_1_theta + anim_angle
+                anim_theta_4 = 2 * math.pi - corner_1_theta + anim_angle
+                anim_corner_1 = convert.meters_to_pixels((self.robot_radius * math.cos(anim_theta_1) + anim_point[0], self.robot_radius * math.sin(anim_theta_1) + anim_point[1]), self.size)
+                anim_corner_2 = convert.meters_to_pixels((self.robot_radius * math.cos(anim_theta_2) + anim_point[0], self.robot_radius * math.sin(anim_theta_2) + anim_point[1]), self.size)
+                anim_corner_3 = convert.meters_to_pixels((self.robot_radius * math.cos(anim_theta_3) + anim_point[0], self.robot_radius * math.sin(anim_theta_3) + anim_point[1]), self.size)
+                anim_corner_4 = convert.meters_to_pixels((self.robot_radius * math.cos(anim_theta_4) + anim_point[0], self.robot_radius * math.sin(anim_theta_4) + anim_point[1]), self.size)
+                self.animation_group.add(Line(width = 2, cap = "square", joint = "miter", close = True, points = [anim_corner_1[0], anim_corner_1[1], anim_corner_2[0], anim_corner_2[1], anim_corner_3[0], anim_corner_3[1], anim_corner_4[0], anim_corner_4[1]]))
+                self.animation_time += 1 / 60
+            if self.animation_time > self.key_points[-1].time:
+                self.animation_time = 1000
         self.canvas.add(self.velocity_indicators_group)
         self.canvas.add(self.non_selected_points_group)
         self.canvas.add(self.angle_indicators_group)
+        self.canvas.add(self.animation_group)
 
         #draw selected point
         if self.selected_point != None:
@@ -102,7 +137,7 @@ class Path(Image):
         self.canvas.add(self.selected_points_group)
 
     def set_animation(self, time: float):
-        pass
+        self.animation_time = time
         
     #return point that was clicked on, if any
     def get_selected_point(self, px, py):
@@ -117,8 +152,9 @@ class Path(Image):
         return None
 
     #update points list
-    def update(self, points: list[Point], sample_rate: float):
+    def update(self, points: list[Point], sampled_points: list, sample_rate: float):
         self.key_points = points
+        self.sampled_points = sampled_points
         self.sample_rate = sample_rate
 
     #update selected point
