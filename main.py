@@ -1,7 +1,6 @@
 from kivy.app import App
 from kivy.clock import Clock
 from pathtool import PathTool
-from kivy.core.window import Window
 
 class PathApp(App):
     def build(self):

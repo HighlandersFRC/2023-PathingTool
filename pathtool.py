@@ -16,7 +16,7 @@ class PathTool(BoxLayout):
         super().__init__(orientation = "horizontal", **kwargs)
         #main widgets
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
-        self.editor = Editor(self.update_widgets, self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocity, self.average_angular_velocity, self.average_all, size_hint = (1, 0.25))
+        self.editor = Editor(self.update_widgets, self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocity, self.average_angular_velocity, self.average_all, self.display_recording, size_hint = (1, 0.25))
         self.path = Path(self.get_sampled_point, size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(self.update_path, size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
@@ -99,6 +99,10 @@ class PathTool(BoxLayout):
         self.key_points = key_points
         self.update_widgets()
 
+    #display recorded path over the field image
+    def display_recording(self, recording: list):
+        pass
+
     #delete selected point
     def delete_point(self, index):
         #if removed point is the first point set new first point velocity to zero
@@ -138,8 +142,10 @@ class PathTool(BoxLayout):
             p1 = self.key_points[i - 1]
             p2 = self.key_points[i]
             p2.angle %= 2 * math.pi
-            if abs(p2.angle - p1.angle) > math.pi:
-                p2.angle = math.pi - p2.angle
+            if p2.angle - p1.angle > math.pi:
+                p2.angle -= 2 * math.pi
+            elif p2.angle - p1.angle < -math.pi:
+                p2.angle += 2 * math.pi
 
     #apply catmull-rom on linear splines
     def average_linear_velocity(self, index: int, update_widgets = True):
@@ -185,6 +191,7 @@ class PathTool(BoxLayout):
         for p in self.key_points:
             self.average_linear_velocity(p.index, update_widgets = False)
             self.average_angular_velocity(p.index, update_widgets = False)
+        self.update_widgets()
 
     #angular optimizer
     def get_optimized_rotation_sine(self, angle1, angle2):
