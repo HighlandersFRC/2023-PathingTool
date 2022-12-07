@@ -101,7 +101,7 @@ class PathTool(BoxLayout):
 
     #display recorded path over the field image
     def display_recording(self, recording: list):
-        pass
+        self.path.set_recording(recording)
 
     #delete selected point
     def delete_point(self, index):

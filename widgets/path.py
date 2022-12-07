@@ -10,13 +10,15 @@ import time
 class Path(Image):
     def __init__(self, sample_func, **kwargs):
         super().__init__(source = "images/RapidReactField.png", **kwargs)
-        #key points, selected point, and sampling rate
         self.key_points = []
         self.sampled_points = []
         self.selected_point = None
+        #seconds
         self.sample_rate = 0.01
+        #[t, x, y, theta]
+        self.recorded_points = []
 
-        #robot dimensions
+        #robot dimensions (meters)
         self.robot_width = 0.7366
         self.robot_length = 0.7366
         self.robot_radius = convert.get_robot_radius(self.robot_width, self.robot_length)
@@ -29,9 +31,10 @@ class Path(Image):
         self.angle_indicators_group = InstructionGroup()
         self.velocity_indicators_group = InstructionGroup()
         self.animation_group = InstructionGroup()
+        self.recording_line = Line()
         self.path_line = Line()
 
-        #animation time
+        #animation time (seconds)
         self.animation_time = -1
         self.sample_func = sample_func
         
@@ -58,9 +61,6 @@ class Path(Image):
         self.canvas.add(self.field_image)
         #if more that 1 point in path generate spline line and add it
         if len(self.key_points) > 1:
-            # pixel_list = [None] * (2 * len(interp_points[1]))
-            # pixel_list[::2] = [convert.meters_to_pixels_x(n, self.size) for n in interp_points[1]]
-            # pixel_list[1::2] = [convert.meters_to_pixels_y(n, self.size) for n in interp_points[2]]
             pixel_list = []
             for p in self.sampled_points:
                 pixel_list.append(convert.meters_to_pixels_x(p[0], self.size))
@@ -143,10 +143,15 @@ class Path(Image):
             self.selected_points_group.add(Ellipse(pos = (pixel_pos[0] - 7, pixel_pos[1] - 7), size = (14, 14)))
         self.canvas.add(self.selected_points_group)
 
+        
+
         # print(f"Draw: {time.time_ns() / 1000000 - start_time}")
 
     def set_animation(self, time: float):
         self.animation_time = time
+
+    def set_recording(self, recorded_points: list):
+        self.recorded_points = recorded_points
         
     #return point that was clicked on, if any
     def get_selected_point(self, px, py):
