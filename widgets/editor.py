@@ -78,7 +78,6 @@ class Editor(GridLayout):
     def open_visualizer_menu(self):
         self.visualizer_menu.data_chooser.path = "./recorded_data"
         self.visualizer_menu.data_chooser.selection = []
-        self.visualizer_menu.update(4499)
         self.visualizer_menu.open()
 
     #save path to json
