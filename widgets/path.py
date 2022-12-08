@@ -31,34 +31,30 @@ class Path(Image):
         self.angle_indicators_group = InstructionGroup()
         self.velocity_indicators_group = InstructionGroup()
         self.animation_group = InstructionGroup()
+        self.recording_animation_group = InstructionGroup()
         self.recording_line = Line()
         self.path_line = Line()
 
         #animation time (seconds)
         self.animation_time = -1
+        self.recording_animation_time = -1
         self.sample_func = sample_func
         
     #draw points and path line
     def draw_path(self):
         # start_time = time.time_ns() / 1000000
         #erase non-selected points, selected point, angle indicators
-        # self.canvas.remove(self.non_selected_points_group)
         self.non_selected_points_group.clear()
-        # self.canvas.remove(self.selected_points_group)
         self.selected_points_group.clear()
-        # self.canvas.remove(self.angle_indicators_group)
         self.angle_indicators_group.clear()
-        # self.canvas.remove(self.velocity_indicators_group)
         self.velocity_indicators_group.clear()
-        # self.canvas.remove(self.animation_group)
         self.animation_group.clear()
-        #if path_line instruction is present erase it
-        # if self.canvas.indexof(self.path_line) != -1:
-        #     self.canvas.remove(self.path_line)
+        self.recording_animation_group.clear()
 
         self.canvas.clear()
         self.field_image.size = self.size
         self.canvas.add(self.field_image)
+
         #if more that 1 point in path generate spline line and add it
         if len(self.key_points) > 1:
             pixel_list = []
@@ -136,6 +132,34 @@ class Path(Image):
         self.canvas.add(self.angle_indicators_group)
         self.canvas.add(self.animation_group)
 
+        #recording animation
+        if len(self.recorded_points) > 1:
+            if self.recording_animation_time <= self.recorded_points[-1][0] and self.recording_animation_time >= 0:
+                recorded_point = self.recorded_points[0]
+                for i in range(len(self.recorded_points) - 1):
+                    if self.recording_animation_time >= self.recorded_points[i][0] and self.recording_animation_time <= self.recorded_points[i + 1][0]:
+                        recorded_point = self.recorded_points[i]
+                        break
+                recorded_angle = recorded_point[3]
+                recorded_pixel_point = convert.meters_to_pixels((recorded_point[1], recorded_point[2]), self.size)
+                recorded_front = convert.meters_to_pixels(((self.robot_length / 2.0) * math.cos(recorded_angle) + recorded_point[1], (self.robot_length / 2.0) * math.sin(recorded_angle) + recorded_point[2]), self.size)
+                self.recording_animation_group.add(Color(0, 0.75, 0))
+                self.recording_animation_group.add(Line(width = 2, cap = "square", joint = "miter", points = [recorded_pixel_point[0], recorded_pixel_point[1], recorded_front[0], recorded_front[1]]))
+                recorded_corner_1_theta = math.atan2(self.robot_length / (self.robot_radius * 2), self.robot_length / (self.robot_radius * 2))
+                recorded_theta_1 = recorded_corner_1_theta + recorded_angle
+                recorded_theta_2 = math.pi - recorded_corner_1_theta + recorded_angle
+                recorded_theta_3 = math.pi + recorded_corner_1_theta + recorded_angle
+                recorded_theta_4 = 2 * math.pi - recorded_corner_1_theta + recorded_angle
+                recorded_corner_1 = convert.meters_to_pixels((self.robot_radius * math.cos(recorded_theta_1) + recorded_point[1], self.robot_radius * math.sin(recorded_theta_1) + recorded_point[2]), self.size)
+                recorded_corner_2 = convert.meters_to_pixels((self.robot_radius * math.cos(recorded_theta_2) + recorded_point[1], self.robot_radius * math.sin(recorded_theta_2) + recorded_point[2]), self.size)
+                recorded_corner_3 = convert.meters_to_pixels((self.robot_radius * math.cos(recorded_theta_3) + recorded_point[1], self.robot_radius * math.sin(recorded_theta_3) + recorded_point[2]), self.size)
+                recorded_corner_4 = convert.meters_to_pixels((self.robot_radius * math.cos(recorded_theta_4) + recorded_point[1], self.robot_radius * math.sin(recorded_theta_4) + recorded_point[2]), self.size)
+                self.recording_animation_group.add(Line(width = 2, cap = "square", joint = "miter", close = True, points = [recorded_corner_1[0], recorded_corner_1[1], recorded_corner_2[0], recorded_corner_2[1], recorded_corner_3[0], recorded_corner_3[1], recorded_corner_4[0], recorded_corner_4[1]]))
+                self.recording_animation_time += 1 / 60
+            if self.recording_animation_time > self.recorded_points[-1][0]:
+                self.recording_animation_time = 1000
+            self.canvas.add(self.recording_animation_group)
+
         #draw selected point
         if self.selected_point != None:
             pixel_pos = convert.meters_to_pixels((self.selected_point.x, self.selected_point.y), self.size)
@@ -155,6 +179,9 @@ class Path(Image):
 
     def set_animation(self, time: float):
         self.animation_time = time
+
+    def set_recording_animation(self):
+        self.recording_animation_time = 0
 
     def set_recording(self, recorded_points: list):
         self.recorded_points = recorded_points
