@@ -143,7 +143,13 @@ class Path(Image):
             self.selected_points_group.add(Ellipse(pos = (pixel_pos[0] - 7, pixel_pos[1] - 7), size = (14, 14)))
         self.canvas.add(self.selected_points_group)
 
-        
+        if len(self.recorded_points) > 0:
+            xy_list = [None for i in range(len(self.recorded_points) * 2)]
+            xy_list[::2] = [convert.meters_to_pixels_x(p[1], self.size) for p in self.recorded_points]
+            xy_list[1::2] = [convert.meters_to_pixels_y(p[2], self.size) for p in self.recorded_points]
+            self.recording_line = Line(width = 2, cap = "round", joint = "round", points = xy_list)
+            self.canvas.add(Color(0, 0.5, 0))
+            self.canvas.add(self.recording_line)
 
         # print(f"Draw: {time.time_ns() / 1000000 - start_time}")
 
