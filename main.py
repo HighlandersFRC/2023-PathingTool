@@ -1,5 +1,6 @@
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.config import Config
 from pathtool import PathTool
 
 class PathApp(App):
@@ -16,4 +17,5 @@ class PathApp(App):
         self.path_tool.editor.save_load.update()
 
 if __name__ == "__main__":
+    Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
     PathApp().run()
