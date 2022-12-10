@@ -220,6 +220,8 @@ class PathTool(BoxLayout):
     def get_sampled_points(self, include_times = False):
         sampled_points = []
         t = 0
+        if len(self.key_points) == 0:
+            return
         while t <= self.key_points[-1].time:
             if include_times:
                 point = self.spline_generator.sample(self.key_points, t)
@@ -232,6 +234,8 @@ class PathTool(BoxLayout):
 
     #get single sampled point by time
     def get_sampled_point(self, time: float, include_time = False):
+        if len(self.key_points) == 0:
+            return
         if include_time:
             point = self.spline_generator.sample(self.key_points, time)
             point.insert(0, time)

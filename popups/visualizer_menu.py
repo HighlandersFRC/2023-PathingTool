@@ -61,9 +61,10 @@ class VisualizerMenu(Popup):
         plt.legend()
         plt.tight_layout()
         optimal_data = self.sample_func(include_times = True)
-        plt.plot([row[0] for row in optimal_data], [row[1] for row in optimal_data], color = (0, 0, 1, 0.5), label = "Opt. X")
-        plt.plot([row[0] for row in optimal_data], [row[2] for row in optimal_data], color = (0, 1, 0, 0.5), label = "Opt. Y")
-        plt.plot([row[0] for row in optimal_data], [row[3] for row in optimal_data], color = (1, 0, 0, 0.5), label = "Opt. Theta")
+        if optimal_data != None:
+            plt.plot([row[0] for row in optimal_data], [row[1] for row in optimal_data], color = (0, 0, 1, 0.5), label = "Opt. X")
+            plt.plot([row[0] for row in optimal_data], [row[2] for row in optimal_data], color = (0, 1, 0, 0.5), label = "Opt. Y")
+            plt.plot([row[0] for row in optimal_data], [row[3] for row in optimal_data], color = (1, 0, 0, 0.5), label = "Opt. Theta")
         plt.show()
 
     def display_on_field(self, event):
