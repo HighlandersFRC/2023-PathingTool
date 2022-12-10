@@ -91,6 +91,10 @@ class PathTool(BoxLayout):
         if update_editor:
             self.editor.update_selected_point(self.selected_point)
             self.editor.update_path_name(self.path_name)
+            if len(self.key_points) > 0:
+                self.editor.update_time(self.key_points[-1].time)
+            else:
+                self.editor.update_time(0.0)
         self.path.update_selected_point(self.selected_point)
 
     #update key points and selected point

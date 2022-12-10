@@ -9,6 +9,7 @@ from widgets.sub_widgets.animation_controller import AnimationController
 from widgets.sub_widgets.velocity_editor import VelocityEditor
 from widgets.sub_widgets.angular_velocity_editor import AngularVelocityEditor
 from widgets.sub_widgets.extra_controls import ExtraControls
+from widgets.sub_widgets.info_bar import InfoBar
 from data_assets.point import Point
 
 from popups.save_load import SaveLoad
@@ -42,7 +43,7 @@ class Editor(GridLayout):
         self.angular_velocity_editor = AngularVelocityEditor(self.update_selected_point, angular_average_func)
         self.animation_controller = AnimationController(animation_func, recording_func)
         self.extra_controls = ExtraControls(average_all_func, self.open_visualizer_menu)
-        self.status_display = Label(text = "", markup = True, font_size = 24)
+        self.info_bar = InfoBar()
 
         #add sub-widgets
         self.add_widget(self.edit_time)
@@ -56,7 +57,7 @@ class Editor(GridLayout):
         self.add_widget(self.angular_velocity_editor)
         self.add_widget(self.animation_controller)
         self.add_widget(self.extra_controls)
-        self.add_widget(self.status_display)
+        self.add_widget(self.info_bar)
 
         #popups
         self.save_load = SaveLoad(save_func, load_func, upload_func, upload_all_func, download_func)
@@ -126,5 +127,7 @@ class Editor(GridLayout):
 
     #update displayed status message
     def update_status(self, text: str, color: tuple[float | int]):
-        self.status_display.text = text
-        self.status_display.color = color
+        self.info_bar.update_status(text, color)
+
+    def update_time(self, time: float):
+        self.info_bar.update_time(time)
