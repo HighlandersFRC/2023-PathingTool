@@ -6,7 +6,7 @@ class InfoBar(BoxLayout):
         super().__init__(orientation = "horizontal", **kwargs)
 
         self.status_label = Label(text = "", markup = True, font_size = 24)
-        self.time_label = Label(text = "[b]Total Time: 0.0[/b]", markup = True, font_size = 24, color = (27 / 255, 178 / 255, 181 / 255))
+        self.time_label = Label(text = "[b]Total Time: 0.0[/b]", markup = True, font_size = 24, color = (27 / 255, 178 / 255, 181 / 255), size_hint = (0.6, 1))
         self.add_widget(self.status_label)
         self.add_widget(self.time_label)
 

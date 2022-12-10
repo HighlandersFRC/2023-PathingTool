@@ -8,10 +8,12 @@ import csv
 from matplotlib import pyplot as plt
 
 class VisualizerMenu(Popup):
-    def __init__(self, display_func, **kwargs):
+    def __init__(self, display_func, clear_local_func, clear_rio_func, **kwargs):
         super().__init__(title = "Visualizer Menu", **kwargs)
 
         self.display_func = display_func
+        self.clear_local_func = clear_local_func
+        self.clear_rio_func = clear_rio_func
 
         self.layout = BoxLayout(orientation = "vertical")
         self.add_widget(self.layout)
@@ -24,10 +26,14 @@ class VisualizerMenu(Popup):
         self.graph_button = Button(text = "Graph", on_press = self.graph)
         self.display_on_field_button = Button(text = "Disp. on Field", on_press = self.display_on_field)
         self.update_button = Button(text = "Update", on_press = self.update)
+        self.clear_local_button = Button(text = "Clear Local Rec.", on_press = self.clear_local_recordings, background_color = (1, 0, 0, 1))
+        self.clear_rio_button = Button(text = "Clear Rio Rec.", on_press = self.clear_rio_recordings, background_color = (0.5, 0, 0, 1))
         self.cancel_button = Button(text = "Back", on_press = self.cancel)
         self.controls_layout.add_widget(self.graph_button)
         self.controls_layout.add_widget(self.display_on_field_button)
         self.controls_layout.add_widget(self.update_button)
+        self.controls_layout.add_widget(self.clear_local_button)
+        self.controls_layout.add_widget(self.clear_rio_button)
         self.controls_layout.add_widget(self.cancel_button)
 
     def on_open(self):
@@ -63,6 +69,14 @@ class VisualizerMenu(Popup):
             data = [[float(val) for val in row] for row in list(reader)]
         self.display_func(data)
         self.dismiss()
+
+    def clear_local_recordings(self, event):
+        self.clear_local_func()
+        self.data_chooser._update_files()
+        self.data_chooser.path = "./recorded_data"
+
+    def clear_rio_recordings(self, event):
+        self.clear_rio_func()
 
     def cancel(self, event):
         self.dismiss()

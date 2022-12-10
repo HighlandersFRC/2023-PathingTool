@@ -4,6 +4,7 @@ from . import convert
 import paramiko
 import scp
 import math
+import os
 
 from data_assets.point import Point
 from SplineGeneration import generateSplines
@@ -110,3 +111,29 @@ def load_path(file_path: str):
     except:
         print("Path was unable to be loaded")
         return [], 0.01, ""
+
+def clear_local_recordings():
+    try:
+        recordings = glob.glob("./recorded_data/*")
+        for r in recordings:
+            os.remove(r)
+        print("Cleared all local recordings")
+        return True
+    except:
+        print("Error clearing local recordings")
+        return False
+    
+def clear_rio_recordings(addr: str):
+    print("Clearing all recordings on the roborio...")
+    conns = get_connection(addr)
+    if conns == None:
+        print("Clearing roborio recordings failed")
+        return False
+    scp_cli = conns[0]
+    ssh_cli = conns[1]
+    sftp = ssh_cli.open_sftp()
+    remote_recordings = sftp.listdir("/home/lvuser/deploy/recordings")
+    for rr in remote_recordings:
+        sftp.remove(rr)
+    print("Clear all recordings on the roborio")
+    return True
