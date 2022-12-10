@@ -30,9 +30,14 @@ class VisualizerMenu(Popup):
         self.controls_layout.add_widget(self.update_button)
         self.controls_layout.add_widget(self.cancel_button)
 
+    def on_open(self):
+        self.data_chooser.path = "./recorded_data"
+
     def update(self, event):
         file_manager.download_recorded_data("10.44.99.2")
+        self.data_chooser.path = "./recorded_data"
         self.data_chooser._update_files()
+        self.data_chooser.path = "./recorded_data"
 
     def graph(self, event):
         if self.data_chooser.selection == []:
@@ -40,7 +45,6 @@ class VisualizerMenu(Popup):
         with open(self.data_chooser.selection[0], newline = "") as file:
             reader = csv.reader(file)
             data = [[float(val) for val in row] for row in list(reader)]
-        ti = list(range(len(data)))
         plt.plot([row[0] for row in data], [row[1] for row in data], color = "b", label = "X")
         plt.plot([row[0] for row in data], [row[2] for row in data], color = "g", label = "Y")
         plt.plot([row[0] for row in data], [row[3] for row in data], color = "r", label = "Theta")
