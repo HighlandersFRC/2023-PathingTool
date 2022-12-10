@@ -14,13 +14,11 @@ class AnimationController(BoxLayout):
 
         #create and add widgets
         self.run_full_button = Button(text = "Full", on_press = self.run_full)
-        self.time_input = TextInput(hint_text = "Time", input_filter = "float")
-        self.run_from_time_button = Button(text = "From Time", on_press = self.run_from_time)
+        self.run_both_button = Button(text = "Run Both", on_press = self.run_both)
         self.run_from_point_button = Button(text = "From Point", on_press = self.run_from_point)
         self.run_recording_button = Button(text = "Recording", on_press = self.run_recording)
         self.add_widget(self.run_full_button)
-        self.add_widget(self.time_input)
-        self.add_widget(self.run_from_time_button)
+        self.add_widget(self.run_both_button)
         self.add_widget(self.run_from_point_button)
         self.add_widget(self.run_recording_button)
 
@@ -28,11 +26,10 @@ class AnimationController(BoxLayout):
     def run_full(self, event):
         self.run_func(0.0)
 
-    #run animation starting at a time
-    def run_from_time(self, event):
-        if self.time_input.text == "":
-            return
-        self.run_func(float(self.time_input.text))
+    #run both ideal and recorded animation at same time
+    def run_both(self, event):
+        self.run_func(0.0)
+        self.recording_func()
 
     #run animation starting at the selected point
     def run_from_point(self, event):

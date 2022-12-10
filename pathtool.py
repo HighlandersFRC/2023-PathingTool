@@ -16,7 +16,7 @@ class PathTool(BoxLayout):
         super().__init__(orientation = "horizontal", **kwargs)
         #main widgets
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
-        self.editor = Editor(self.update_widgets, self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocity, self.average_angular_velocity, self.average_all, self.display_recording, self.run_recording, size_hint = (1, 0.25))
+        self.editor = Editor(self.update_widgets, self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocity, self.average_angular_velocity, self.average_all, self.display_recording, self.run_recording, self.clear_local_recordings, self.clear_rio_recordings, self.get_sampled_points, size_hint = (1, 0.25))
         self.path = Path(self.get_sampled_point, size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(self.update_path, size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
@@ -31,6 +31,8 @@ class PathTool(BoxLayout):
         self.sample_rate = 0.01
         #name of current path
         self.path_name = ""
+        #ip address of the roborio
+        self.rio_address = "10.44.99.2"
 
     #add widgets to main layout
     def set_layout(self):
@@ -91,6 +93,10 @@ class PathTool(BoxLayout):
         if update_editor:
             self.editor.update_selected_point(self.selected_point)
             self.editor.update_path_name(self.path_name)
+            if len(self.key_points) > 0:
+                self.editor.update_time(self.key_points[-1].time)
+            else:
+                self.editor.update_time(0.0)
         self.path.update_selected_point(self.selected_point)
 
     #update key points and selected point
@@ -214,6 +220,8 @@ class PathTool(BoxLayout):
     def get_sampled_points(self, include_times = False):
         sampled_points = []
         t = 0
+        if len(self.key_points) == 0:
+            return
         while t <= self.key_points[-1].time:
             if include_times:
                 point = self.spline_generator.sample(self.key_points, t)
@@ -226,6 +234,8 @@ class PathTool(BoxLayout):
 
     #get single sampled point by time
     def get_sampled_point(self, time: float, include_time = False):
+        if len(self.key_points) == 0:
+            return
         if include_time:
             point = self.spline_generator.sample(self.key_points, time)
             point.insert(0, time)
@@ -271,8 +281,7 @@ class PathTool(BoxLayout):
     #upload the current path
     def upload_path(self, file_path: str, folder_path: str, file_name: str, sample_rate: float):
         self.save_path(folder_path, file_name, sample_rate)
-        result = file_manager.upload("10.44.99.2", file_path)
-        #update status
+        result = file_manager.upload(self.rio_address, file_path)
         if result:
             self.editor.update_status("[b]Path Uploaded[/b]", (0.25, 1, 0.25, 1))
         else:
@@ -281,8 +290,7 @@ class PathTool(BoxLayout):
     #upload all paths
     def upload_all_paths(self, folder_path: str, file_name: str, sample_rate: float):
         self.save_path(folder_path, file_name, sample_rate)
-        result = file_manager.upload_all("10.44.99.2")
-        #update status
+        result = file_manager.upload_all(self.rio_address)
         if result:
             self.editor.update_status("[b]Uploaded All Paths[/b]", (0.25, 1, 0.25, 1))
         else:
@@ -290,9 +298,24 @@ class PathTool(BoxLayout):
 
     #download all paths
     def download_all_paths(self):
-        result = file_manager.download_all("10.44.99.2")
-        #update status
+        result = file_manager.download_all(self.rio_address)
         if result:
             self.editor.update_status("[b]All Paths Downloaded[/b]", (0.25, 1, 0.25, 1))
         else:
             self.editor.update_status("[b]Download All Failed[/b]", (1, 0.25, 0.25, 1))
+
+    #clear all local csv recordings
+    def clear_local_recordings(self):
+        result = file_manager.clear_local_recordings()
+        if result:
+            self.editor.update_status("[b]Local Recordings Cleared[/b]", (0.25, 1, 0.25, 1))
+        else:
+            self.editor.update_status("[b]Clear Local Rec. Failed[/b]", (1, 0.25, 0.25, 1))
+
+    #clear all csv recordings on the roborio
+    def clear_rio_recordings(self):
+        result = file_manager.clear_rio_recordings(self.rio_address)
+        if result:
+            self.editor.update_status("[b]Rio Recordings Cleared[/b]", (0.25, 1, 0.25, 1))
+        else:
+            self.editor.update_status("[b]Clear Rio Rec. Failed[/b]", (1, 0.25, 0.25, 1))
