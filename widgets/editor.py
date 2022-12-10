@@ -15,7 +15,7 @@ from popups.save_load import SaveLoad
 from popups.visualizer_menu import VisualizerMenu
 
 class Editor(GridLayout):
-    def __init__(self, update_func, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, linear_average_func, angular_average_func, average_all_func, display_func, **kwargs):
+    def __init__(self, update_func, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, linear_average_func, angular_average_func, average_all_func, display_func, recording_func, **kwargs):
         super().__init__(cols = 3, **kwargs)
         #selected key point
         self.selected_point = None
@@ -27,7 +27,6 @@ class Editor(GridLayout):
         #callback functions in pathtool
         self.delete_func = delete_func
         self.clear_func = clear_func
-        self.animation_func = animation_func
         self.update_func = update_func
         self.display_func = display_func
 
@@ -41,7 +40,7 @@ class Editor(GridLayout):
         self.save_delete = SaveDelete(self.delete_point, self.clear_points, self.save_path, self.load_path, self.upload_path)
         self.velocity_editor = VelocityEditor(self.update_selected_point, linear_average_func)
         self.angular_velocity_editor = AngularVelocityEditor(self.update_selected_point, angular_average_func)
-        self.animation_controller = AnimationController(self.run_animation)
+        self.animation_controller = AnimationController(animation_func, recording_func)
         self.extra_controls = ExtraControls(average_all_func, self.open_visualizer_menu)
         self.status_display = Label(text = "", markup = True, font_size = 24)
 
@@ -78,7 +77,6 @@ class Editor(GridLayout):
     def open_visualizer_menu(self):
         self.visualizer_menu.data_chooser.path = "./recorded_data"
         self.visualizer_menu.data_chooser.selection = []
-        self.visualizer_menu.update(4499)
         self.visualizer_menu.open()
 
     #save path to json
@@ -125,10 +123,6 @@ class Editor(GridLayout):
     #update name of path
     def update_path_name(self, name: str):
         self.path_name = name
-
-    #call run animation callback
-    def run_animation(self, time: float):
-        self.animation_func(time)
 
     #update displayed status message
     def update_status(self, text: str, color: tuple[float | int]):

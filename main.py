@@ -6,7 +6,7 @@ class PathApp(App):
     def build(self):
         #schedule execute callback
         Clock.schedule_interval(self.execute, 1.0  / 60.0)
-        self.title = "SnapCracklePop® - Highlanders FRC"
+        self.title = "2023 Path Tool - Highlanders FRC #4499"
         self.path_tool = PathTool()
         return self.path_tool
 
