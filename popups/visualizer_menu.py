@@ -8,12 +8,13 @@ import csv
 from matplotlib import pyplot as plt
 
 class VisualizerMenu(Popup):
-    def __init__(self, display_func, clear_local_func, clear_rio_func, **kwargs):
+    def __init__(self, display_func, sample_func, clear_local_func, clear_rio_func, **kwargs):
         super().__init__(title = "Visualizer Menu", **kwargs)
 
         self.display_func = display_func
         self.clear_local_func = clear_local_func
         self.clear_rio_func = clear_rio_func
+        self.sample_func = sample_func
 
         self.layout = BoxLayout(orientation = "vertical")
         self.add_widget(self.layout)
@@ -50,15 +51,19 @@ class VisualizerMenu(Popup):
             return
         with open(self.data_chooser.selection[0], newline = "") as file:
             reader = csv.reader(file)
-            data = [[float(val) for val in row] for row in list(reader)]
-        plt.plot([row[0] for row in data], [row[1] for row in data], color = "b", label = "X")
-        plt.plot([row[0] for row in data], [row[2] for row in data], color = "g", label = "Y")
-        plt.plot([row[0] for row in data], [row[3] for row in data], color = "r", label = "Theta")
+            recorded_data = [[float(val) for val in row] for row in list(reader)]
+        plt.plot([row[0] for row in recorded_data], [row[1] for row in recorded_data], color = (0, 0, 1, 1), label = "X")
+        plt.plot([row[0] for row in recorded_data], [row[2] for row in recorded_data], color = (0, 1, 0, 1), label = "Y")
+        plt.plot([row[0] for row in recorded_data], [row[3] for row in recorded_data], color = (1, 0, 0, 1), label = "Theta")
         plt.xlabel("Time")
         plt.title("X, Y, Theta vs Time")
         plt.grid(visible = True, which = "both")
         plt.legend()
         plt.tight_layout()
+        optimal_data = self.sample_func(include_times = True)
+        plt.plot([row[0] for row in optimal_data], [row[1] for row in optimal_data], color = (0, 0, 1, 0.5), label = "Opt. X")
+        plt.plot([row[0] for row in optimal_data], [row[2] for row in optimal_data], color = (0, 1, 0, 0.5), label = "Opt. Y")
+        plt.plot([row[0] for row in optimal_data], [row[3] for row in optimal_data], color = (1, 0, 0, 0.5), label = "Opt. Theta")
         plt.show()
 
     def display_on_field(self, event):

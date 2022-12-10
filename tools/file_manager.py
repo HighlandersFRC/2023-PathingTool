@@ -36,6 +36,7 @@ def upload_all(addr: str):
     for save in saves:
         scp_cli.put(save, remote_path = "/home/lvuser/deploy")
     print("Uploaded all save files")
+    scp_cli.close()
     return True
 
 def upload(addr: str, file_path: str):
@@ -46,6 +47,7 @@ def upload(addr: str, file_path: str):
     scp_cli = conns[0]
     scp_cli.put(file_path, remote_path = "/home/lvuser/deploy")
     print("Uploaded save successfully")
+    scp_cli.close()
     return True
 
 def download_all(addr: str):
@@ -63,6 +65,8 @@ def download_all(addr: str):
             scp_cli.get(remote_path = f"/home/lvuser/deploy/{rs}", local_path = "saves/")
             print(f"Downloaded {rs}")
     print("Downloaded all saves successfully")
+    scp_cli.close()
+    ssh_cli.close()
     return True
 
 def download_recorded_data(addr: str):
@@ -80,6 +84,8 @@ def download_recorded_data(addr: str):
             scp_cli.get(remote_path = f"/home/lvuser/deploy/recordings/{rr}", local_path = "recorded_data/")
             print(f"Downloaded {rr}")
     print("Recorded data downloaded successfully")
+    scp_cli.close()
+    ssh_cli.close()
 
 def save_path(key_points: list[Point], sampled_points: list, sample_rate: float, folder_path: str, file_name: str):
     data = {}
@@ -134,6 +140,8 @@ def clear_rio_recordings(addr: str):
     sftp = ssh_cli.open_sftp()
     remote_recordings = sftp.listdir("/home/lvuser/deploy/recordings")
     for rr in remote_recordings:
-        sftp.remove(rr)
-    print("Clear all recordings on the roborio")
+        sftp.remove(f"/home/lvuser/deploy/recordings/{rr}")
+    print("Cleared all recordings on the roborio")
+    scp_cli.close()
+    ssh_cli.close()
     return True
