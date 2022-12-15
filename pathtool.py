@@ -10,6 +10,7 @@ from tools import file_manager
 from popups.save_load import SaveLoad
 from SplineGeneration.generateSplines import SplineGenerator
 import math
+import matplotlib.pyplot as plt
 
 class PathTool(BoxLayout):
     def __init__(self, **kwargs):
@@ -35,7 +36,7 @@ class PathTool(BoxLayout):
         self.rio_address = "10.44.99.2"
 
         #physical limitations of the robot
-        self.MAX_LINEAR_ACCEL = 0.5
+        self.MAX_LINEAR_ACCEL = 9.8
         self.MAX_LINEAR_VEL = 5
         self.MAX_ANGULAR_ACCEL = 1.5 * 2 * math.pi
         self.MAX_ANGULAR_VEL = 1.5 * 2 * math.pi
@@ -251,13 +252,22 @@ class PathTool(BoxLayout):
     
     #add colors indicating when physical limitations are exceeded by the path
     def add_color_indicators(self, points: list[list]):
+        lin_vel_list = []
+        lin_accel_list = []
         for p in points:
             lin_vel = self.spline_generator.sample_lin_vel(self.key_points, p[0])
-            if lin_vel > self.MAX_LINEAR_VEL:
+            lin_accel = self.spline_generator.sample_lin_accel(self.key_points, p[0])
+            lin_vel_list.append(lin_vel)
+            lin_accel_list.append(lin_accel)
+            if lin_vel > self.MAX_LINEAR_VEL and lin_accel > self.MAX_LINEAR_ACCEL:
                 p.append((1, 0, 0))
+            elif lin_vel > self.MAX_LINEAR_VEL or lin_accel > self.MAX_LINEAR_ACCEL:
+                p.append(((0.5, 0, 0)))
             else:
                 p.append((0, 0, 0))
-        print(points)
+        # plt.plot([p[0] for p in points], lin_accel_list, color = (0, 1, 0, 1))
+        # plt.plot([p[0] for p in points], lin_vel_list, color = (1, 0, 0, 1))
+        # plt.show()
         return points
 
     #start path animation from a time

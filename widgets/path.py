@@ -1,7 +1,6 @@
 from kivy.uix.image import Image
 from kivy.graphics import *
 
-from data_assets.point import Point
 from tools import convert
 from SplineGeneration import generateSplines
 import math
@@ -34,6 +33,7 @@ class Path(Image):
         self.recording_animation_group = InstructionGroup()
         self.recording_line = Line()
         self.path_line = Line()
+        self.path_line_group = InstructionGroup()
 
         #animation time (seconds)
         self.animation_time = -1
@@ -50,6 +50,7 @@ class Path(Image):
         self.velocity_indicators_group.clear()
         self.animation_group.clear()
         self.recording_animation_group.clear()
+        self.path_line_group.clear()
 
         self.canvas.clear()
         self.field_image.size = self.size
@@ -59,11 +60,16 @@ class Path(Image):
         if len(self.key_points) > 1:
             pixel_list = []
             for p in self.sampled_points:
-                pixel_list.append(convert.meters_to_pixels_x(p[1], self.size))
-                pixel_list.append(convert.meters_to_pixels_y(p[2], self.size))
-            self.path_line = Line(points = pixel_list, width = 2, cap = "round", joint = "round")
-            self.canvas.add(Color(0, 0, 0))
-            self.canvas.add(self.path_line)
+                px = convert.meters_to_pixels_x(p[1], self.size)
+                py = convert.meters_to_pixels_y(p[2], self.size)
+                # pixel_list.append(px)
+                # pixel_list.append(py)
+                self.path_line_group.add(Color(p[4][0], p[4][1], p[4][2]))
+                self.path_line_group.add(Point(points = [px, py], pointsize = 3))
+            # self.path_line = Line(points = pixel_list, width = 2, cap = "round", joint = "round")
+            # self.canvas.add(Color(0, 0, 0))
+            # self.canvas.add(self.path_line)
+            self.canvas.add(self.path_line_group)
 
         #draw non-selected points and angle indicators
         for p in self.key_points:
@@ -199,11 +205,11 @@ class Path(Image):
         return None
 
     #update points list
-    def update(self, points: list[Point], sampled_points: list, sample_rate: float):
+    def update(self, points: list, sampled_points: list, sample_rate: float):
         self.key_points = points
         self.sampled_points = sampled_points
         self.sample_rate = sample_rate
 
     #update selected point
-    def update_selected_point(self, point: Point):
+    def update_selected_point(self, point):
         self.selected_point = point

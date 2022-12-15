@@ -75,7 +75,18 @@ class SplineGenerator:
         y_vel_coefficients = np.flip(self.yVelCoefficients[index * 6: index * 6 + 6])
         x_vel_coefficients = np.flip(self.xVelCoefficients[index * 6: index * 6 + 6])
         lin_vel_coefficients = np.polyadd(np.polymul(x_vel_coefficients, x_vel_coefficients), np.polymul(y_vel_coefficients, y_vel_coefficients))
-        return math.sqrt(float(np.polyval(lin_vel_coefficients, time)))
+        return math.sqrt(abs(float(np.polyval(lin_vel_coefficients, time))))
+
+    def sample_lin_accel(self, key_points: list, time: float):
+        index = 0
+        for i in range(len(key_points) - 1):
+            if time >= key_points[i].time and time <= key_points[i + 1].time:
+                index = i
+                break
+        y_accel_coefficients = np.flip(self.yAccelCoefficients[index * 6: index * 6 + 6])
+        x_accel_coefficients = np.flip(self.xAccelCoefficients[index * 6: index * 6 + 6])
+        lin_accel_coefficients = np.polyadd(np.polymul(x_accel_coefficients, x_accel_coefficients), np.polymul(y_accel_coefficients, y_accel_coefficients))
+        return math.sqrt(abs(float(np.polyval(lin_accel_coefficients, time))))
 
     def generateSplineCurves(self, points):
         overallSysEqArray = []
