@@ -10,6 +10,14 @@ class SplineGenerator:
         self.yCoefficients = []
         self.thetaCoefficients = []
 
+        self.xVelCoefficients = []
+        self.yVelCoefficients = []
+        self.thetaVelCoefficients = []
+
+        self.xAccelCoefficients = []
+        self.yAccelCoefficients = []
+        self.thetaAccelCoefficients = []
+
     def sample(self, pointList, sample_time):
         pointTimeList = []
 
@@ -47,6 +55,27 @@ class SplineGenerator:
 
         # show()
         return [sampledX, sampledY, sampledTheta]
+
+    # def get_exceeded_max_intervals(self, key_points, max_lin_vel, max_lin_accel, max_ang_vel, max_ang_accel):
+    #     lin_vel_coefficients = np.polyadd(np.polymul(self.xVelCoefficients, self.xVelCoefficients), np.polymul(self.yVelCoefficients, self.yVelCoefficients))
+    #     lin_accel_coefficients = np.polyadd(np.polymul(self.xAccelCoefficients, self.xAccelCoefficients), np.polymul(self.yAccelCoefficients, self.yAccelCoefficients))
+    #     lin_vel_coefficients[0] -= max_lin_vel ** 2
+    #     lin_accel_coefficients[0] -= max_lin_accel ** 2
+    #     lin_vel_roots = list(np.roots(lin_vel_coefficients))
+    #     lin_accel_roots = list(np.roots(lin_accel_coefficients))
+    #     lin_vel_roots = [float(r) for r in lin_vel_roots if np.isreal(r)]
+    #     lin_accel_roots = [float(r) for r in lin_accel_roots if np.isreal(r)]
+
+    def sample_lin_vel(self, key_points: list, time: float):
+        index = 0
+        for i in range(len(key_points) - 1):
+            if time >= key_points[i].time and time <= key_points[i + 1].time:
+                index = i
+                break
+        y_vel_coefficients = np.flip(self.yVelCoefficients[index * 6: index * 6 + 6])
+        x_vel_coefficients = np.flip(self.xVelCoefficients[index * 6: index * 6 + 6])
+        lin_vel_coefficients = np.polyadd(np.polymul(x_vel_coefficients, x_vel_coefficients), np.polymul(y_vel_coefficients, y_vel_coefficients))
+        return math.sqrt(float(np.polyval(lin_vel_coefficients, time)))
 
     def generateSplineCurves(self, points):
         overallSysEqArray = []
@@ -151,6 +180,31 @@ class SplineGenerator:
         self.xCoefficients = xCoefficients
         self.yCoefficients = yCoefficients
         self.thetaCoefficients = thetaCoefficients
+
+        xCoefficients = np.flip(xCoefficients)
+        yCoefficients = np.flip(yCoefficients)
+        thetaCoefficients = np.flip(thetaCoefficients)
+
+        self.xVelCoefficients = np.polyder(xCoefficients)
+        self.yVelCoefficients = np.polyder(yCoefficients)
+        self.thetaVelCoefficients = np.polyder(thetaCoefficients)
+
+        self.xAccelCoefficients = np.polyder(self.xVelCoefficients)
+        self.yAccelCoefficients = np.polyder(self.yVelCoefficients)
+        self.thetaAccelCoefficients = np.polyder(self.thetaVelCoefficients)
+
+        self.xVelCoefficients = np.flip(self.xVelCoefficients)
+        self.yVelCoefficients = np.flip(self.yVelCoefficients)
+        self.thetaVelCoefficients = np.flip(self.thetaVelCoefficients)
+
+        self.xAccelCoefficients = np.flip(self.xAccelCoefficients)
+        self.yAccelCoefficients = np.flip(self.yAccelCoefficients)
+        self.thetaAccelCoefficients = np.flip(self.thetaAccelCoefficients)
+
+        # plt.plot([i / 100 for i in range(100)], [float(np.polyval(np.flip(self.xCoefficients), i / 100)) for i in range(100)], color = (1, 0, 0, 1))
+        # plt.plot([i / 100 for i in range(100)], [float(np.polyval(np.flip(self.xVelCoefficients), i / 100)) for i in range(100)], color = (0, 1, 0, 1))
+        # plt.plot([i / 100 for i in range(100)], [float(np.polyval(np.flip(self.xAccelCoefficients), i / 100)) for i in range(100)], color = (0, 0, 1, 1))
+        # plt.show()
 
     # # list is as follows [sample_time, x, y, theta, xVel, yVel, thetaVel, xAccel, yAccel, thetaAccel]
     # pointList = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, math.pi/4, 3, 1.5, math.pi/4, 0, 0, 0], [2, 6, 3, math.pi/2, 3.5, -0.75, 0, 0, 0, 0], [3, 8, 0, (3/4) * math.pi, 2, 4.5, 0, 0, 0, 0], [4, 10, 12, (3/4) * math.pi, 2, 5, 0, 0, 0, 0], [5, 10, 10, (3/4) * math.pi, 0, 0, 0, 0, 0, 0]]

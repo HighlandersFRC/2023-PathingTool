@@ -91,7 +91,7 @@ class PathTool(BoxLayout):
         #if multiple points update equations
         if len(self.key_points) > 1:
             self.spline_generator.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), p.angular_velocity, 0.0, 0.0, 0.0] for p in self.key_points])
-            self.path.update(self.key_points, self.get_sampled_points(colors = True), self.sample_rate)
+            self.path.update(self.key_points, self.get_sampled_points(colors = True, times = True), self.sample_rate)
         else:
             self.path.update(self.key_points, [], self.sample_rate)
         self.points_menu.update(self.key_points, self.selected_point)
@@ -230,12 +230,12 @@ class PathTool(BoxLayout):
             return
         while t <= self.key_points[-1].time:
             point = self.spline_generator.sample(self.key_points, t)
-            if times:
+            if times or colors:
                 point.insert(0, t)
             sampled_points.append(point)
             t += self.sample_rate
         if colors:
-            sampled_points = self.add_color_indicators(sampled_points, times)
+            sampled_points = self.add_color_indicators(sampled_points)
         return sampled_points
 
     #get single sampled point by time
@@ -250,27 +250,14 @@ class PathTool(BoxLayout):
             return self.spline_generator.sample(self.key_points, time)
     
     #add colors indicating when physical limitations are exceeded by the path
-    def add_color_indicators(self, points: list[list], times_included: bool):
-        offset = 0
-        if times_included:
-            offset = 1
-        for i in range(len(points) - 2):
-            lin_vel1 = convert.get_dist(points[i][0 + offset], points[i][1 + offset], points[i + 1][0 + offset], points[i + 1][1 + offset]) / self.sample_rate
-            ang_vel1 = (points[i + 1][2 + offset] - points[i][2 + offset]) / self.sample_rate
-            lin_vel2 = convert.get_dist(points[i + 1][0 + offset], points[i + 1][1 + offset], points[i + 2][0 + offset], points[i + 2][1 + offset]) / self.sample_rate
-            ang_vel2 = (points[i + 2][2 + offset] - points[i + 1][2 + offset]) / self.sample_rate
-            lin_accel = (lin_vel2 - lin_vel1) / self.sample_rate
-            ang_accel = (ang_vel2 - ang_vel1) / self.sample_rate
-            color = [0, 0, 0]
-            if lin_vel1 > self.MAX_LINEAR_VEL:
-                color = convert.sum_lists(color, [0, 0.25, 0])
-            if lin_accel > self.MAX_LINEAR_ACCEL:
-                color = convert.sum_lists(color, [0, 0, 0.25])
-            if ang_vel1 > self.MAX_ANGULAR_VEL:
-                color = convert.sum_lists(color, [0.25, 0, 0])
-            if ang_vel1 > self.MAX_ANGULAR_ACCEL:
-                color = convert.sum_lists(color, [0.25, 0, 0])
-            points[i].append(color)
+    def add_color_indicators(self, points: list[list]):
+        for p in points:
+            lin_vel = self.spline_generator.sample_lin_vel(self.key_points, p[0])
+            if lin_vel > self.MAX_LINEAR_VEL:
+                p.append((1, 0, 0))
+            else:
+                p.append((0, 0, 0))
+        print(points)
         return points
 
     #start path animation from a time
