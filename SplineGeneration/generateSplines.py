@@ -135,6 +135,16 @@ class SplineGenerator:
 
         # print("X COEF:", xCoefficients)
 
+        
+        # # define the time interval
+        # time_interval = np.linspace(0, 1, num=50)
+
+        # # calculate the x velocities
+        # x_velocities = np.polyval(self.xCoefficients[1:], time_interval)
+
+        # # print the results
+        # print("X velocities: ", x_velocities)
+
         # sampledPoints = samplePoints([xCoefficients, yCoefficients, thetaCoefficients], points, 50)
 
         # return sampledPoints
