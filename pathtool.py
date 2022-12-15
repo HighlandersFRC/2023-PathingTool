@@ -236,7 +236,6 @@ class PathTool(BoxLayout):
             t += self.sample_rate
         if colors:
             sampled_points = self.add_color_indicators(sampled_points, times)
-        print(sampled_points)
         return sampled_points
 
     #get single sampled point by time

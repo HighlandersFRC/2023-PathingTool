@@ -30,8 +30,6 @@ def get_robot_radius(robot_width: float, robot_height: float):
 
 def sum_lists(l1: list[float], l2: list[float]):
     ret = []
-    print(f"l1: {l1} l2: {l2}")
     for i in range(min(len(l1), len(l2))):
-        print(i)
         ret.append(l1[i] + l2[i])
     return ret

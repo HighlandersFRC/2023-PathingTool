@@ -11,20 +11,14 @@ class SplineGenerator:
         self.thetaCoefficients = []
 
     def sample(self, pointList, sample_time):
-        # start_time = time.time()
         pointTimeList = []
 
         for i in range(0, len(pointList)):
             pointTimeList.append(pointList[i].time)
-
-        # print("TIMES: ", pointTimeList)
-
-        # xEquations = equations[0]
-        # yEquations = equations[1]
-        # thetaEquations = equations[2]
+        
         index = 0
         for j in range(0, len(pointTimeList) - 1):
-            if(sample_time >= pointTimeList[j] and sample_time <= pointTimeList[j+1]):
+            if(sample_time >= pointTimeList[j] and sample_time <= pointTimeList[j + 1]):
                 index = j
                 break
 
@@ -35,11 +29,6 @@ class SplineGenerator:
         sampledX = currentXEquation[0] + (currentXEquation[1] * sample_time) + (currentXEquation[2] * (sample_time ** 2)) + (currentXEquation[3] * (sample_time ** 3)) + (currentXEquation[4] * (sample_time ** 4)) + (currentXEquation[5] * (sample_time ** 5))
         sampledY = currentYEquation[0] + (currentYEquation[1] * sample_time) + (currentYEquation[2] * (sample_time ** 2)) + (currentYEquation[3] * (sample_time ** 3)) + (currentYEquation[4] * (sample_time ** 4)) + (currentYEquation[5] * (sample_time ** 5))
         sampledTheta = currentThetaEquation[0] + (currentThetaEquation[1] * sample_time) + (currentThetaEquation[2] * (sample_time ** 2)) + (currentThetaEquation[3] * (sample_time ** 3)) + (currentThetaEquation[4] * (sample_time ** 4)) + (currentThetaEquation[5] * (sample_time ** 5))
-
-        # print("TIMES: ", sampledTimes)
-        # print("X: ", sampledXPoints)
-        # print("Y: ", sampledYPoints)
-        # print("Theta: ", sampledThetaPoints)
 
         # # plot(sampledXPoints, sampledYPoints)
         # print(len(sampledXPoints))
@@ -57,7 +46,6 @@ class SplineGenerator:
         # print("XVEL: ", sampledXVelocities)
 
         # show()
-        # print(f"Sample: {time.time() - start_time}")
         return [sampledX, sampledY, sampledTheta]
 
     def generateSplineCurves(self, points):
