@@ -86,6 +86,7 @@ class SplineGenerator:
         y_accel_coefficients = np.flip(self.yAccelCoefficients[index * 6: index * 6 + 6])
         x_accel_coefficients = np.flip(self.xAccelCoefficients[index * 6: index * 6 + 6])
         lin_accel_coefficients = np.polyadd(np.polymul(x_accel_coefficients, x_accel_coefficients), np.polymul(y_accel_coefficients, y_accel_coefficients))
+        # print(f"Lin Accel: {math.sqrt(abs(float(np.polyval(lin_accel_coefficients, time))))}")
         return math.sqrt(abs(float(np.polyval(lin_accel_coefficients, time))))
 
     def generateSplineCurves(self, points):
@@ -196,21 +197,11 @@ class SplineGenerator:
         yCoefficients = np.flip(yCoefficients)
         thetaCoefficients = np.flip(thetaCoefficients)
 
-        self.xVelCoefficients = np.polyder(xCoefficients)
-        self.yVelCoefficients = np.polyder(yCoefficients)
-        self.thetaVelCoefficients = np.polyder(thetaCoefficients)
+        xVelCoefficients = []
 
-        self.xAccelCoefficients = np.polyder(self.xVelCoefficients)
-        self.yAccelCoefficients = np.polyder(self.yVelCoefficients)
-        self.thetaAccelCoefficients = np.polyder(self.thetaVelCoefficients)
-
-        self.xVelCoefficients = np.flip(self.xVelCoefficients)
-        self.yVelCoefficients = np.flip(self.yVelCoefficients)
-        self.thetaVelCoefficients = np.flip(self.thetaVelCoefficients)
-
-        self.xAccelCoefficients = np.flip(self.xAccelCoefficients)
-        self.yAccelCoefficients = np.flip(self.yAccelCoefficients)
-        self.thetaAccelCoefficients = np.flip(self.thetaAccelCoefficients)
+        xEquations = [xCoefficients[6 * i : 6 * (i + 1)] for i in range(len(xCoefficients) / 6 + 1)]
+        for e in xEquations:
+            pass
 
         # plt.plot([i / 100 for i in range(100)], [float(np.polyval(np.flip(self.xCoefficients), i / 100)) for i in range(100)], color = (1, 0, 0, 1))
         # plt.plot([i / 100 for i in range(100)], [float(np.polyval(np.flip(self.xVelCoefficients), i / 100)) for i in range(100)], color = (0, 1, 0, 1))

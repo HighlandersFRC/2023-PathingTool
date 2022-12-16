@@ -59,16 +59,18 @@ class Path(Image):
         #if more that 1 point in path generate spline line and add it
         if len(self.key_points) > 1:
             pixel_list = []
-            for p in self.sampled_points:
+            color = self.sampled_points[0][4]
+            for i in range(len(self.sampled_points)):
+                p = self.sampled_points[i]
                 px = convert.meters_to_pixels_x(p[1], self.size)
                 py = convert.meters_to_pixels_y(p[2], self.size)
-                # pixel_list.append(px)
-                # pixel_list.append(py)
-                self.path_line_group.add(Color(p[4][0], p[4][1], p[4][2]))
-                self.path_line_group.add(Point(points = [px, py], pointsize = 3))
-            # self.path_line = Line(points = pixel_list, width = 2, cap = "round", joint = "round")
-            # self.canvas.add(Color(0, 0, 0))
-            # self.canvas.add(self.path_line)
+                pixel_list.append(px)
+                pixel_list.append(py)
+                if p[4] != color or i == len(self.sampled_points) - 1:
+                    self.path_line_group.add(Color(p[4][0], p[4][1], p[4][2]))
+                    self.path_line_group.add(Line(points = pixel_list, width = 2, cap = "round", joint = "round"))
+                    color = p[4]
+                    pixel_list = []
             self.canvas.add(self.path_line_group)
 
         #draw non-selected points and angle indicators
