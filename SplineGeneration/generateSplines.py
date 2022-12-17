@@ -6,65 +6,31 @@ import time
 
 class SplineGenerator:
     def __init__(self):
-        self.xCoefficients = []
-        self.yCoefficients = []
-        self.thetaCoefficients = []
+        self.xEquations = []
+        self.yEquations = []
+        self.thetaEquations = []
 
-        self.xVelCoefficients = []
-        self.yVelCoefficients = []
-        self.thetaVelCoefficients = []
+        self.xVelEquations = []
+        self.yVelEquations = []
+        self.thetaVelEquations = []
 
-        self.xAccelCoefficients = []
-        self.yAccelCoefficients = []
-        self.thetaAccelCoefficients = []
+        self.xAccelEquations = []
+        self.yAccelEquations = []
+        self.thetaAccelEquations = []
 
-    def sample(self, pointList, sample_time):
-        pointTimeList = []
-
-        for i in range(0, len(pointList)):
-            pointTimeList.append(pointList[i].time)
-        
+    def sample_pos(self, key_points: list, time: float):
         index = 0
-        for j in range(0, len(pointTimeList) - 1):
-            if(sample_time >= pointTimeList[j] and sample_time <= pointTimeList[j + 1]):
-                index = j
+        for i in range(len(key_points) - 1):
+            if time >= key_points[i].time and time <= key_points[i + 1].time:
+                index = i
                 break
-
-        currentXEquation = self.xCoefficients[index * 6: (index * 6) + 6]
-        currentYEquation = self.yCoefficients[index * 6: (index * 6) + 6]
-        currentThetaEquation = self.thetaCoefficients[index * 6: (index * 6) + 6]
-
-        sampledX = currentXEquation[0] + (currentXEquation[1] * sample_time) + (currentXEquation[2] * (sample_time ** 2)) + (currentXEquation[3] * (sample_time ** 3)) + (currentXEquation[4] * (sample_time ** 4)) + (currentXEquation[5] * (sample_time ** 5))
-        sampledY = currentYEquation[0] + (currentYEquation[1] * sample_time) + (currentYEquation[2] * (sample_time ** 2)) + (currentYEquation[3] * (sample_time ** 3)) + (currentYEquation[4] * (sample_time ** 4)) + (currentYEquation[5] * (sample_time ** 5))
-        sampledTheta = currentThetaEquation[0] + (currentThetaEquation[1] * sample_time) + (currentThetaEquation[2] * (sample_time ** 2)) + (currentThetaEquation[3] * (sample_time ** 3)) + (currentThetaEquation[4] * (sample_time ** 4)) + (currentThetaEquation[5] * (sample_time ** 5))
-
-        # # plot(sampledXPoints, sampledYPoints)
-        # print(len(sampledXPoints))
-        # print(len(sampledYPoints))
-        # print(len(sampledXVelocities))
-        # print(len(sampledYVelocities))
-
-        # totalPoints = []
-
-        # for x, y in zip(sampledXPoints, sampledYPoints):
-        #     totalPoints.append([x, y])
-
-        # print("TOTAL POINTS: ", totalPoints)
-
-        # print("XVEL: ", sampledXVelocities)
-
-        # show()
-        return [sampledX, sampledY, sampledTheta]
-
-    # def get_exceeded_max_intervals(self, key_points, max_lin_vel, max_lin_accel, max_ang_vel, max_ang_accel):
-    #     lin_vel_coefficients = np.polyadd(np.polymul(self.xVelCoefficients, self.xVelCoefficients), np.polymul(self.yVelCoefficients, self.yVelCoefficients))
-    #     lin_accel_coefficients = np.polyadd(np.polymul(self.xAccelCoefficients, self.xAccelCoefficients), np.polymul(self.yAccelCoefficients, self.yAccelCoefficients))
-    #     lin_vel_coefficients[0] -= max_lin_vel ** 2
-    #     lin_accel_coefficients[0] -= max_lin_accel ** 2
-    #     lin_vel_roots = list(np.roots(lin_vel_coefficients))
-    #     lin_accel_roots = list(np.roots(lin_accel_coefficients))
-    #     lin_vel_roots = [float(r) for r in lin_vel_roots if np.isreal(r)]
-    #     lin_accel_roots = [float(r) for r in lin_accel_roots if np.isreal(r)]
+        xEquation = self.xEquations[index]
+        yEquation = self.yEquations[index]
+        thetaEquation = self.thetaEquations[index]
+        x = float(np.polyval(xEquation, time))
+        y = float(np.polyval(yEquation, time))
+        theta = float(np.polyval(thetaEquation, time))
+        return [x, y, theta]
 
     def sample_lin_vel(self, key_points: list, time: float):
         index = 0
@@ -72,10 +38,35 @@ class SplineGenerator:
             if time >= key_points[i].time and time <= key_points[i + 1].time:
                 index = i
                 break
-        y_vel_coefficients = np.flip(self.yVelCoefficients[index * 6: index * 6 + 6])
-        x_vel_coefficients = np.flip(self.xVelCoefficients[index * 6: index * 6 + 6])
-        lin_vel_coefficients = np.polyadd(np.polymul(x_vel_coefficients, x_vel_coefficients), np.polymul(y_vel_coefficients, y_vel_coefficients))
-        return math.sqrt(abs(float(np.polyval(lin_vel_coefficients, time))))
+        xEquation = self.xEquations[index]
+        xVelEquation = self.xVelEquations[index]
+        yEquation = self.yEquations[index]
+        yVelEquation = self.yVelEquations[index]
+        x = float(np.polyval(xEquation, time))
+        y = float(np.polyval(yEquation, time))
+        vx = float(np.polyval(xVelEquation, time))
+        vy = float(np.polyval(yVelEquation, time))
+        return (x * vx + y * vy) / math.sqrt(x ** 2 + y ** 2)
+
+    def sample_raw_linear_info(self, key_points: list, time: float):
+        index = 0
+        for i in range(len(key_points) - 1):
+            if time >= key_points[i].time and time <= key_points[i + 1].time:
+                index = i
+                break
+        xEquation = self.xEquations[index]
+        xVelEquation = self.xVelEquations[index]
+        xAccelEquation = self.xAccelEquations[index]
+        yEquation = self.yEquations[index]
+        yVelEquation = self.yVelEquations[index]
+        yAccelEquation = self.yAccelEquations[index]
+        x = float(np.polyval(xEquation, time))
+        y = float(np.polyval(yEquation, time))
+        vx = float(np.polyval(xVelEquation, time))
+        vy = float(np.polyval(yVelEquation, time))
+        ax = float(np.polyval(xAccelEquation, time))
+        ay = float(np.polyval(yAccelEquation, time))
+        return [x, y, vx, vy, ax, ay]
 
     def sample_lin_accel(self, key_points: list, time: float):
         index = 0
@@ -83,29 +74,34 @@ class SplineGenerator:
             if time >= key_points[i].time and time <= key_points[i + 1].time:
                 index = i
                 break
-        y_accel_coefficients = np.flip(self.yAccelCoefficients[index * 6: index * 6 + 6])
-        x_accel_coefficients = np.flip(self.xAccelCoefficients[index * 6: index * 6 + 6])
-        lin_accel_coefficients = np.polyadd(np.polymul(x_accel_coefficients, x_accel_coefficients), np.polymul(y_accel_coefficients, y_accel_coefficients))
-        # print(f"Lin Accel: {math.sqrt(abs(float(np.polyval(lin_accel_coefficients, time))))}")
-        return math.sqrt(abs(float(np.polyval(lin_accel_coefficients, time))))
+        xEquation = self.xEquations[index]
+        xVelEquation = self.xVelEquations[index]
+        xAccelEquation = self.xAccelEquations[index]
+        yEquation = self.yEquations[index]
+        yVelEquation = self.yVelEquations[index]
+        yAccelEquation = self.yAccelEquations[index]
+        x = float(np.polyval(xEquation, time))
+        y = float(np.polyval(yEquation, time))
+        vx = float(np.polyval(xVelEquation, time))
+        vy = float(np.polyval(yVelEquation, time))
+        ax = float(np.polyval(xAccelEquation, time))
+        ay = float(np.polyval(yAccelEquation, time))
+        return (x ** 3 * ax + x ** 2 * vy + x ** 2 * y * ay + y ** 2 * x * ax - 2 * x * y * vx * vy + y ** 2 * vx + y ** 3 * ay) / ((x ** 2 + y ** 2) * math.sqrt(x ** 2 + y ** 2))
 
     def generateSplineCurves(self, points):
         overallSysEqArray = []
         xArray = []
         yArray = []
         thetaArray = []
-        overallOutputArray = []
 
         size = (len(points) - 1) * 6
-        # print(size)
-        # print(overallSysEqArray)
+
         for i in range(len(points) - 1):
             currentPoint = points[i]
             nextPoint = points[i+1]
             
             startPad = [0 for j in range(0, i * 6)]
 
-            # if(i == len(points) - 2):
             firstPointEq = startPad + [1, currentPoint[0], currentPoint[0] ** 2, currentPoint[0] ** 3, currentPoint[0] ** 4, currentPoint[0] ** 5]
             secondPointEq = startPad + [1, nextPoint[0], nextPoint[0] ** 2, nextPoint[0] ** 3, nextPoint[0] ** 4, nextPoint[0] ** 5]
             firstVelEq = startPad + [0, 1,  2 * currentPoint[0], 3 * (currentPoint[0] ** 2), 4 * (currentPoint[0] ** 3), 5 * (currentPoint[0] ** 4)]
@@ -148,20 +144,6 @@ class SplineGenerator:
             thetaArray.append(currentPoint[9])
             thetaArray.append(nextPoint[9])
 
-            # if(i <= len(points) - 3):
-            #     snapEndPad = [0 for j in range(0, size - len(secondAccelEq))]
-            #     overallSysEqArray.append(secondAccelEq + snapEndPad)
-            #     # print("SNAP: ", len(secondAccelEq + snapEndPad))
-            #     print("SNAP: ", secondAccelEq + snapEndPad)
-            #     xArray.append(0)
-            #     yArray.append(0)
-            #     thetaArray.append(0)
-
-        # print(len(overallSysEqArray))
-        # print(overallSysEqArray)
-        # print("XMATRIX: ", xArray)
-        # print("Y LENGTH: ", len(yArray))
-
         overallSysEqArray = np.array(overallSysEqArray)
 
         xMatrix = np.array(xArray)
@@ -174,41 +156,32 @@ class SplineGenerator:
         yCoefficients = np.matmul(M, yMatrix)
         thetaCoefficients = np.matmul(M, thetaMatrix)
 
-        # print("X COEF:", xCoefficients)
+        self.xVelEquations = []
+        self.yVelEquations = []
+        self.thetaVelEquations = []
 
-        
-        # # define the time interval
-        # time_interval = np.linspace(0, 1, num=50)
+        self.xEquations = [list(np.flip(xCoefficients[i * 6:(i + 1) * 6])) for i in range(int(len(xCoefficients) / 6))]
+        self.yEquations = [list(np.flip(yCoefficients[i * 6:(i + 1) * 6])) for i in range(int(len(yCoefficients) / 6))]
+        self.thetaEquations = [list(np.flip(thetaCoefficients[i * 6:(i + 1) * 6])) for i in range(int(len(thetaCoefficients) / 6))]
 
-        # # calculate the x velocities
-        # x_velocities = np.polyval(self.xCoefficients[1:], time_interval)
+        for e in self.xEquations:
+            self.xVelEquations.append(list(np.polyder(e)))
+        for e in self.yEquations:
+            self.yVelEquations.append(list(np.polyder(e)))
+        for e in self.thetaEquations:
+            self.thetaVelEquations.append(list(np.polyder(e)))
 
-        # # print the results
-        # print("X velocities: ", x_velocities)
+        self.xAccelEquations = []
+        self.yAccelEquations = []
+        self.thetaAccelEquations = []
 
-        # sampledPoints = samplePoints([xCoefficients, yCoefficients, thetaCoefficients], points, 50)
+        for e in self.xVelEquations:
+            self.xAccelEquations.append(list(np.polyder(e)))
+        for e in self.yVelEquations:
+            self.yAccelEquations.append(list(np.polyder(e)))
+        for e in self.thetaVelEquations:
+            self.thetaAccelEquations.append(list(np.polyder(e)))
 
-        # return sampledPoints
-        self.xCoefficients = xCoefficients
-        self.yCoefficients = yCoefficients
-        self.thetaCoefficients = thetaCoefficients
-
-        xCoefficients = np.flip(xCoefficients)
-        yCoefficients = np.flip(yCoefficients)
-        thetaCoefficients = np.flip(thetaCoefficients)
-
-        xVelCoefficients = []
-
-        xEquations = [xCoefficients[6 * i : 6 * (i + 1)] for i in range(len(xCoefficients) / 6 + 1)]
-        for e in xEquations:
-            pass
-
-        # plt.plot([i / 100 for i in range(100)], [float(np.polyval(np.flip(self.xCoefficients), i / 100)) for i in range(100)], color = (1, 0, 0, 1))
-        # plt.plot([i / 100 for i in range(100)], [float(np.polyval(np.flip(self.xVelCoefficients), i / 100)) for i in range(100)], color = (0, 1, 0, 1))
-        # plt.plot([i / 100 for i in range(100)], [float(np.polyval(np.flip(self.xAccelCoefficients), i / 100)) for i in range(100)], color = (0, 0, 1, 1))
-        # plt.show()
-
-    # # list is as follows [sample_time, x, y, theta, xVel, yVel, thetaVel, xAccel, yAccel, thetaAccel]
-    # pointList = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, math.pi/4, 3, 1.5, math.pi/4, 0, 0, 0], [2, 6, 3, math.pi/2, 3.5, -0.75, 0, 0, 0, 0], [3, 8, 0, (3/4) * math.pi, 2, 4.5, 0, 0, 0, 0], [4, 10, 12, (3/4) * math.pi, 2, 5, 0, 0, 0, 0], [5, 10, 10, (3/4) * math.pi, 0, 0, 0, 0, 0, 0]]
-    # pointList = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, -1, 0, 1, 1, 0, 0, 0, 0], [2, 4, 8, 0, 2, 2, 0, 0, 0, 0], [3, 6, 2, 0, 1, 1, 0, 0, 0, 0]]
-    # generateSplineCurves(pointList)
+        # print(f"XP: {self.xEquations}")
+        # print(f"XV: {self.xVelEquations}")
+        # print(f"XA: {self.xAccelEquations}")

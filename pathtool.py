@@ -230,7 +230,7 @@ class PathTool(BoxLayout):
         if len(self.key_points) == 0:
             return
         while t <= self.key_points[-1].time:
-            point = self.spline_generator.sample(self.key_points, t)
+            point = self.spline_generator.sample_pos(self.key_points, t)
             if times or colors:
                 point.insert(0, t)
             sampled_points.append(point)
@@ -244,30 +244,40 @@ class PathTool(BoxLayout):
         if len(self.key_points) == 0:
             return
         if include_time:
-            point = self.spline_generator.sample(self.key_points, time)
+            point = self.spline_generator.sample_pos(self.key_points, time)
             point.insert(0, time)
             return point
         else:
-            return self.spline_generator.sample(self.key_points, time)
+            return self.spline_generator.sample_pos(self.key_points, time)
     
     #add colors indicating when physical limitations are exceeded by the path
     def add_color_indicators(self, points: list[list]):
         lin_vel_list = []
         lin_accel_list = []
+        raw_info = []
         for p in points:
             lin_vel = self.spline_generator.sample_lin_vel(self.key_points, p[0])
             lin_accel = self.spline_generator.sample_lin_accel(self.key_points, p[0])
             lin_vel_list.append(lin_vel)
             lin_accel_list.append(lin_accel)
-            if lin_vel > self.MAX_LINEAR_VEL and lin_accel > self.MAX_LINEAR_ACCEL:
+            if abs(lin_vel) > self.MAX_LINEAR_VEL and abs(lin_accel) > self.MAX_LINEAR_ACCEL:
+                p.append((1, 0, 1))
+            elif abs(lin_vel) > self.MAX_LINEAR_VEL:
                 p.append((1, 0, 0))
-            elif lin_vel > self.MAX_LINEAR_VEL or lin_accel > self.MAX_LINEAR_ACCEL:
-                p.append(((0.5, 0, 0)))
+            elif abs(lin_accel) > self.MAX_LINEAR_ACCEL:
+                p.append((0, 0, 1))
             else:
                 p.append((0, 0, 0))
+            raw_info.append(self.spline_generator.sample_raw_linear_info(self.key_points, p[0]))
         # plt.plot([p[0] for p in points], lin_accel_list, color = (0, 1, 0, 1))
         # plt.plot([p[0] for p in points], lin_vel_list, color = (1, 0, 0, 1))
-        # plt.show()
+        plt.plot([p[0] for p in points], [entry[0] for entry in raw_info], color = (1, 0, 0, 1))
+        plt.plot([p[0] for p in points], [entry[2] for entry in raw_info], color = (0.6, 0, 0, 1))
+        plt.plot([p[0] for p in points], [entry[4] for entry in raw_info], color = (0.3, 0, 0, 1))
+        plt.plot([p[0] for p in points], [entry[1] for entry in raw_info], color = (0, 1, 0, 1))
+        plt.plot([p[0] for p in points], [entry[3] for entry in raw_info], color = (0, 0.6, 0, 1))
+        plt.plot([p[0] for p in points], [entry[5] for entry in raw_info], color = (0, 0.3, 0, 1))
+        plt.show()
         return points
 
     #start path animation from a time

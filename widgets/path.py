@@ -70,7 +70,7 @@ class Path(Image):
                     self.path_line_group.add(Color(p[4][0], p[4][1], p[4][2]))
                     self.path_line_group.add(Line(points = pixel_list, width = 2, cap = "round", joint = "round"))
                     color = p[4]
-                    pixel_list = []
+                    pixel_list = [px, py]
             self.canvas.add(self.path_line_group)
 
         #draw non-selected points and angle indicators
