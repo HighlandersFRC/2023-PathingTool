@@ -106,8 +106,8 @@ class SplineGenerator:
             secondPointEq = startPad + [1, nextPoint[0], nextPoint[0] ** 2, nextPoint[0] ** 3, nextPoint[0] ** 4, nextPoint[0] ** 5]
             firstVelEq = startPad + [0, 1,  2 * currentPoint[0], 3 * (currentPoint[0] ** 2), 4 * (currentPoint[0] ** 3), 5 * (currentPoint[0] ** 4)]
             secondVelEq = startPad + [0, 1,  2 * nextPoint[0], 3 * (nextPoint[0] ** 2), 4 * (nextPoint[0] ** 3), 5 * (nextPoint[0] ** 4)]
-            firstAccelEq = startPad + [0, 0, 0, 6, 24 * currentPoint[0], 60 * (currentPoint[0] ** 2)]
-            secondAccelEq = startPad + [0, 0, 0, 6, 24 * nextPoint[0], 60 * (nextPoint[0] ** 2)]
+            firstAccelEq = startPad + [0, 0, 2, 6 * currentPoint[0], 12 * currentPoint[0] ** 2, 20 * (currentPoint[0] ** 3)]
+            secondAccelEq = startPad + [0, 0, 2, 6 * nextPoint[0], 12 * nextPoint[0] ** 2, 20 * (nextPoint[0] ** 3)]
 
             firstEndPad = [0 for j in range(0, size - len(firstPointEq))]
             secondEndPad = [0 for j in range(0, size - len(secondPointEq))]

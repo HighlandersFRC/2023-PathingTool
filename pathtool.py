@@ -271,13 +271,13 @@ class PathTool(BoxLayout):
             raw_info.append(self.spline_generator.sample_raw_linear_info(self.key_points, p[0]))
         # plt.plot([p[0] for p in points], lin_accel_list, color = (0, 1, 0, 1))
         # plt.plot([p[0] for p in points], lin_vel_list, color = (1, 0, 0, 1))
-        plt.plot([p[0] for p in points], [entry[0] for entry in raw_info], color = (1, 0, 0, 1))
-        plt.plot([p[0] for p in points], [entry[2] for entry in raw_info], color = (0.6, 0, 0, 1))
-        plt.plot([p[0] for p in points], [entry[4] for entry in raw_info], color = (0.3, 0, 0, 1))
-        plt.plot([p[0] for p in points], [entry[1] for entry in raw_info], color = (0, 1, 0, 1))
-        plt.plot([p[0] for p in points], [entry[3] for entry in raw_info], color = (0, 0.6, 0, 1))
-        plt.plot([p[0] for p in points], [entry[5] for entry in raw_info], color = (0, 0.3, 0, 1))
-        plt.show()
+        # plt.plot([p[0] for p in points], [entry[0] for entry in raw_info], color = (1, 0, 0, 1))
+        # plt.plot([p[0] for p in points], [entry[2] for entry in raw_info], color = (0.6, 0, 0, 1))
+        # plt.plot([p[0] for p in points], [entry[4] for entry in raw_info], color = (0.3, 0, 0, 1))
+        # plt.plot([p[0] for p in points], [entry[1] for entry in raw_info], color = (0, 1, 0, 1))
+        # plt.plot([p[0] for p in points], [entry[3] for entry in raw_info], color = (0, 0.6, 0, 1))
+        # plt.plot([p[0] for p in points], [entry[5] for entry in raw_info], color = (0, 0.3, 0, 1))
+        # plt.show()
         return points
 
     #start path animation from a time
