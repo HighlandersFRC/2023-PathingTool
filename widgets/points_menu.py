@@ -38,7 +38,7 @@ class PointsMenu(BoxLayout):
     #button callback
     def select(self, index: int, event):
         self.selected_point = self.key_points[index]
-        self.update_func(self.key_points, self.selected_point)
+        self.update_func(self.key_points, self.selected_point, update_equations = False)
         return index
 
     #index adjust callback

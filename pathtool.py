@@ -10,6 +10,7 @@ from tools import file_manager
 from popups.save_load import SaveLoad
 from SplineGeneration.generateSplines import SplineGenerator
 import math
+import matplotlib.pyplot as plt
 
 class PathTool(BoxLayout):
     def __init__(self, **kwargs):
@@ -33,6 +34,12 @@ class PathTool(BoxLayout):
         self.path_name = ""
         #ip address of the roborio
         self.rio_address = "10.44.99.2"
+
+        #physical limitations of the robot
+        self.MAX_LINEAR_ACCEL = 6
+        self.MAX_LINEAR_VEL = 4
+        self.MAX_ANGULAR_ACCEL = 1.5 * 2 * math.pi
+        self.MAX_ANGULAR_VEL = 1.5 * 2 * math.pi
 
     #add widgets to main layout
     def set_layout(self):
@@ -77,15 +84,15 @@ class PathTool(BoxLayout):
         self.update_widgets()
 
     #update main widgets
-    def update_widgets(self, update_editor = True):
+    def update_widgets(self, update_editor = True, update_equations = True):
         #update indexes and times
         self.index_points()
         self.time_points()
         self.optimize_points()
         #if multiple points update equations
-        if len(self.key_points) > 1:
+        if len(self.key_points) > 1 and update_equations:
             self.spline_generator.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), p.angular_velocity, 0.0, 0.0, 0.0] for p in self.key_points])
-            self.path.update(self.key_points, self.get_sampled_points(), self.sample_rate)
+            self.path.update(self.key_points, self.get_sampled_points(colors = True, times = True), self.sample_rate)
         else:
             self.path.update(self.key_points, [], self.sample_rate)
         self.points_menu.update(self.key_points, self.selected_point)
@@ -100,10 +107,10 @@ class PathTool(BoxLayout):
         self.path.update_selected_point(self.selected_point)
 
     #update key points and selected point
-    def update_path(self, key_points: list[Point], selected_point: Point):
+    def update_path(self, key_points: list[Point], selected_point: Point, update_equations = True):
         self.selected_point = selected_point
         self.key_points = key_points
-        self.update_widgets()
+        self.update_widgets(update_equations = update_equations)
 
     #display recorded path over the field image
     def display_recording(self, recording: list):
@@ -217,19 +224,19 @@ class PathTool(BoxLayout):
             return 1
 
     #get list of sampled points
-    def get_sampled_points(self, include_times = False):
+    def get_sampled_points(self, times = False, colors = False):
         sampled_points = []
         t = 0
         if len(self.key_points) == 0:
             return
         while t <= self.key_points[-1].time:
-            if include_times:
-                point = self.spline_generator.sample(self.key_points, t)
+            point = self.spline_generator.sample_pos(self.key_points, t)
+            if times or colors:
                 point.insert(0, t)
-                sampled_points.append(point)
-            else:
-                sampled_points.append(self.spline_generator.sample(self.key_points, t))
+            sampled_points.append(point)
             t += self.sample_rate
+        if colors:
+            sampled_points = self.add_color_indicators(sampled_points)
         return sampled_points
 
     #get single sampled point by time
@@ -237,11 +244,41 @@ class PathTool(BoxLayout):
         if len(self.key_points) == 0:
             return
         if include_time:
-            point = self.spline_generator.sample(self.key_points, time)
+            point = self.spline_generator.sample_pos(self.key_points, time)
             point.insert(0, time)
             return point
         else:
-            return self.spline_generator.sample(self.key_points, time)
+            return self.spline_generator.sample_pos(self.key_points, time)
+    
+    #add colors indicating when physical limitations are exceeded by the path
+    def add_color_indicators(self, points: list[list]):
+        lin_vel_list = []
+        lin_accel_list = []
+        raw_info = []
+        for p in points:
+            lin_vel = self.spline_generator.sample_lin_vel(self.key_points, p[0])
+            lin_accel = self.spline_generator.sample_lin_accel(self.key_points, p[0])
+            lin_vel_list.append(lin_vel)
+            lin_accel_list.append(lin_accel)
+            if abs(lin_vel) > self.MAX_LINEAR_VEL and abs(lin_accel) > self.MAX_LINEAR_ACCEL:
+                p.append((1, 0, 1))
+            elif abs(lin_vel) > self.MAX_LINEAR_VEL:
+                p.append((1, 0, 0))
+            elif abs(lin_accel) > self.MAX_LINEAR_ACCEL:
+                p.append((0, 0, 1))
+            else:
+                p.append((0, 0, 0))
+            raw_info.append(self.spline_generator.sample_raw_linear_info(self.key_points, p[0]))
+        # plt.plot([p[0] for p in points], lin_accel_list, color = (0, 1, 0, 1))
+        # plt.plot([p[0] for p in points], lin_vel_list, color = (1, 0, 0, 1))
+        # plt.plot([p[0] for p in points], [entry[0] for entry in raw_info], color = (1, 0, 0, 1))
+        # plt.plot([p[0] for p in points], [entry[2] for entry in raw_info], color = (0.6, 0, 0, 1))
+        # plt.plot([p[0] for p in points], [entry[4] for entry in raw_info], color = (0.3, 0, 0, 1))
+        # plt.plot([p[0] for p in points], [entry[1] for entry in raw_info], color = (0, 1, 0, 1))
+        # plt.plot([p[0] for p in points], [entry[3] for entry in raw_info], color = (0, 0.6, 0, 1))
+        # plt.plot([p[0] for p in points], [entry[5] for entry in raw_info], color = (0, 0.3, 0, 1))
+        # plt.show()
+        return points
 
     #start path animation from a time
     def run_animation(self, start_time: float):
@@ -254,7 +291,7 @@ class PathTool(BoxLayout):
         print(f"saving {folder_path}\\{file_name}.json")
         self.sample_rate = sample_rate
         self.path_name = file_name
-        sampled_points = self.get_sampled_points(include_times = True)
+        sampled_points = self.get_sampled_points(times = True)
         result = file_manager.save_path(self.key_points, sampled_points, self.sample_rate, folder_path, file_name)
         self.update_widgets()
         #update status

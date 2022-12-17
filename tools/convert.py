@@ -27,3 +27,9 @@ def meters_to_pixels_y(y, pixel_size: tuple):
 
 def get_robot_radius(robot_width: float, robot_height: float):
     return math.sqrt((robot_width / 2.0) ** 2 + (robot_height / 2.0) ** 2)
+
+def sum_lists(l1: list[float], l2: list[float]):
+    ret = []
+    for i in range(min(len(l1), len(l2))):
+        ret.append(l1[i] + l2[i])
+    return ret
