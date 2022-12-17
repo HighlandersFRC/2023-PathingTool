@@ -36,8 +36,8 @@ class PathTool(BoxLayout):
         self.rio_address = "10.44.99.2"
 
         #physical limitations of the robot
-        self.MAX_LINEAR_ACCEL = 9.8
-        self.MAX_LINEAR_VEL = 5
+        self.MAX_LINEAR_ACCEL = 6
+        self.MAX_LINEAR_VEL = 4
         self.MAX_ANGULAR_ACCEL = 1.5 * 2 * math.pi
         self.MAX_ANGULAR_VEL = 1.5 * 2 * math.pi
 
@@ -84,13 +84,13 @@ class PathTool(BoxLayout):
         self.update_widgets()
 
     #update main widgets
-    def update_widgets(self, update_editor = True):
+    def update_widgets(self, update_editor = True, update_equations = True):
         #update indexes and times
         self.index_points()
         self.time_points()
         self.optimize_points()
         #if multiple points update equations
-        if len(self.key_points) > 1:
+        if len(self.key_points) > 1 and update_equations:
             self.spline_generator.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), p.angular_velocity, 0.0, 0.0, 0.0] for p in self.key_points])
             self.path.update(self.key_points, self.get_sampled_points(colors = True, times = True), self.sample_rate)
         else:
@@ -107,10 +107,10 @@ class PathTool(BoxLayout):
         self.path.update_selected_point(self.selected_point)
 
     #update key points and selected point
-    def update_path(self, key_points: list[Point], selected_point: Point):
+    def update_path(self, key_points: list[Point], selected_point: Point, update_equations = True):
         self.selected_point = selected_point
         self.key_points = key_points
-        self.update_widgets()
+        self.update_widgets(update_equations = update_equations)
 
     #display recorded path over the field image
     def display_recording(self, recording: list):

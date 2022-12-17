@@ -33,11 +33,14 @@ def upload_all(addr: str):
     if conns == None:
         return False
     scp_cli = conns[0]
-    for save in saves:
-        scp_cli.put(save, remote_path = "/home/lvuser/deploy")
-    print("Uploaded all save files")
-    scp_cli.close()
-    return True
+    try:
+        for save in saves:
+            scp_cli.put(save, remote_path = "/home/lvuser/deploy")
+        print("Uploaded all save files")
+        scp_cli.close()
+        return True
+    except:
+        return False
 
 def upload(addr: str, file_path: str):
     print("Uploading all...")
@@ -45,10 +48,13 @@ def upload(addr: str, file_path: str):
     if conns == None:
         return False
     scp_cli = conns[0]
-    scp_cli.put(file_path, remote_path = "/home/lvuser/deploy")
-    print("Uploaded save successfully")
-    scp_cli.close()
-    return True
+    try:
+        scp_cli.put(file_path, remote_path = "/home/lvuser/deploy")
+        print("Uploaded save successfully")
+        scp_cli.close()
+        return True
+    except:
+        return False
 
 def download_all(addr: str):
     print("Downloading all...")
@@ -58,16 +64,19 @@ def download_all(addr: str):
         return False
     scp_cli = conns[0]
     ssh_cli = conns[1]
-    sftp = ssh_cli.open_sftp()
-    remote_saves = sftp.listdir("/home/lvuser/deploy")
-    for rs in remote_saves:
-        if rs.endswith(".json"):
-            scp_cli.get(remote_path = f"/home/lvuser/deploy/{rs}", local_path = "saves/")
-            print(f"Downloaded {rs}")
-    print("Downloaded all saves successfully")
-    scp_cli.close()
-    ssh_cli.close()
-    return True
+    try:
+        sftp = ssh_cli.open_sftp()
+        remote_saves = sftp.listdir("/home/lvuser/deploy")
+        for rs in remote_saves:
+            if rs.endswith(".json"):
+                scp_cli.get(remote_path = f"/home/lvuser/deploy/{rs}", local_path = "saves/")
+                print(f"Downloaded {rs}")
+        print("Downloaded all saves successfully")
+        scp_cli.close()
+        ssh_cli.close()
+        return True
+    except:
+        return False
 
 def download_recorded_data(addr: str):
     print("Downloading all recordings...")
