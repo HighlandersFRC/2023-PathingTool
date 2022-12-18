@@ -268,7 +268,7 @@ class PathTool(BoxLayout):
                 p.append((0, 0, 1))
             else:
                 p.append((0, 0, 0))
-            raw_info.append(self.spline_generator.sample_raw_linear_info(self.key_points, p[0]))
+            # raw_info.append(self.spline_generator.sample_raw_linear_info(self.key_points, p[0]))
         # plt.plot([p[0] for p in points], lin_accel_list, color = (0, 1, 0, 1))
         # plt.plot([p[0] for p in points], lin_vel_list, color = (1, 0, 0, 1))
         # plt.plot([p[0] for p in points], [entry[0] for entry in raw_info], color = (1, 0, 0, 1))

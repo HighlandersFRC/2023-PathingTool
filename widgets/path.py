@@ -67,7 +67,7 @@ class Path(Image):
                 pixel_list.append(px)
                 pixel_list.append(py)
                 if p[4] != color or i == len(self.sampled_points) - 1:
-                    self.path_line_group.add(Color(p[4][0], p[4][1], p[4][2]))
+                    self.path_line_group.add(Color(color[0], color[1], color[2]))
                     self.path_line_group.add(Line(points = pixel_list, width = 2, cap = "round", joint = "round"))
                     color = p[4]
                     pixel_list = [px, py]
