@@ -1,4 +1,11 @@
 import math
+import pyautogui
+
+#height of the windows taskbar, in pixels
+TASK_BAR_HEIGHT = 40
+
+#vertical resolution of the screen
+VERTICAL_RESOLUTION = 900
 
 def get_dist(x1, y1, x2, y2):
     return math.sqrt(((x1 - x2) ** 2) + ((y1 - y2) ** 2))
@@ -33,3 +40,15 @@ def sum_lists(l1: list[float], l2: list[float]):
     for i in range(min(len(l1), len(l2))):
         ret.append(l1[i] + l2[i])
     return ret
+
+def get_cursor_dist_meters(selected_pos_meters: list[float], pixel_size: list[float]):
+    x, y = pyautogui.position()
+    y = VERTICAL_RESOLUTION - y - TASK_BAR_HEIGHT
+    cursor_pos_meters = pixels_to_meters((x, y), pixel_size)
+    return get_dist(cursor_pos_meters[0], cursor_pos_meters[1], selected_pos_meters[0], selected_pos_meters[1])
+
+def get_cursor_pos_meters(pixel_size: list[float]):
+    x, y = pyautogui.position()
+
+    y = VERTICAL_RESOLUTION - y - TASK_BAR_HEIGHT
+    return pixels_to_meters((x, y), pixel_size)

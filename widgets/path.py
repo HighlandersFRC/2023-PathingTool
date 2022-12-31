@@ -1,6 +1,6 @@
 from kivy.uix.image import Image
+from kivy.uix.label import Label
 from kivy.graphics import *
-
 from tools import convert
 from SplineGeneration import generateSplines
 import math
@@ -12,16 +12,20 @@ class Path(Image):
         self.key_points = []
         self.sampled_points = []
         self.selected_point = None
+
         #seconds
         self.sample_rate = 0.01
+
         #[t, x, y, theta]
+        #in seconds, meters, meters, radians
         self.recorded_points = []
 
-        #robot dimensions (meters)
+        #robot dimensions in meters
         self.robot_width = 0.7366
         self.robot_length = 0.7366
         self.robot_radius = convert.get_robot_radius(self.robot_width, self.robot_length)
 
+        #image of field
         self.field_image = Rectangle(source = "images/RapidReactField.png", pos = self.pos)
 
         #main instructions/instruction groups
@@ -35,10 +39,14 @@ class Path(Image):
         self.path_line = Line()
         self.path_line_group = InstructionGroup()
 
-        #animation time (seconds)
+        #animation time in seconds
         self.animation_time = -1
         self.recording_animation_time = -1
         self.sample_func = sample_func
+
+        #infomation text
+        self.info_label = Label(text = "[b]X:[/b] null, [b]Y:[/b] null\n[b]Dist:[/b] null", markup = True, font_size = 12, color = (0, 0, 0))
+        self.info_rect = Rectangle()
         
     #draw points and path line
     def draw_path(self):
@@ -51,7 +59,6 @@ class Path(Image):
         self.animation_group.clear()
         self.recording_animation_group.clear()
         self.path_line_group.clear()
-
         self.canvas.clear()
         self.field_image.size = self.size
         self.canvas.add(self.field_image)
@@ -183,6 +190,8 @@ class Path(Image):
             self.canvas.add(Color(0, 0.5, 0))
             self.canvas.add(self.recording_line)
 
+        #update infomational text
+        self.update_info()
         # print(f"Draw: {time.time_ns() / 1000000 - start_time}")
 
     def set_animation(self, time: float):
@@ -206,12 +215,23 @@ class Path(Image):
                 return p
         return None
 
-    #update points list
     def update(self, points: list, sampled_points: list, sample_rate: float):
         self.key_points = points
         self.sampled_points = sampled_points
         self.sample_rate = sample_rate
 
-    #update selected point
     def update_selected_point(self, point):
         self.selected_point = point
+
+    def update_info(self):
+        pos = convert.get_cursor_pos_meters(self.size)
+        if self.selected_point != None:
+            dist = convert.get_cursor_dist_meters([self.selected_point.x, self.selected_point.y], self.size)
+            self.info_label.text = f"[b]X:[/b] {round(pos[0], 3)}, [b]Y:[/b] {round(pos[1], 3)}\n[b]Dist:[/b] {round(dist, 3)}"
+        else:
+            self.info_label.text = f"[b]X:[/b] {round(pos[0], 3)}, [b]Y:[/b] {round(pos[1], 3)}\n[b]Dist:[/b] null"
+        texture = self.info_label.texture
+        if texture == None:
+            return
+        self.info_rect = Rectangle(texture = texture, size = list(texture.size), pos = (3, 3))
+        self.canvas.add(self.info_rect)
