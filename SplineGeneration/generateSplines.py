@@ -86,7 +86,7 @@ class SplineGenerator:
         vy = float(np.polyval(yVelEquation, time))
         ax = float(np.polyval(xAccelEquation, time))
         ay = float(np.polyval(yAccelEquation, time))
-        return (x ** 3 * ax + x ** 2 * vy + x ** 2 * y * ay + y ** 2 * x * ax - 2 * x * y * vx * vy + y ** 2 * vx + y ** 3 * ay) / ((x ** 2 + y ** 2) * math.sqrt(x ** 2 + y ** 2))
+        return (x ** 3 * ax + x ** 2 * vy ** 2 + x ** 2 * y * ay + y ** 2 * x * ax - 2 * x * y * vx * vy + y ** 2 * vx ** 2 + y ** 3 * ay) / ((x ** 2 + y ** 2) * math.sqrt(x ** 2 + y ** 2))
 
     def generateSplineCurves(self, points):
         overallSysEqArray = []
