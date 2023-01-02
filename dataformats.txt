@@ -27,3 +27,6 @@ Path JSON Format
         ...
     ]
 }
+
+Odometry Recording CSV Format
+time (float), x (float), y (float), theta (float)
