@@ -27,7 +27,7 @@ class VisualizerMenu(Popup):
         self.graph_button = Button(text = "Graph", on_press = self.graph)
         self.display_on_field_button = Button(text = "Disp. on Field", on_press = self.display_on_field)
         self.clear_recording_on_field_button = Button(text = "Clear Rec. On Field", on_press = self.clear_recording_on_field, background_color = (1, 0, 0, 1))
-        self.update_button = Button(text = "Update", on_press = self.update)
+        self.update_button = Button(text = "Update", on_press = self.update, background_color = (0, 1, 0, 1))
         self.clear_local_button = Button(text = "Clear Local Rec.", on_press = self.clear_local_recordings, background_color = (1, 0, 0, 1))
         self.clear_rio_button = Button(text = "Clear Rio Rec.", on_press = self.clear_rio_recordings, background_color = (0.5, 0, 0, 1))
         self.cancel_button = Button(text = "Back", on_press = self.cancel)
