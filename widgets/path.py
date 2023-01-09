@@ -45,7 +45,7 @@ class Path(Image):
         self.sample_func = sample_func
 
         #infomation text
-        self.info_label = Label(text = "[b]X:[/b] null, [b]Y:[/b] null\n[b]Dist:[/b] null", markup = True, font_size = 12, color = (0, 0, 0))
+        self.info_label = Label(text = "[b]PX:[/b] null, [b]PY:[/b]\n[b]X:[/b] null, [b]Y:[/b] null\n[b]Dist:[/b] null", markup = True, font_size = 12, color = (0, 0, 0))
         self.info_rect = Rectangle()
         
     #draw points and path line
@@ -224,14 +224,15 @@ class Path(Image):
         self.selected_point = point
 
     def update_info(self):
-        pos = convert.get_cursor_pos_meters(self.size)
+        pos = convert.get_cursor_field_pos_meters(self.size)
+        pixel_pos = convert.get_cursor_screen_pos_pixels()
         if self.selected_point != None:
             dist = convert.get_cursor_dist_meters([self.selected_point.x, self.selected_point.y], self.size)
-            self.info_label.text = f"[b]X:[/b] {round(pos[0], 3)}, [b]Y:[/b] {round(pos[1], 3)}\n[b]Dist:[/b] {round(dist, 3)}"
+            self.info_label.text = f"[b]PX:[/b] {pixel_pos[0]}, [b]PY:[/b]{pixel_pos[1]}\n[b]X:[/b] {round(pos[0], 3)}, [b]Y:[/b] {round(pos[1], 3)}\n[b]Dist:[/b] {round(dist, 3)}"
         else:
-            self.info_label.text = f"[b]X:[/b] {round(pos[0], 3)}, [b]Y:[/b] {round(pos[1], 3)}\n[b]Dist:[/b] null"
+            self.info_label.text = f"[b]PX:[/b] {pixel_pos[0]}, [b]PY:[/b]{pixel_pos[1]}\n[b]X:[/b] {round(pos[0], 3)}, [b]Y:[/b] {round(pos[1], 3)}\n[b]Dist:[/b] null"
         texture = self.info_label.texture
         if texture == None:
             return
-        self.info_rect = Rectangle(texture = texture, size = list(texture.size), pos = (3, 3))
+        self.info_rect = Rectangle(texture = texture, size = list(texture.size), pos = (35, 667))
         self.canvas.add(self.info_rect)
