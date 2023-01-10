@@ -16,8 +16,8 @@ FIELD_WIDTH_PIXELS = 1455
 FIELD_HEIGHT_PIXELS = 717
 
 #horizontal and vertical dimensions of the field in meters
-FIELD_WIDTH_METERS = 16.54
-FIELD_HEIGHT_METERS = 8.02
+FIELD_WIDTH_METERS = 16.63
+FIELD_HEIGHT_METERS = 8.20
 
 #horizontal and vertical offset of the origin in pixels on the full resolution field image
 FIELD_WIDTH_OFFSET_PIXELS = 0
