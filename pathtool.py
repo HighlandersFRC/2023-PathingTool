@@ -227,7 +227,7 @@ class PathTool(BoxLayout):
     def get_sampled_points(self, times = False, colors = False):
         sampled_points = []
         t = 0
-        if len(self.key_points) == 0:
+        if len(self.key_points) <= 1:
             return
         while t <= self.key_points[-1].time:
             point = self.spline_generator.sample_pos(self.key_points, t)
@@ -241,7 +241,7 @@ class PathTool(BoxLayout):
 
     #get single sampled point by time
     def get_sampled_point(self, time: float, include_time = False):
-        if len(self.key_points) == 0:
+        if len(self.key_points) <= 1:
             return
         if include_time:
             point = self.spline_generator.sample_pos(self.key_points, time)
@@ -268,7 +268,7 @@ class PathTool(BoxLayout):
                 p.append((0, 0, 1))
             else:
                 p.append((0, 0, 0))
-            raw_info.append(self.spline_generator.sample_raw_linear_info(self.key_points, p[0]))
+            # raw_info.append(self.spline_generator.sample_raw_linear_info(self.key_points, p[0]))
         # plt.plot([p[0] for p in points], lin_accel_list, color = (0, 1, 0, 1))
         # plt.plot([p[0] for p in points], lin_vel_list, color = (1, 0, 0, 1))
         # plt.plot([p[0] for p in points], [entry[0] for entry in raw_info], color = (1, 0, 0, 1))

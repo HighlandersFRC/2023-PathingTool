@@ -1,15 +1,21 @@
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.config import Config
+from kivy.core.window import Window
 from pathtool import PathTool
+import pyautogui
+
+TITLE = "2023 Path Tool - Highlanders FRC #4499 - Version 1.1.1"
+ICON = "images/4499Icon.ico"
 
 class PathApp(App):
     def build(self):
         #schedule execute callback
         Clock.schedule_interval(self.execute, 1.0  / 60.0)
-        self.title = "2023 Path Tool - Highlanders FRC #4499 - Version 1.1.1"
-        self.icon = "images/4499Icon.ico"
+        self.title = TITLE
+        self.icon = ICON
         self.path_tool = PathTool()
+        Window.maximize()
         return self.path_tool
 
     #called at 60 Hz by Clock

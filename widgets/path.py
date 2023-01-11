@@ -1,6 +1,6 @@
 from kivy.uix.image import Image
+from kivy.uix.label import Label
 from kivy.graphics import *
-
 from tools import convert
 from SplineGeneration import generateSplines
 import math
@@ -8,21 +8,25 @@ import time
 
 class Path(Image):
     def __init__(self, sample_func, **kwargs):
-        super().__init__(source = "images/RapidReactField.png", **kwargs)
+        super().__init__(source = "images/2023-Field.png", **kwargs)
         self.key_points = []
         self.sampled_points = []
         self.selected_point = None
+
         #seconds
         self.sample_rate = 0.01
+
         #[t, x, y, theta]
+        #in seconds, meters, meters, radians
         self.recorded_points = []
 
-        #robot dimensions (meters)
+        #robot dimensions in meters
+        self.robot_length = 1.7366
         self.robot_width = 0.7366
-        self.robot_length = 0.7366
         self.robot_radius = convert.get_robot_radius(self.robot_width, self.robot_length)
 
-        self.field_image = Rectangle(source = "images/RapidReactField.png", pos = self.pos)
+        #image of field
+        self.field_image = Rectangle(source = "images/2023-Field.png", pos = self.pos)
 
         #main instructions/instruction groups
         self.non_selected_points_group = InstructionGroup()
@@ -35,10 +39,14 @@ class Path(Image):
         self.path_line = Line()
         self.path_line_group = InstructionGroup()
 
-        #animation time (seconds)
+        #animation time in seconds
         self.animation_time = -1
         self.recording_animation_time = -1
         self.sample_func = sample_func
+
+        #infomation text
+        self.info_label = Label(text = "[b]PX:[/b] null, [b]PY:[/b]\n[b]X:[/b] null, [b]Y:[/b] null\n[b]Dist:[/b] null", markup = True, font_size = 12, color = (0, 0, 0))
+        self.info_rect = Rectangle()
         
     #draw points and path line
     def draw_path(self):
@@ -51,7 +59,6 @@ class Path(Image):
         self.animation_group.clear()
         self.recording_animation_group.clear()
         self.path_line_group.clear()
-
         self.canvas.clear()
         self.field_image.size = self.size
         self.canvas.add(self.field_image)
@@ -67,7 +74,7 @@ class Path(Image):
                 pixel_list.append(px)
                 pixel_list.append(py)
                 if p[4] != color or i == len(self.sampled_points) - 1:
-                    self.path_line_group.add(Color(p[4][0], p[4][1], p[4][2]))
+                    self.path_line_group.add(Color(color[0], color[1], color[2]))
                     self.path_line_group.add(Line(points = pixel_list, width = 2, cap = "round", joint = "round"))
                     color = p[4]
                     pixel_list = [px, py]
@@ -86,7 +93,7 @@ class Path(Image):
 
             #angle indicators
             #angle from 0 to first corner
-            corner_1_theta = math.atan2((self.robot_length) / (self.robot_radius * 2), (self.robot_width) / (self.robot_radius * 2))
+            corner_1_theta = math.atan2((self.robot_width) / (self.robot_radius * 2), (self.robot_length) / (self.robot_radius * 2))
             #corner angles
             theta_1 = corner_1_theta + p.angle
             theta_2 = math.pi - corner_1_theta + p.angle
@@ -122,7 +129,7 @@ class Path(Image):
                 anim_front = convert.meters_to_pixels(((self.robot_length / 2.0) * math.cos(anim_angle) + anim_point[0], (self.robot_length / 2.0) * math.sin(anim_angle) + anim_point[1]), self.size)
                 self.animation_group.add(Color(0, 0.4, 0.8))
                 self.animation_group.add(Line(width = 2, cap = "square", joint = "miter", points = [anim_pixel_point[0], anim_pixel_point[1], anim_front[0], anim_front[1]]))
-                corner_1_theta = math.atan2((self.robot_length) / (self.robot_radius * 2), (self.robot_width) / (self.robot_radius * 2))
+                corner_1_theta = math.atan2((self.robot_width) / (self.robot_radius * 2), (self.robot_length) / (self.robot_radius * 2))
                 anim_theta_1 = corner_1_theta + anim_angle
                 anim_theta_2 = math.pi - corner_1_theta + anim_angle
                 anim_theta_3 = math.pi + corner_1_theta + anim_angle
@@ -153,7 +160,7 @@ class Path(Image):
                 recorded_front = convert.meters_to_pixels(((self.robot_length / 2.0) * math.cos(recorded_angle) + recorded_point[1], (self.robot_length / 2.0) * math.sin(recorded_angle) + recorded_point[2]), self.size)
                 self.recording_animation_group.add(Color(0, 0.75, 0))
                 self.recording_animation_group.add(Line(width = 2, cap = "square", joint = "miter", points = [recorded_pixel_point[0], recorded_pixel_point[1], recorded_front[0], recorded_front[1]]))
-                recorded_corner_1_theta = math.atan2(self.robot_length / (self.robot_radius * 2), self.robot_length / (self.robot_radius * 2))
+                recorded_corner_1_theta = math.atan2(self.robot_width / (self.robot_radius * 2), self.robot_length / (self.robot_radius * 2))
                 recorded_theta_1 = recorded_corner_1_theta + recorded_angle
                 recorded_theta_2 = math.pi - recorded_corner_1_theta + recorded_angle
                 recorded_theta_3 = math.pi + recorded_corner_1_theta + recorded_angle
@@ -183,6 +190,8 @@ class Path(Image):
             self.canvas.add(Color(0, 0.5, 0))
             self.canvas.add(self.recording_line)
 
+        #update infomational text
+        self.update_info()
         # print(f"Draw: {time.time_ns() / 1000000 - start_time}")
 
     def set_animation(self, time: float):
@@ -206,12 +215,24 @@ class Path(Image):
                 return p
         return None
 
-    #update points list
     def update(self, points: list, sampled_points: list, sample_rate: float):
         self.key_points = points
         self.sampled_points = sampled_points
         self.sample_rate = sample_rate
 
-    #update selected point
     def update_selected_point(self, point):
         self.selected_point = point
+
+    def update_info(self):
+        pos = convert.get_cursor_field_pos_meters(self.size)
+        pixel_pos = convert.get_cursor_screen_pos_pixels()
+        if self.selected_point != None:
+            dist = convert.get_cursor_dist_meters([self.selected_point.x, self.selected_point.y], self.size)
+            self.info_label.text = f"[b]PX:[/b] {pixel_pos[0]}, [b]PY:[/b]{pixel_pos[1]}\n[b]X:[/b] {round(pos[0], 3)}, [b]Y:[/b] {round(pos[1], 3)}\n[b]Dist:[/b] {round(dist, 3)}"
+        else:
+            self.info_label.text = f"[b]PX:[/b] {pixel_pos[0]}, [b]PY:[/b]{pixel_pos[1]}\n[b]X:[/b] {round(pos[0], 3)}, [b]Y:[/b] {round(pos[1], 3)}\n[b]Dist:[/b] null"
+        texture = self.info_label.texture
+        if texture == None:
+            return
+        self.info_rect = Rectangle(texture = texture, size = list(texture.size), pos = (35, 667))
+        self.canvas.add(self.info_rect)

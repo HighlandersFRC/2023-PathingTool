@@ -26,12 +26,14 @@ class VisualizerMenu(Popup):
 
         self.graph_button = Button(text = "Graph", on_press = self.graph)
         self.display_on_field_button = Button(text = "Disp. on Field", on_press = self.display_on_field)
-        self.update_button = Button(text = "Update", on_press = self.update)
+        self.clear_recording_on_field_button = Button(text = "Clear Rec. On Field", on_press = self.clear_recording_on_field, background_color = (1, 0, 0, 1))
+        self.update_button = Button(text = "Update", on_press = self.update, background_color = (0, 1, 0, 1))
         self.clear_local_button = Button(text = "Clear Local Rec.", on_press = self.clear_local_recordings, background_color = (1, 0, 0, 1))
         self.clear_rio_button = Button(text = "Clear Rio Rec.", on_press = self.clear_rio_recordings, background_color = (0.5, 0, 0, 1))
         self.cancel_button = Button(text = "Back", on_press = self.cancel)
         self.controls_layout.add_widget(self.graph_button)
         self.controls_layout.add_widget(self.display_on_field_button)
+        self.controls_layout.add_widget(self.clear_recording_on_field_button)
         self.controls_layout.add_widget(self.update_button)
         self.controls_layout.add_widget(self.clear_local_button)
         self.controls_layout.add_widget(self.clear_rio_button)
@@ -74,6 +76,10 @@ class VisualizerMenu(Popup):
             reader = csv.reader(file)
             data = [[float(val) for val in row] for row in list(reader)]
         self.display_func(data)
+        self.dismiss()
+
+    def clear_recording_on_field(self, event):
+        self.display_func([[0, 0, 0]])
         self.dismiss()
 
     def clear_local_recordings(self, event):

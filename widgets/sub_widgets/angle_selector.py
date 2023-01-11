@@ -17,7 +17,7 @@ class AngleSelector(BoxLayout):
 
         #create and add widgets
         self.dial = AngleDial(self.update_angle)
-        self.angle_input = TextInput(hint_text = "Angle (degrees)", input_filter = "float")
+        self.angle_input = TextInput(hint_text = "Angle (degrees)", input_filter = "float", multiline = False, on_text_validate = self.submit)
         self.submit_button = Button(text = "Set Angle", on_press = self.submit)
         self.add_widget(self.dial)
         self.add_widget(self.angle_input)

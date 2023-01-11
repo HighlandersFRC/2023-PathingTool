@@ -18,7 +18,7 @@ class EditValue(BoxLayout):
         self.field = field
 
         #create and add sub-widgets
-        self.value_input = TextInput(hint_text = f"{self.name} Value", input_filter = "float")
+        self.value_input = TextInput(hint_text = f"{self.name} Value", input_filter = "float", multiline = False, on_text_validate = self.submit)
         self.submit_button = Button(text = f"Set {self.name}", on_press = self.submit)
         self.add_widget(self.value_input)
         self.add_widget(self.submit_button)

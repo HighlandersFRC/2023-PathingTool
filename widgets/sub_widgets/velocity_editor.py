@@ -18,9 +18,9 @@ class VelocityEditor(BoxLayout):
 
         #create and add widgets
         self.theta_dial = AngleDial(self.set_v_theta)
-        self.v_theta_input = TextInput(hint_text = "VTheta (degr)", input_filter = "float")
+        self.v_theta_input = TextInput(hint_text = "VTheta (degr)", input_filter = "float", multiline = False, on_text_validate = self.update_v_theta)
         self.v_theta_button = Button(text = "Set VTheta", on_press = self.update_v_theta)
-        self.v_mag_input = TextInput(hint_text = "VMagnitude (m)", input_filter = "float")
+        self.v_mag_input = TextInput(hint_text = "VMagnitude (m)", input_filter = "float", multiline = False, on_text_validate = self.update_v_mag)
         self.v_mag_button = Button(text = "Set VMag", on_press = self.update_v_mag)
         self.average_button = Button(text = "Lin Cat.", on_press = self.average, background_color = (0.5, 0, 0, 1))
         self.add_widget(self.theta_dial)
