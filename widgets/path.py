@@ -21,8 +21,8 @@ class Path(Image):
         self.recorded_points = []
 
         #robot dimensions in meters
+        self.robot_length = 1.7366
         self.robot_width = 0.7366
-        self.robot_length = 0.7366
         self.robot_radius = convert.get_robot_radius(self.robot_width, self.robot_length)
 
         #image of field
@@ -93,7 +93,7 @@ class Path(Image):
 
             #angle indicators
             #angle from 0 to first corner
-            corner_1_theta = math.atan2((self.robot_length) / (self.robot_radius * 2), (self.robot_width) / (self.robot_radius * 2))
+            corner_1_theta = math.atan2((self.robot_width) / (self.robot_radius * 2), (self.robot_length) / (self.robot_radius * 2))
             #corner angles
             theta_1 = corner_1_theta + p.angle
             theta_2 = math.pi - corner_1_theta + p.angle
@@ -129,7 +129,7 @@ class Path(Image):
                 anim_front = convert.meters_to_pixels(((self.robot_length / 2.0) * math.cos(anim_angle) + anim_point[0], (self.robot_length / 2.0) * math.sin(anim_angle) + anim_point[1]), self.size)
                 self.animation_group.add(Color(0, 0.4, 0.8))
                 self.animation_group.add(Line(width = 2, cap = "square", joint = "miter", points = [anim_pixel_point[0], anim_pixel_point[1], anim_front[0], anim_front[1]]))
-                corner_1_theta = math.atan2((self.robot_length) / (self.robot_radius * 2), (self.robot_width) / (self.robot_radius * 2))
+                corner_1_theta = math.atan2((self.robot_width) / (self.robot_radius * 2), (self.robot_length) / (self.robot_radius * 2))
                 anim_theta_1 = corner_1_theta + anim_angle
                 anim_theta_2 = math.pi - corner_1_theta + anim_angle
                 anim_theta_3 = math.pi + corner_1_theta + anim_angle
@@ -160,7 +160,7 @@ class Path(Image):
                 recorded_front = convert.meters_to_pixels(((self.robot_length / 2.0) * math.cos(recorded_angle) + recorded_point[1], (self.robot_length / 2.0) * math.sin(recorded_angle) + recorded_point[2]), self.size)
                 self.recording_animation_group.add(Color(0, 0.75, 0))
                 self.recording_animation_group.add(Line(width = 2, cap = "square", joint = "miter", points = [recorded_pixel_point[0], recorded_pixel_point[1], recorded_front[0], recorded_front[1]]))
-                recorded_corner_1_theta = math.atan2(self.robot_length / (self.robot_radius * 2), self.robot_length / (self.robot_radius * 2))
+                recorded_corner_1_theta = math.atan2(self.robot_width / (self.robot_radius * 2), self.robot_length / (self.robot_radius * 2))
                 recorded_theta_1 = recorded_corner_1_theta + recorded_angle
                 recorded_theta_2 = math.pi - recorded_corner_1_theta + recorded_angle
                 recorded_theta_3 = math.pi + recorded_corner_1_theta + recorded_angle
