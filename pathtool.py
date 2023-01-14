@@ -184,8 +184,9 @@ class PathTool(BoxLayout):
     #apply catmull-rom  on angular spline
     def average_angular_velocity(self, index: int, update_widgets = True):
         if self.key_points[index].index != 0 and self.key_points[index].index != len(self.key_points) - 1:
-            p0 = self.key_points[self.key_points[index].index - 1]
-            p2 = self.key_points[self.key_points[index].index + 1]
+            p0 = self.key_points[index - 1]
+            p1 = self.key_points[index]
+            p2 = self.key_points[index + 1]
             dt = p2.time - p0.time
             da = p2.angle - p0.angle
             if p2.angle - p0.angle > math.pi:
@@ -198,6 +199,10 @@ class PathTool(BoxLayout):
                 self.key_points[index].angular_velocity = 0
             else:
                 self.key_points[index].angular_velocity = da / dt
+            if abs(p0.angle - p1.angle) < math.pi / 8:
+                self.key_points[index].angular_velocity = 0
+            elif abs(p1.angle - p2.angle) < math.pi / 8:
+                self.key_points[index].angular_velocity = 0
         else:
             self.key_points[index].angular_velocity = 0
         if update_widgets:

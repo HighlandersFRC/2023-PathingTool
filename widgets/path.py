@@ -21,8 +21,8 @@ class Path(Image):
         self.recorded_points = []
 
         #robot dimensions in meters
-        self.robot_length = 1.7366
-        self.robot_width = 0.7366
+        self.robot_length = 0.73025
+        self.robot_width = 0.635
         self.robot_radius = convert.get_robot_radius(self.robot_width, self.robot_length)
 
         #image of field
