@@ -30,6 +30,8 @@ class PathTool(BoxLayout):
         self.selected_point = None
         #how often path is sample in seconds
         self.sample_rate = 0.01
+        #amount of time at the end to give PIDs to settle
+        self.end_time_pad = 5 / 50
         #name of current path
         self.path_name = ""
         #ip address of the roborio
@@ -242,6 +244,12 @@ class PathTool(BoxLayout):
             t += self.sample_rate
         if colors:
             sampled_points = self.add_color_indicators(sampled_points)
+        last_point = [0, 0, 0, 0, (0, 0, 0)]
+        last_point[0] = sampled_points[-1][0] + self.end_time_pad
+        last_point[1] = sampled_points[-1][1]
+        last_point[2] = sampled_points[-1][2]
+        last_point[3] = sampled_points[-1][3]
+        sampled_points.append(last_point)
         return sampled_points
 
     #get single sampled point by time
