@@ -48,19 +48,17 @@ Command JSON Format
         "position"
     ),
     "trigger": (
-        float time,
-        [float x, float y] position
+        if trigger_type is time: float time,
+        if trigger_type is position: [float x, float y]
     ),
     "command": {
         "type": (
             "angle_arm",
-            "extend_arm",
-            "auto_balance"
+            "extend_arm"
         ),
         "args": (
             if type is angle_arm: [float degrees],
-            if type is extend arm: [float length],
-            if type is auto_balance: []
+            if type is extend arm: [float length]
         )
     }
 }

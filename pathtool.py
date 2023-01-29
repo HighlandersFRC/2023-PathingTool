@@ -24,6 +24,8 @@ class PathTool(BoxLayout):
 
         self.spline_generator = SplineGenerator()
 
+        #list of commands
+        self.commands = []
         #list of key points
         self.key_points = []
         #currently selected point
