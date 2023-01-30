@@ -17,7 +17,7 @@ from popups.visualizer_menu import VisualizerMenu
 from popups.command_editor import CommandEditor
 
 class Editor(GridLayout):
-    def __init__(self, update_func, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, linear_average_func, angular_average_func, average_all_func, display_func, recording_func, clear_local_func, clear_rio_func, full_sample_func, **kwargs):
+    def __init__(self, update_func, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, linear_average_func, angular_average_func, average_all_func, display_func, recording_func, clear_local_func, clear_rio_func, full_sample_func, update_commands_func, **kwargs):
         super().__init__(cols = 3, **kwargs)
         #selected key point
         self.selected_point = None
@@ -63,7 +63,7 @@ class Editor(GridLayout):
         #popups
         self.save_load = SaveLoad(save_func, load_func, upload_func, upload_all_func, download_func)
         self.visualizer_menu = VisualizerMenu(display_func, full_sample_func, clear_local_func, clear_rio_func)
-        self.command_editor = CommandEditor()
+        self.command_editor = CommandEditor(update_commands_func)
 
     #delete selected point if a point is selected
     def delete_point(self):
@@ -125,7 +125,12 @@ class Editor(GridLayout):
         self.velocity_editor.update(self.selected_point)
         self.angular_velocity_editor.update(self.selected_point)
         self.animation_controller.update(self.selected_point)
+        self.command_editor.update_selected_point(self.selected_point)
         self.update_func(update_editor = False)
+
+    #update list of commands
+    def update_commands(self, commands: list):
+        self.command_editor.update(commands)
 
     #update name of path
     def update_path_name(self, name: str):
