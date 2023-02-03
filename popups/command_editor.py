@@ -2,6 +2,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
+from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
 
@@ -70,6 +71,9 @@ class Command(BoxLayout):
         self.trigger_type = "time"
         self.trigger = 0
 
+        self.types = ["angle_arm", "extend_arm"]
+        self.triggers = ["time", "position"]
+
         self.selected_point = selected_point
 
         self.type_menu = BoxLayout(orientation = "vertical")
@@ -81,13 +85,13 @@ class Command(BoxLayout):
         self.add_widget(self.trigger_menu)
         self.add_widget(self.extra_menu)
 
-        self.angle_button = Button(text = "Angle\nArm", on_press = partial(self.select_type, "angle"))
-        self.extend_button = Button(text = "Extend\nArm", on_press = partial(self.select_type, "extend"))
+        self.angle_button = ToggleButton(text = "Angle\nArm", on_press = partial(self.select_type, 0), state = "down")
+        self.extend_button = ToggleButton(text = "Extend\nArm", on_press = partial(self.select_type, 1))
         self.type_menu.add_widget(self.angle_button)
         self.type_menu.add_widget(self.extend_button)
 
-        self.time_button = Button(text = "Time\nTrigger")
-        self.position_button = Button(text = "Position\nTrigger")
+        self.time_button = ToggleButton(text = "Time\nTrigger", on_press = partial(self.select_trigger_type, 0), state = "down")
+        self.position_button = ToggleButton(text = "Position\nTrigger", on_press = partial(self.select_trigger_type, 1))
         self.trigger_type_menu.add_widget(self.time_button)
         self.trigger_type_menu.add_widget(self.position_button)
 
@@ -109,26 +113,48 @@ class Command(BoxLayout):
         self.position_trigger.add_widget(self.position_trigger_x_input)
         self.position_trigger.add_widget(self.position_trigger_y_input)
 
-        self.index_trigger_input = TextInput(hint_text = "Index", input_filter = "int", multiline = False)
-        self.index_trigger_label = Label(text = "[b]Point\nIndex[/b]", markup = True)
+        if self.selected_point != None:
+            self.index_trigger_input = TextInput(hint_text = "Index", text = str(self.selected_point.index), input_filter = "int", multiline = False)
+        else: 
+            self.index_trigger_input = TextInput(hint_text = "Index", input_filter = "int", multiline = False)
+        self.index_trigger_label = ToggleButton(text = "Use\nPoint\nIndex")
         self.index_trigger.add_widget(self.index_trigger_label)
         self.index_trigger.add_widget(self.index_trigger_input)
 
         self.delete_button = Button(text = "Delete", on_press = partial(delete_func, self.index), background_color = (1, 0, 0, 1))
         self.extra_menu.add_widget(self.delete_button)
 
-    def select_type(self, type: str, event):
+    def select_type(self, type_int: int, event):
+        type = self.types[type_int]
         self.deselect_all_types()
-        if type == "angle":
+        if type == "angle_arm":
             self.angle_button.state = "down"
             self.type = "angle_arm"
-        elif type == "extend":
+        elif type == "extend_arm":
             self.extend_button.state = "down"
-            self.type = "angle_arm"
+            self.type = "extend_arm"
 
     def deselect_all_types(self):
         self.angle_button.state = "normal"
         self.extend_button.state = "normal"
+
+    def select_trigger_type(self, trigger_int: int, event):
+        trigger_type = self.triggers[trigger_int]
+        self.deselect_all_triggers()
+        self.trigger_menu.clear_widgets()
+        if trigger_type == "time":
+            self.time_button.state = "down"
+            self.trigger_type = "time"
+            self.trigger_menu.add_widget(self.time_trigger)
+        elif trigger_type == "position":
+            self.position_button.state = "down"
+            self.trigger_type = "position"
+            self.trigger_menu.add_widget(self.position_trigger)
+        self.trigger_menu.add_widget(self.index_trigger)
+
+    def deselect_all_triggers(self):
+        self.time_button.state = "normal"
+        self.position_button.state = "normal"
 
     def get_command(self):
         return {
