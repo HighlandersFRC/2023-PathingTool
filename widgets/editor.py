@@ -125,15 +125,19 @@ class Editor(GridLayout):
         self.velocity_editor.update(self.selected_point)
         self.angular_velocity_editor.update(self.selected_point)
         self.animation_controller.update(self.selected_point)
-        self.command_editor.update_selected_point(self.selected_point)
         self.update_func(update_editor = False)
 
+    #update list of key points
     def update_command_key_points(self, key_points: list[Point]):
         self.command_editor.update_key_points(key_points)
 
     #update list of commands
     def update_commands(self, commands: list):
         self.command_editor.update(commands)
+
+    #get list of commands
+    def get_commands(self):
+        return self.command_editor.get_commands()
 
     #update name of path
     def update_path_name(self, name: str):

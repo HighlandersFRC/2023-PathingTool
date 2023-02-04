@@ -36,43 +36,44 @@ class CommandEditor(Popup):
         self.layout.add_widget(self.buttons_layout)
 
         #buttons for button layout
-        self.cancel_button = Button(text = "Cancel", on_press = self.dismiss)
+        self.cancel_button = Button(text = "Back", on_press = self.dismiss)
         self.add_command_button = Button(text = "Add Command", on_press = self.add_command)
         self.buttons_layout.add_widget(self.cancel_button)
         self.buttons_layout.add_widget(self.add_command_button)
 
     def add_command(self, event):
-        self.commands.append(Command(len(self.commands), self.delete_command, self.selected_point, self.key_points))
-        self.update_func(self.commands)
+        self.commands.append(Command(len(self.commands), self.delete_command, self.key_points))
+        self.update_func([c.get_command() for c in self.commands])
 
-    def update(self, commands: list):
-        self.commands = commands
+    def update(self, commands: list[dict]):
+        self.commands = []
+        for c in commands:
+            self.commands.append(Command(len(self.commands), self.delete_command, self.key_points))
+            self.commands[-1].set_command(c)
         self.index_commands()
         self.commands_layout.clear_widgets()
         for c in self.commands:
             self.commands_layout.add_widget(c)
-        
-
-    def update_selected_point(self, point: Point):
-        self.selected_point = point
-        for c in self.commands:
-            c.selected_point = point
 
     def update_key_points(self, key_points: list[Point]):
         self.key_points = key_points
         for c in self.commands:
             c.key_points = key_points
 
+    def get_commands(self):
+        return [c.get_command() for c in self.commands]
+
     def index_commands(self):
         for i in range(len(self.commands)):
             self.commands[i].index = i
 
     def delete_command(self, index: int, event):
+        print(self.commands[index].get_command())
         self.commands.pop(index)
-        self.update_func(self.commands)
+        self.update_func([c.get_command() for c in self.commands])
 
 class Command(BoxLayout):
-    def __init__(self, index: int, delete_func, selected_point: Point, key_points: list[Point], **kwargs):
+    def __init__(self, index: int, delete_func, key_points: list[Point], **kwargs):
         super().__init__(orientation = "horizontal", spacing = 0, **kwargs)
         self.index = index
         self.type = "angle_arm"
@@ -83,7 +84,6 @@ class Command(BoxLayout):
         self.types = ["angle_arm", "extend_arm"]
         self.triggers = ["time", "position"]
 
-        self.selected_point = selected_point
         self.key_points = key_points
 
         self.delete_func = delete_func
@@ -135,10 +135,7 @@ class Command(BoxLayout):
         self.position_trigger.add_widget(self.position_trigger_x_input)
         self.position_trigger.add_widget(self.position_trigger_y_input)
 
-        if self.selected_point != None:
-            self.index_trigger_input = TextInput(hint_text = "Index", text = str(self.selected_point.index), input_filter = "int", multiline = False)
-        else: 
-            self.index_trigger_input = TextInput(hint_text = "Index", input_filter = "int", multiline = False)
+        self.index_trigger_input = TextInput(hint_text = "Index", input_filter = "int", multiline = False)
         self.index_trigger_button = ToggleButton(text = "Use\nPoint\nIndex", on_press = self.update_index_selection, on_release = self.update_index_selection)
         self.index_trigger.add_widget(self.index_trigger_button)
         self.index_trigger.add_widget(self.index_trigger_input)
@@ -157,6 +154,7 @@ class Command(BoxLayout):
             self.extend_button.state = "down"
             self.type = "extend_arm"
             self.set_extend_arg(None)
+        
 
     def deselect_all_types(self):
         self.angle_button.state = "normal"
@@ -219,6 +217,25 @@ class Command(BoxLayout):
     def delete(self, event):
         self.delete_func(self.index, event)
 
+    def update_inputs(self):
+        self.deselect_all_types()
+        self.deselect_all_triggers()
+        if self.type == "angle_arm":
+            self.angle_button.state = "down"
+            self.angle_input.text = str(self.args[0])
+        elif self.type == "extend_arm":
+            self.extend_button.state = "down"
+            self.extend_input.text = str(self.args[0])
+        if self.trigger_type == "time":
+            self.time_button.state = "down"
+            self.time_trigger_input.text = str(self.trigger)
+            self.select_trigger_type(0, None)
+        elif self.trigger_type == "position":
+            self.position_button.state = "down"
+            self.position_trigger_x_input.text = str(self.trigger[0])
+            self.position_trigger_y_input.text = str(self.trigger[1])
+            self.select_trigger_type(1, None)
+
     def get_command(self):
         return {
             "trigger_type": self.trigger_type,
@@ -228,3 +245,13 @@ class Command(BoxLayout):
                 "args": self.args
             }
         }
+
+    def set_command(self, cmd: dict):
+        self.trigger_type = cmd["trigger_type"]
+        self.trigger = cmd["trigger"]
+        self.type = cmd["command"]["type"]
+        self.args = cmd["command"]["args"]
+        self.set_angle_arg(None)
+        self.set_extend_arg(None)
+        self.update_index_selection(None)
+        self.update_inputs()

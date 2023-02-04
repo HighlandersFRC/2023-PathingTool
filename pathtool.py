@@ -314,7 +314,8 @@ class PathTool(BoxLayout):
         self.sample_rate = sample_rate
         self.path_name = file_name
         sampled_points = self.get_sampled_points(times = True)
-        result = file_manager.save_path(self.key_points, sampled_points, self.sample_rate, folder_path, file_name)
+        self.commands = self.editor.get_commands()
+        result = file_manager.save_path(self.key_points, self.commands, sampled_points, self.sample_rate, folder_path, file_name)
         self.update_widgets()
         #update status
         if result:
@@ -329,6 +330,7 @@ class PathTool(BoxLayout):
         self.key_points = path_data[0]
         self.sample_rate = path_data[1]
         self.path_name = path_data[2]
+        self.commands = path_data[3]
         self.selected_point = None
         self.update_widgets()
         #update status
