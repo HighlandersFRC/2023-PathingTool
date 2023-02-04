@@ -17,19 +17,23 @@ class PathTool(BoxLayout):
         super().__init__(orientation = "horizontal", **kwargs)
         #main widgets
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
-        self.editor = Editor(self.update_widgets, self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocity, self.average_angular_velocity, self.average_all, self.display_recording, self.run_recording, self.clear_local_recordings, self.clear_rio_recordings, self.get_sampled_points, size_hint = (1, 0.25))
+        self.editor = Editor(self.update_widgets, self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocity, self.average_angular_velocity, self.average_all, self.display_recording, self.run_recording, self.clear_local_recordings, self.clear_rio_recordings, self.get_sampled_points, self.update_commands, size_hint = (1, 0.25))
         self.path = Path(self.get_sampled_point, size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
         self.points_menu = PointsMenu(self.update_path, size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
 
         self.spline_generator = SplineGenerator()
 
+        #list of commands
+        self.commands = []
         #list of key points
         self.key_points = []
         #currently selected point
         self.selected_point = None
         #how often path is sample in seconds
         self.sample_rate = 0.01
+        #amount of time at the end to give PIDs to settle
+        self.end_time_pad = 5 / 50
         #name of current path
         self.path_name = ""
         #ip address of the roborio
@@ -100,6 +104,7 @@ class PathTool(BoxLayout):
         if update_editor:
             self.editor.update_selected_point(self.selected_point)
             self.editor.update_path_name(self.path_name)
+            self.editor.update_commands(self.commands)
             if len(self.key_points) > 0:
                 self.editor.update_time(self.key_points[-1].time)
             else:
@@ -111,6 +116,11 @@ class PathTool(BoxLayout):
         self.selected_point = selected_point
         self.key_points = key_points
         self.update_widgets(update_equations = update_equations)
+
+    #update the command list
+    def update_commands(self, commands: list):
+        self.commands = commands
+        self.update_widgets(update_equations = False)
 
     #display recorded path over the field image
     def display_recording(self, recording: list):
@@ -184,8 +194,9 @@ class PathTool(BoxLayout):
     #apply catmull-rom  on angular spline
     def average_angular_velocity(self, index: int, update_widgets = True):
         if self.key_points[index].index != 0 and self.key_points[index].index != len(self.key_points) - 1:
-            p0 = self.key_points[self.key_points[index].index - 1]
-            p2 = self.key_points[self.key_points[index].index + 1]
+            p0 = self.key_points[index - 1]
+            p1 = self.key_points[index]
+            p2 = self.key_points[index + 1]
             dt = p2.time - p0.time
             da = p2.angle - p0.angle
             if p2.angle - p0.angle > math.pi:
@@ -198,6 +209,10 @@ class PathTool(BoxLayout):
                 self.key_points[index].angular_velocity = 0
             else:
                 self.key_points[index].angular_velocity = da / dt
+            if abs(p0.angle - p1.angle) < math.pi / 8:
+                self.key_points[index].angular_velocity = 0
+            elif abs(p1.angle - p2.angle) < math.pi / 8:
+                self.key_points[index].angular_velocity = 0
         else:
             self.key_points[index].angular_velocity = 0
         if update_widgets:
@@ -237,6 +252,12 @@ class PathTool(BoxLayout):
             t += self.sample_rate
         if colors:
             sampled_points = self.add_color_indicators(sampled_points)
+        last_point = [0, 0, 0, 0, (0, 0, 0)]
+        last_point[0] = sampled_points[-1][0] + self.end_time_pad
+        last_point[1] = sampled_points[-1][1]
+        last_point[2] = sampled_points[-1][2]
+        last_point[3] = sampled_points[-1][3]
+        sampled_points.append(last_point)
         return sampled_points
 
     #get single sampled point by time
