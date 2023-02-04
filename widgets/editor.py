@@ -128,6 +128,9 @@ class Editor(GridLayout):
         self.command_editor.update_selected_point(self.selected_point)
         self.update_func(update_editor = False)
 
+    def update_command_key_points(self, key_points: list[Point]):
+        self.command_editor.update_key_points(key_points)
+
     #update list of commands
     def update_commands(self, commands: list):
         self.command_editor.update(commands)
