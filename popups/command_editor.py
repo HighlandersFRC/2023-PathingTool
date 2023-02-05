@@ -68,7 +68,6 @@ class CommandEditor(Popup):
             self.commands[i].index = i
 
     def delete_command(self, index: int, event):
-        print(self.commands[index].get_command())
         self.commands.pop(index)
         self.update_func([c.get_command() for c in self.commands])
 
@@ -81,7 +80,7 @@ class Command(BoxLayout):
         self.trigger_type = "time"
         self.trigger = 0
 
-        self.types = ["angle_arm", "extend_arm"]
+        self.types = ["angle_arm", "extend_arm", "intake", "placement"]
         self.triggers = ["time", "position"]
 
         self.key_points = key_points
@@ -99,8 +98,12 @@ class Command(BoxLayout):
 
         self.angle_layout = BoxLayout(orientation = "horizontal")
         self.extend_layout = BoxLayout(orientation = "horizontal")
+        self.intake_button = ToggleButton(text = "Intake", on_press = partial(self.select_type, 2))
+        self.placement_button = ToggleButton(text = "Placement", on_press = partial(self.select_type, 3))
         self.type_menu.add_widget(self.angle_layout)
         self.type_menu.add_widget(self.extend_layout)
+        self.type_menu.add_widget(self.intake_button)
+        self.type_menu.add_widget(self.placement_button)
         
         self.angle_button = ToggleButton(text = "Angle\nArm", on_press = partial(self.select_type, 0), state = "down")
         self.angle_input = TextInput(hint_text = "Angle", input_filter = "float", multiline = False, on_text_validate = self.set_angle_arg)
@@ -154,11 +157,21 @@ class Command(BoxLayout):
             self.extend_button.state = "down"
             self.type = "extend_arm"
             self.set_extend_arg(None)
+        elif type == "intake":
+            self.intake_button.state = "down"
+            self.type = "intake"
+            self.args = [1]
+        elif type == "placement":
+            self.placement_button.state = "down"
+            self.type = "placement"
+            self.args = [1]
         
 
     def deselect_all_types(self):
         self.angle_button.state = "normal"
         self.extend_button.state = "normal"
+        self.intake_button.state = "normal"
+        self.placement_button.state = "normal"
 
     def select_trigger_type(self, trigger_int: int, event):
         trigger_type = self.triggers[trigger_int]
@@ -226,6 +239,10 @@ class Command(BoxLayout):
         elif self.type == "extend_arm":
             self.extend_button.state = "down"
             self.extend_input.text = str(self.args[0])
+        elif self.type == "intake":
+            self.intake_button.state = "down"
+        elif self.type == "placement":
+            self.placement_button.state = "down"
         if self.trigger_type == "time":
             self.time_button.state = "down"
             self.time_trigger_input.text = str(self.trigger)
