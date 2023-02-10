@@ -20,6 +20,9 @@ class Path(Image):
         #in seconds, meters, meters, radians
         self.recorded_points = []
 
+        #autonomous commands
+        self.commands = []
+
         #robot dimensions in meters
         self.robot_length = 0.73025
         self.robot_width = 0.635
@@ -38,6 +41,7 @@ class Path(Image):
         self.recording_line = Line()
         self.path_line = Line()
         self.path_line_group = InstructionGroup()
+        self.command_group = InstructionGroup()
 
         #animation time in seconds
         self.animation_time = -1
@@ -59,6 +63,7 @@ class Path(Image):
         self.animation_group.clear()
         self.recording_animation_group.clear()
         self.path_line_group.clear()
+        self.command_group.clear()
         self.canvas.clear()
         self.field_image.size = self.size
         self.canvas.add(self.field_image)
@@ -190,6 +195,29 @@ class Path(Image):
             self.canvas.add(Color(0, 0.5, 0))
             self.canvas.add(self.recording_line)
 
+        #draw command indicators
+        for c in self.commands:
+            color = None
+            if c["command"]["type"] == "placement":
+                color = (1, 0, 0, 1)
+            elif c["command"]["type"] == "intake":
+                color = (1, 0.73, 0, 1)
+            elif c["command"]["type"] == "angle_arm":
+                color = (0, 0, 1, 1)
+            elif c["command"]["type"] == "extend_arm":
+                color = (0, 1, 0, 1)
+            px = 0
+            py = 0
+            if c["trigger_type"] == "time":
+                p = self.sample_func(c["trigger"])
+                px, py = convert.meters_to_pixels(p, self.size)
+            elif c["trigger_type"] == "position":
+                px = convert.meters_to_pixels_x(c["trigger"][0], self.size)
+                py = convert.meters_to_pixels_y(c["trigger"][1], self.size)
+            self.command_group.add(Color(color[0], color[1], color[2]))
+            self.command_group.add(Ellipse(pos = (px - 5, py - 5), size = (10, 10)))
+        self.canvas.add(self.command_group)
+
         #update infomational text
         self.update_info()
         # print(f"Draw: {time.time_ns() / 1000000 - start_time}")
@@ -215,10 +243,11 @@ class Path(Image):
                 return p
         return None
 
-    def update(self, points: list, sampled_points: list, sample_rate: float):
+    def update(self, points: list, sampled_points: list, sample_rate: float, commands: list[dict]):
         self.key_points = points
         self.sampled_points = sampled_points
         self.sample_rate = sample_rate
+        self.commands = commands
 
     def update_selected_point(self, point):
         self.selected_point = point

@@ -93,12 +93,13 @@ class PathTool(BoxLayout):
         self.index_points()
         self.time_points()
         self.optimize_points()
+        self.commands = self.editor.get_commands()
         #if multiple points update equations
         if len(self.key_points) > 1 and update_equations:
             self.spline_generator.generateSplineCurves([[p.time, p.x, p.y, p.angle, p.velocity_magnitude * math.cos(p.velocity_theta), p.velocity_magnitude * math.sin(p.velocity_theta), p.angular_velocity, 0.0, 0.0, 0.0] for p in self.key_points])
-            self.path.update(self.key_points, self.get_sampled_points(colors = True, times = True), self.sample_rate)
+            self.path.update(self.key_points, self.get_sampled_points(colors = True, times = True), self.sample_rate, self.commands)
         else:
-            self.path.update(self.key_points, [], self.sample_rate)
+            self.path.update(self.key_points, [], self.sample_rate, self.commands)
         self.points_menu.update(self.key_points, self.selected_point)
         #update selected point in widgets
         if update_editor:
@@ -264,7 +265,7 @@ class PathTool(BoxLayout):
     #get single sampled point by time
     def get_sampled_point(self, time: float, include_time = False):
         if len(self.key_points) <= 1:
-            return
+            return [0, 0]
         if include_time:
             point = self.spline_generator.sample_pos(self.key_points, time)
             point.insert(0, time)

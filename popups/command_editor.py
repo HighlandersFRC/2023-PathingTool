@@ -98,19 +98,19 @@ class Command(BoxLayout):
 
         self.angle_layout = BoxLayout(orientation = "horizontal")
         self.extend_layout = BoxLayout(orientation = "horizontal")
-        self.intake_button = ToggleButton(text = "Intake", on_press = partial(self.select_type, 2))
-        self.placement_button = ToggleButton(text = "Placement", on_press = partial(self.select_type, 3))
+        self.intake_button = ToggleButton(text = "Intake", on_press = partial(self.select_type, 2), color = (1, 0.73, 0, 1))
+        self.placement_button = ToggleButton(text = "Placement", on_press = partial(self.select_type, 3), color = (1, 0, 0, 1))
         self.type_menu.add_widget(self.angle_layout)
         self.type_menu.add_widget(self.extend_layout)
         self.type_menu.add_widget(self.intake_button)
         self.type_menu.add_widget(self.placement_button)
         
-        self.angle_button = ToggleButton(text = "Angle\nArm", on_press = partial(self.select_type, 0), state = "down")
+        self.angle_button = ToggleButton(text = "Angle\nArm", on_press = partial(self.select_type, 0), state = "down", color = (0, 0, 1, 1))
         self.angle_input = TextInput(hint_text = "Angle", input_filter = "float", multiline = False, on_text_validate = self.set_angle_arg)
         self.angle_layout.add_widget(self.angle_button)
         self.angle_layout.add_widget(self.angle_input)
 
-        self.extend_button = ToggleButton(text = "Extend\nArm", on_press = partial(self.select_type, 1))
+        self.extend_button = ToggleButton(text = "Extend\nArm", on_press = partial(self.select_type, 1), color = (0, 1, 0, 1))
         self.extend_input = TextInput(hint_text = "Ext. Length", input_filter = "float", multiline = False, on_text_validate = self.set_extend_arg)
         self.extend_layout.add_widget(self.extend_button)
         self.extend_layout.add_widget(self.extend_input)

@@ -1,6 +1,7 @@
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
+from kivy.uix.label import Label
 
 from data_assets.point import Point
 
@@ -23,6 +24,10 @@ class EditValue(BoxLayout):
         self.add_widget(self.value_input)
         self.add_widget(self.submit_button)
 
+        if field == "delta_time":
+            self.time_to_point_label = Label(text = "[b]Point Time[/b]", markup = True)
+            self.add_widget(self.time_to_point_label)
+
     #submit button callback
     def submit(self, event):
         #if no point is selected do nothing
@@ -41,6 +46,8 @@ class EditValue(BoxLayout):
     def update(self, point: Point):
         self.selected_point = point
         self.value_input.text = str(round(self.get_value(), 2))
+        if self.field == "delta_time" and point != None:
+            self.time_to_point_label.text = f"[b]Point Time: [color=#00ff00]{point.time}[/color][/b]"
 
     #get value from point field
     def get_value(self):
