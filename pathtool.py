@@ -37,7 +37,8 @@ class PathTool(BoxLayout):
         #name of current path
         self.path_name = ""
         #ip address of the roborio
-        self.rio_address = "10.44.99.2"
+        # self.rio_address = "10.44.99.2"
+        self.rio_address = "172.22.11.2"
 
         #physical limitations of the robot
         self.MAX_LINEAR_ACCEL = 6
@@ -330,7 +331,7 @@ class PathTool(BoxLayout):
         self.key_points = path_data[0]
         self.sample_rate = path_data[1]
         self.path_name = path_data[2]
-        self.commands = path_data[3]
+        # self.commands = path_data[3]
         self.selected_point = None
         self.update_widgets()
         #update status
