@@ -2,7 +2,7 @@ from kivy.app import App
 from kivy.clock import Clock
 from kivy.config import Config
 from kivy.core.window import Window
-from arm_animation import ArmAnimation
+from tools.motion_profile.arm_animation import ArmAnimation
 
 
 TITLE = "2023 Arm Motion Profile Simulator - Highlanders FRC #4499"
@@ -18,7 +18,7 @@ class MotionProfileApp(App):
         return self.arm_animation
 
     def execute(self, dt):
-        pass
+        self.arm_animation.update(dt)
 
 if __name__ == "__main__":
     Config.set('input', 'mouse', 'mouse,multitouch_on_demand')

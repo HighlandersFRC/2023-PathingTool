@@ -18,7 +18,7 @@ class SplineGenerator:
     def sample_pos(self, key_points: list, time: float):
         index = 0
         for i in range(len(key_points) - 1):
-            if time >= key_points[i].time and time <= key_points[i + 1].time:
+            if time >= key_points[i][0] and time <= key_points[i + 1][0]:
                 index = i
                 break
         rEquation = self.rEquations[index]
@@ -30,7 +30,7 @@ class SplineGenerator:
     def sample_lin_vel(self, key_points: list, time: float):
         index = 0
         for i in range(len(key_points) - 1):
-            if time >= key_points[i].time and time <= key_points[i + 1].time:
+            if time >= key_points[i][0] and time <= key_points[i + 1][0]:
                 index = i
                 break
         rEquation = self.rEquations[index]
@@ -49,7 +49,7 @@ class SplineGenerator:
     def sample_raw_linear_info(self, key_points: list, time: float):
         index = 0
         for i in range(len(key_points) - 1):
-            if time >= key_points[i].time and time <= key_points[i + 1].time:
+            if time >= key_points[i][0] and time <= key_points[i + 1][0]:
                 index = i
                 break
         rEquation = self.rEquations[index]
@@ -69,7 +69,7 @@ class SplineGenerator:
     def sample_lin_accel(self, key_points: list, time: float):
         index = 0
         for i in range(len(key_points) - 1):
-            if time >= key_points[i].time and time <= key_points[i + 1].time:
+            if time >= key_points[i][0] and time <= key_points[i + 1][0]:
                 index = i
                 break
         rEquation = self.rEquations[index]
@@ -125,17 +125,17 @@ class SplineGenerator:
             
             xArray.append(currentPoint[1])
             xArray.append(nextPoint[1])
-            xArray.append(currentPoint[4])
-            xArray.append(nextPoint[4])
-            xArray.append(currentPoint[7])
-            xArray.append(nextPoint[7])
+            xArray.append(currentPoint[3])
+            xArray.append(nextPoint[3])
+            xArray.append(currentPoint[5])
+            xArray.append(nextPoint[5])
 
-            thetaArray.append(currentPoint[3])
-            thetaArray.append(nextPoint[3])
+            thetaArray.append(currentPoint[2])
+            thetaArray.append(nextPoint[2])
+            thetaArray.append(currentPoint[4])
+            thetaArray.append(nextPoint[4])
             thetaArray.append(currentPoint[6])
             thetaArray.append(nextPoint[6])
-            thetaArray.append(currentPoint[9])
-            thetaArray.append(nextPoint[9])
 
         overallSysEqArray = np.array(overallSysEqArray)
 
