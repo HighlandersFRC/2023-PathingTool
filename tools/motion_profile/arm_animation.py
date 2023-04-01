@@ -4,6 +4,7 @@ from SplineGeneration.generatePolarSplines import SplineGenerator
 from tools import convert
 from kivy.graphics import *
 import math
+import random
 
 class ArmAnimation(BoxLayout):
     def __init__(self, **kwargs):
@@ -24,16 +25,17 @@ class ArmAnimation(BoxLayout):
 
         #setpoints
         #[time (s), arm angle (deg), arm extension (in)]
-        self.setpoints = [
-            [0, 180, 0, 0, 0, 0, 0],
-            [0.5, 180, 40, 0, 0, 0, 0],
-            [1, 180, 0, 0, 0, 0, 0],
-            [1.5, 135, 0, 0, 0, 0, 0],
-            [2, 180, 0, 0, 0, 0, 0],
-            [2.5, 135, 40, 0, 0, 0, 0],
-            [3, 225, 20, 0, 0, 0, 0],
-            [3.5, 180, 0, 0, 0, 0, 0]
-        ]
+        # self.setpoints = [
+        #     [0, 180, 0, 0, 0, 0, 0],
+        #     [0.5, 180, 40, 0, 0, 0, 0],
+        #     [1, 180, 0, 0, 0, 0, 0],
+        #     [1.5, 135, 0, 0, 0, 0, 0],
+        #     [2, 180, 0, 0, 0, 0, 0],
+        #     [2.5, 135, 40, 0, 0, 0, 0],
+        #     [3, 225, 20, 0, 0, 0, 0],
+        #     [3.5, 180, 0, 0, 0, 0, 0]
+        # ]
+        self.setpoints = [[i / 2, random.randint(80, 280), random.randint(0, 50), 0, 0, 0, 0] for i in range(100)]
         self.anim_time = 0
         self.angle = 180
         self.extension = 0
@@ -51,9 +53,9 @@ class ArmAnimation(BoxLayout):
         self.anim_time += dt
         if self.anim_time > self.setpoints[-1][0]:
             self.anim_time = 0
-        print(f"Time: {self.anim_time}")
-        print(f"Ext: {self.extension}")
-        print(f"Ang: {self.angle}")
+        # print(f"Time: {self.anim_time}")
+        # print(f"Ext: {self.extension}")
+        # print(f"Ang: {self.angle}")
 
         self.anim_group.clear()
         self.canvas.clear()
