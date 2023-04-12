@@ -75,3 +75,9 @@ def get_cursor_field_pos_pixels():
 
 def get_cursor_screen_pos_pixels():
     return pyautogui.position()
+
+def deg_to_rad(deg: float) -> float:
+    return deg * (math.pi / 180)
+
+def rad_to_deg(rad: float) -> float:
+    return rad * (180 / math.pi)

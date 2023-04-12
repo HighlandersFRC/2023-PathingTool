@@ -53,7 +53,7 @@ class Path(Image):
         self.info_rect = Rectangle()
         
     #draw points and path line
-    def draw_path(self):
+    def draw_path(self, dt: float):
         # start_time = time.time_ns() / 1000000
         #erase non-selected points, selected point, angle indicators
         self.non_selected_points_group.clear()
@@ -144,7 +144,7 @@ class Path(Image):
                 anim_corner_3 = convert.meters_to_pixels((self.robot_radius * math.cos(anim_theta_3) + anim_point[0], self.robot_radius * math.sin(anim_theta_3) + anim_point[1]), self.size)
                 anim_corner_4 = convert.meters_to_pixels((self.robot_radius * math.cos(anim_theta_4) + anim_point[0], self.robot_radius * math.sin(anim_theta_4) + anim_point[1]), self.size)
                 self.animation_group.add(Line(width = 2, cap = "square", joint = "miter", close = True, points = [anim_corner_1[0], anim_corner_1[1], anim_corner_2[0], anim_corner_2[1], anim_corner_3[0], anim_corner_3[1], anim_corner_4[0], anim_corner_4[1]]))
-                self.animation_time += 1 / 60
+                self.animation_time += dt
             if self.animation_time > self.key_points[-1].time:
                 self.animation_time = 1000
         self.canvas.add(self.velocity_indicators_group)
@@ -175,7 +175,7 @@ class Path(Image):
                 recorded_corner_3 = convert.meters_to_pixels((self.robot_radius * math.cos(recorded_theta_3) + recorded_point[1], self.robot_radius * math.sin(recorded_theta_3) + recorded_point[2]), self.size)
                 recorded_corner_4 = convert.meters_to_pixels((self.robot_radius * math.cos(recorded_theta_4) + recorded_point[1], self.robot_radius * math.sin(recorded_theta_4) + recorded_point[2]), self.size)
                 self.recording_animation_group.add(Line(width = 2, cap = "square", joint = "miter", close = True, points = [recorded_corner_1[0], recorded_corner_1[1], recorded_corner_2[0], recorded_corner_2[1], recorded_corner_3[0], recorded_corner_3[1], recorded_corner_4[0], recorded_corner_4[1]]))
-                self.recording_animation_time += 1 / 60
+                self.recording_animation_time += dt
             if self.recording_animation_time > self.recorded_points[-1][0]:
                 self.recording_animation_time = 1000
             self.canvas.add(self.recording_animation_group)
