@@ -2,7 +2,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 
 class SaveDelete(BoxLayout):
-    def __init__(self, delete_point, clear_points, save_func, load_func, upload_func, **kwargs):
+    def __init__(self, delete_point, clear_points, save_func, load_func, upload_func, switch_func, **kwargs):
         super().__init__(**kwargs)
         #callback functions
         self.delete_point = delete_point
@@ -10,6 +10,7 @@ class SaveDelete(BoxLayout):
         self.save_func = save_func
         self.load_func = load_func
         self.upload_func = upload_func
+        self.switch_func = switch_func
 
         #create and add sub-widgets
         self.clear_button = Button(text = "CLEAR", background_color = (0.5, 0, 0, 1), on_press = self.clear)
@@ -17,16 +18,21 @@ class SaveDelete(BoxLayout):
         self.save_button = Button(text = "SAVE", background_color = (0, 0.5, 0, 1), on_press = self.save)
         self.load_button = Button(text = "LOAD", background_color = (0, 1, 0, 1), on_press = self.load)
         self.upload_download_button = Button(text = "UP/DOWNLOAD", background_color = (0, 0.5, 0, 1), on_press = self.upload, size_hint = (1.5, 1))
+        self.switch_button = Button(text = "SWITCH PAGE", background_color = (1, 0, 0, 1), on_press = self.switch_func, size_hint = (1.5, 1))
         self.add_widget(self.clear_button)
         self.add_widget(self.delete_button)
         self.add_widget(self.save_button)
         self.add_widget(self.load_button)
         self.add_widget(self.upload_download_button)
-
+        self.add_widget(self.switch_button)
+        
     #updload button callback
     def upload(self, event):
         self.upload_func()
-
+        
+    def switch(self, event):
+        self.switch_func()
+    
     #save button callback
     def save(self, event):
         self.save_func()

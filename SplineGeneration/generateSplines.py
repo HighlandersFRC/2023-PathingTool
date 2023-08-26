@@ -1,7 +1,7 @@
 import numpy as np
 import math
-from matplotlib.pyplot import plot, show, quiver
-import matplotlib.pyplot as plt
+# from matplotlib.pyplot import plot, show, quiver
+# import matplotlib.pyplot as plt
 import time
 
 class SplineGenerator:

@@ -5,6 +5,7 @@ from widgets.sub_widgets.angle_selector import AngleSelector
 from widgets.sub_widgets.edit_value import EditValue
 from widgets.sub_widgets.nudge_value import NudgeValue
 from widgets.sub_widgets.save_delete import SaveDelete
+from widgets.sub_widgets.switch import Switch
 from widgets.sub_widgets.animation_controller import AnimationController
 from widgets.sub_widgets.velocity_editor import VelocityEditor
 from widgets.sub_widgets.angular_velocity_editor import AngularVelocityEditor
@@ -17,7 +18,7 @@ from popups.visualizer_menu import VisualizerMenu
 from popups.command_editor import CommandEditor
 
 class Editor(GridLayout):
-    def __init__(self, update_func, delete_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, linear_average_func, angular_average_func, average_all_func, display_func, recording_func, clear_local_func, clear_rio_func, full_sample_func, update_commands_func, **kwargs):
+    def __init__(self, update_func, delete_func, switch_func, clear_func, animation_func, save_func, load_func, upload_func, upload_all_func, download_func, linear_average_func, angular_average_func, average_all_func, display_func, recording_func, clear_local_func, clear_rio_func, full_sample_func, update_commands_func, **kwargs):
         super().__init__(cols = 3, **kwargs)
         #selected key point
         self.selected_point = None
@@ -31,6 +32,7 @@ class Editor(GridLayout):
         self.clear_func = clear_func
         self.update_func = update_func
         self.display_func = display_func
+        self.switch_func = switch_func
 
         #editor sub-widgets
         self.edit_time = EditValue("Delta Time", "delta_time", self.update_selected_point)
@@ -39,12 +41,15 @@ class Editor(GridLayout):
         self.angle_selector = AngleSelector(self.update_selected_point)
         self.nudge_x = NudgeValue("X", "x", (0, 0, 0.75, 1), (0, 0, 0.75, 1), self.update_selected_point)
         self.nudge_y = NudgeValue("Y", "y", (0.75, 0.75, 0.75, 1), (0.75, 0.75, 0.75, 1), self.update_selected_point)
-        self.save_delete = SaveDelete(self.delete_point, self.clear_points, self.save_path, self.load_path, self.upload_path)
+        self.save_delete = SaveDelete(self.delete_point, self.clear_points, self.save_path, self.load_path, self.upload_path, self.switch_page)
         self.velocity_editor = VelocityEditor(self.update_selected_point, linear_average_func)
         self.angular_velocity_editor = AngularVelocityEditor(self.update_selected_point, angular_average_func)
         self.animation_controller = AnimationController(animation_func, recording_func)
         self.extra_controls = ExtraControls(average_all_func, self.open_visualizer_menu, self.open_command_editor)
+        # self.switch = Switch(self.switch_page)
         self.info_bar = InfoBar()
+
+        # having problems with the switch widget, commented out works but uncommented fails
 
         #add sub-widgets
         self.add_widget(self.edit_time)
@@ -58,6 +63,7 @@ class Editor(GridLayout):
         self.add_widget(self.angular_velocity_editor)
         self.add_widget(self.animation_controller)
         self.add_widget(self.extra_controls)
+        # self.add_widget(self.switch)
         self.add_widget(self.info_bar)
 
         #popups
@@ -71,6 +77,11 @@ class Editor(GridLayout):
             return
         #call callback in pathtool
         self.delete_func(self.selected_point.index)
+        
+    def switch_page(self, test):
+        # print(test.text)
+        self.switch_func()
+        
 
     #clear key points
     def clear_points(self):

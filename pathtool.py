@@ -2,6 +2,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.modalview import ModalView
 
 from widgets.path import Path
+from widgets.ftcpath import FTCPath
 from widgets.points_menu import PointsMenu
 from widgets.editor import Editor
 from data_assets.point import Point
@@ -10,20 +11,22 @@ from tools import file_manager
 from popups.save_load import SaveLoad
 from SplineGeneration.generateSplines import SplineGenerator
 import math
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 class PathTool(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(orientation = "horizontal", **kwargs)
         #main widgets
         self.editor_viewer_layout = BoxLayout(orientation = "vertical")
-        self.editor = Editor(self.update_widgets, self.delete_point, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocity, self.average_angular_velocity, self.average_all, self.display_recording, self.run_recording, self.clear_local_recordings, self.clear_rio_recordings, self.get_sampled_points, self.update_commands, size_hint = (1, 0.25))
-        self.path = Path(self.get_sampled_point, size_hint = (1, 1.5), allow_stretch = True, keep_ratio = False)
+        self.editor = Editor(self.update_widgets, self.delete_point, self.switch_page, self.clear_points, self.run_animation, self.save_path, self.load_path, self.upload_path, self.upload_all_paths, self.download_all_paths, self.average_linear_velocity, self.average_angular_velocity, self.average_all, self.display_recording, self.run_recording, self.clear_local_recordings, self.clear_rio_recordings, self.get_sampled_points, self.update_commands, size_hint = (1, 0.25))
+        #TODO: currently hardcoded to FTCPath,
+        self.path = Path(self.get_sampled_point, size_hint = (1, 1.5), allow_stretch = False, keep_ratio = False)
         self.points_menu = PointsMenu(self.update_path, size_hint = (0.1, 1), padding = [2, 2, 2, 2], spacing = 1)
         self.set_layout()
 
         self.spline_generator = SplineGenerator()
 
+        self.is_frc = True
         #list of commands
         self.commands = []
         #list of key points
@@ -45,9 +48,17 @@ class PathTool(BoxLayout):
         self.MAX_LINEAR_VEL = 4
         self.MAX_ANGULAR_ACCEL = 1.5 * 2 * math.pi
         self.MAX_ANGULAR_VEL = 1.5 * 2 * math.pi
-
+    
     #add widgets to main layout
     def set_layout(self):
+        self.editor_viewer_layout.add_widget(self.editor)
+        self.editor_viewer_layout.add_widget(self.path)
+        self.add_widget(self.editor_viewer_layout)
+        self.add_widget(self.points_menu)
+
+    def change_layout(self):
+        self.clear_points()
+        self.editor_viewer_layout.clear_widgets()
         self.editor_viewer_layout.add_widget(self.editor)
         self.editor_viewer_layout.add_widget(self.path)
         self.add_widget(self.editor_viewer_layout)
@@ -61,10 +72,13 @@ class PathTool(BoxLayout):
         #Click on the field
         if self.path.collide_point(touch.x, touch.y):
             self.selected_point = self.path.get_selected_point(touch.x, touch.y)
-
+#TODO: hardcoded to ftc now
             #if no point is selected add new point
             if self.selected_point == None:
-                pos = convert.pixels_to_meters((touch.x, touch.y), self.path.size)
+                if self.is_frc:
+                    pos = convert.pixels_to_meters((touch.x, touch.y), self.path.size)
+                else:
+                    pos = convert.ftc_pixels_to_meters((touch.x, touch.y), self.path.size)
                 if len(self.key_points) > 0:
                     self.selected_point = Point(len(self.key_points), 1.0, pos[0], pos[1], 0.0, 1.0, 0.0, 0.0)
                 else:
@@ -133,7 +147,7 @@ class PathTool(BoxLayout):
     def run_recording(self):
         self.path.set_recording_animation()
 
-    #delete selected point
+    #delete selected point 
     def delete_point(self, index):
         #if removed point is the first point set new first point velocity to zero
         if index == 0 and len(self.key_points) > 1:
@@ -146,7 +160,19 @@ class PathTool(BoxLayout):
             self.selected_point = None
         #update main widgets
         self.update_widgets()
-
+        
+    def switch_page(self):
+        print("switching commencing")
+        if self.is_frc:
+            self.is_frc = False
+            self.path = FTCPath(self.get_sampled_point, size_hint = (1, 1.5), allow_stretch = False, keep_ratio = False)
+        else:
+            self.is_frc = True
+            self.path = Path(self.get_sampled_point, size_hint = (1, 1.5), allow_stretch = False, keep_ratio = False)
+        self.clear_widgets()
+        self.change_layout()
+        print("switching completed")
+    
     #clear key points
     def clear_points(self):
         #clear key points, selected point, and update main widgets
