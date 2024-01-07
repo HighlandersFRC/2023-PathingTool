@@ -8,16 +8,18 @@ TASK_BAR_HEIGHT = 40
 VERTICAL_RESOLUTION = 900
 
 #horizontal and vertical resolution of the field image
-FIELD_IMAGE_WIDTH_PIXELS = 1446
-FIELD_IMAGE_HEIGHT_PIXELS = 701
+FIELD_IMAGE_WIDTH_PIXELS = 2601
+FIELD_IMAGE_HEIGHT_PIXELS = 1291
 
 #horizontal and vertical resolution of the path widget
-FIELD_WIDTH_PIXELS = 1455
-FIELD_HEIGHT_PIXELS = 717
+# FIELD_WIDTH_PIXELS = 1745
+# FIELD_HEIGHT_PIXELS = 858
+FIELD_WIDTH_PIXELS = FIELD_IMAGE_WIDTH_PIXELS
+FIELD_HEIGHT_PIXELS = FIELD_IMAGE_HEIGHT_PIXELS
 
 #horizontal and vertical dimensions of the field in meters
-FIELD_WIDTH_METERS = 16.63
-FIELD_HEIGHT_METERS = 8.20
+FIELD_WIDTH_METERS = 16.59128
+FIELD_HEIGHT_METERS = 8.211312
 
 #horizontal and vertical offset of the origin in pixels on the full resolution field image
 FIELD_WIDTH_OFFSET_PIXELS = 0

@@ -8,7 +8,7 @@ import time
 
 class Path(Image):
     def __init__(self, sample_func, **kwargs):
-        super().__init__(source = "images/2023-Field.png", **kwargs)
+        super().__init__(source = "images/CrescendoField.png", **kwargs)
         self.key_points = []
         self.sampled_points = []
         self.selected_point = None
@@ -29,7 +29,7 @@ class Path(Image):
         self.robot_radius = convert.get_robot_radius(self.robot_width, self.robot_length)
 
         #image of field
-        self.field_image = Rectangle(source = "images/2023-Field.png", pos = self.pos)
+        self.field_image = Rectangle(source = "images/CrescendoField.png", pos = self.pos)
 
         #main instructions/instruction groups
         self.non_selected_points_group = InstructionGroup()
@@ -66,6 +66,7 @@ class Path(Image):
         self.command_group.clear()
         self.canvas.clear()
         self.field_image.size = self.size
+        self.canvas.add(Rectangle(pos = (0, 0), size = self.size))
         self.canvas.add(self.field_image)
 
         #if more that 1 point in path generate spline line and add it
